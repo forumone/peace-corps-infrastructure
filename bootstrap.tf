@@ -77,7 +77,7 @@ resource "aws_eip" "us-east-1b-nat" {
 
 #### Configuration Management
 # Create a CM Machine
-resource "aws_instance" "salt1a" {
+resource "aws_instance" "config1a" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps"
@@ -85,20 +85,22 @@ resource "aws_instance" "salt1a" {
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        Name = "Salt 1A"
+        Name = "Config 1A"
         Agency = "Peace Corps"
   }
 }
+
+#### Configuration Management
 # Create a CM Machine
-resource "aws_instance" "salt1b" {
+resource "aws_instance" "configminion" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps"
   security_groups = ["${aws_security_group.private.id}"]
-  subnet_id = "${aws_subnet.us-east-1b-private.id}"
+  subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        Name = "Salt 1B"
+        Name = "Config Minion"
         Agency = "Peace Corps"
   }
 }
