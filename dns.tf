@@ -15,3 +15,19 @@ resource "aws_route53_record" "natb" {
    ttl = "300"
    records = ["${aws_eip.us-east-1b-nat.public_ip}"]
 }
+
+resource "aws_route53_record" "donate-peacecorps-dev" {
+   zone_id = "${var.r53_zone_id}"
+   name = "donate.peacecorps-dev.18f.us"
+   type = "CNAME"
+   ttl = "60"
+   records = ["${aws_elb.dev.dns_name}"]
+}
+
+resource "aws_route53_record" "pay-donate-peacecorps-dev" {
+   zone_id = "${var.r53_zone_id}"
+   name = "pay.donate.peacecorps-dev.18f.us"
+   type = "CNAME"
+   ttl = "60"
+   records = ["${aws_elb.dev.dns_name}"]
+}

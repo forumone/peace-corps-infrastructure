@@ -1,0 +1,10 @@
+---
+- name: Installs nginx
+
+#- hosts: all
+#  roles:
+#    - common
+
+- hosts: ec2_tag_role_webserver
+  roles:
+    - nginx

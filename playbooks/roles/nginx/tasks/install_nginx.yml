@@ -1,0 +1,8 @@
+---
+# These tasks install and set up nginx
+
+- name: Install nginx
+  apt: name=nginx state=latest
+
+- name: Start nginx
+  service: name=nginx state=started enabled=yes

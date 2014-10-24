@@ -27,7 +27,7 @@ provider "aws" {
 resource "aws_vpc" "peace-corps" {
     cidr_block = "10.19.61.0/24"
     tags {
-        Name = "peacecorps"
+        name = "peacecorps"
     }
 }
 
@@ -45,8 +45,8 @@ resource "aws_instance" "us-east-1a-nat" {
   associate_public_ip_address = false
   source_dest_check = false
   tags {
-        Name = "NAT 1A"
-        Agency = "Peace Corps"
+        name = "NAT 1A"
+        agency = "peacecorps"
   }
 }
 
@@ -60,8 +60,8 @@ resource "aws_instance" "us-east-1b-nat" {
   associate_public_ip_address = false
   source_dest_check = false
   tags {
-    Name = "NAT 1B"
-    Agency = "Peace Corps"
+    name = "NAT 1B"
+    agency = "peacecorps"
   }
 }
 
@@ -85,14 +85,14 @@ resource "aws_instance" "config1a" {
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        Name = "Config 1A"
-        Agency = "Peace Corps"
+        name = "Configuration Management"
+        agency = "peacecorps"
+        role = "configmanagement"
   }
 }
 
-#### Configuration Management
-# Create a CM Machine
-resource "aws_instance" "configminion" {
+
+resource "aws_instance" "configtest" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps"
@@ -100,10 +100,12 @@ resource "aws_instance" "configminion" {
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        Name = "Config Minion"
-        Agency = "Peace Corps"
+        name = "Configuration Management Test"
+        agency = "peacecorps"
+        role = "webserver"
   }
 }
+
 
 #### DEV SETUP
 # Create a Dev Machine
@@ -115,8 +117,8 @@ resource "aws_instance" "dev" {
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        Name = "Dev Box"
-        Agency = "Peace Corps"
+        name = "Dev Box"
+        agency = "peacecorps"
   }
 }
 
@@ -139,5 +141,41 @@ resource "aws_elb" "dev" {
     lb_protocol = "tcp"
   }
 
+  listener {
+    instance_port = 443
+    instance_protocol = "tcp"
+    lb_port = 443
+    lb_protocol = "tcp"
+  }
+
   instances = ["${aws_instance.dev.id}"]
+}
+
+# Create a new load balancer
+resource "aws_elb" "configtest" {
+  name = "peacecorps-configtest-elb"
+  subnets = ["${aws_subnet.us-east-1a-public.id}", "${aws_subnet.us-east-1b-public.id}"]
+
+  listener {
+    instance_port = 80
+    instance_protocol = "http"
+    lb_port = 80
+    lb_protocol = "http"
+  }
+
+  listener {
+    instance_port = 49521
+    instance_protocol = "tcp"
+    lb_port = 49521
+    lb_protocol = "tcp"
+  }
+
+  listener {
+    instance_port = 443
+    instance_protocol = "tcp"
+    lb_port = 443
+    lb_protocol = "tcp"
+  }
+
+  instances = ["${aws_instance.configtest.id}"]
 }
