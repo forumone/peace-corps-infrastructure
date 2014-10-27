@@ -3,9 +3,19 @@
 # creates a virtualenv, and collects static assets
 #
 ---
+- name: see if the code repository exists
+  stat: path={{app_code_dir}}
+  register: existing_app_code_dir
 
-- name: checkout latest web app code
+- name: checkout web app code if the directory does not exist
   git: repo={{code_repository}} dest={{app_code_dir}}
+  when: existing_app_code_dir.stat.isdir is not defined
+
+- name: pull for latest from the master branch if code directoy exists
+  command: git pull origin master
+  args:
+    chdir: {{app_code_dir}}
+  when: existing_app_code_dir.stat.isdir is defined
 
 - name: check if virtualenv already exists
   stat: path={{virtualenv_dir}}
