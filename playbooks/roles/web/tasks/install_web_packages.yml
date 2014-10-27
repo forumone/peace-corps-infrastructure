@@ -10,7 +10,9 @@
   sudo: yes
   with_items:
     - git
+    - python3
     - python-dev
+    - libevent-dev
     - libpq-dev
     - python-virtualenv
     - supervisor
