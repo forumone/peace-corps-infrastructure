@@ -1,0 +1,18 @@
+---
+# These tasks install and set up related web packages
+
+- name: ensure apt cache is up to date
+  apt: update_cache=yes 
+  sudo: yes
+
+- name: ensure web server packages are installed
+  apt: name={{item}}
+  sudo: yes
+  with_items:
+    - git
+    - python-dev
+    - libpq-dev
+    - python-virtualenv
+    - supervisor
+    - postgresql-client-common
+    - postgresql-client

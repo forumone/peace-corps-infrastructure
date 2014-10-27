@@ -1,5 +1,10 @@
 ---
-- name: Installs nginx
+# Installs some Common Tooling, like fail2ban
+- hosts: all
+  roles:
+    - common
+
+- name: Installs the Django Web Application
   hosts: tag_role_webserver
   roles:
-    - nginx
+    - web

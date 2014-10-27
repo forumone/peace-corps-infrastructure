@@ -1,0 +1,2 @@
+---
+- include: install_fail2ban.yml
