@@ -1,0 +1,8 @@
+###
+# Pulls the code from a remote Git repository, configures the web application,
+# creates a virtualenv, and collects static assets
+#
+---
+
+- name: checkout latest web app code
+  git: repo={{code_repository}} dest={{app_code_dir}}

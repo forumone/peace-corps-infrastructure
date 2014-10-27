@@ -1,0 +1,14 @@
+###
+# Configuration for Nginx web server
+#
+
+- name: check if nginx has default symlink host file
+  stat: path=/etc/nginx/sites-enabled/default
+  register: nginx_default_file
+
+- name: delete default symlink website on nginx
+  command: rm /etc/nginx/sites-enabled/default
+  sudo: yes
+  when: nginx_default_file.stat.exists
+  notify:
+    - restart nginx
