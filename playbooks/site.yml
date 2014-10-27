@@ -1,5 +1,5 @@
 ---
 - name: Installs nginx
-  hosts: tag_role_webserver
+  hosts: ec2_tag_role_webserver
   roles:
     - nginx
