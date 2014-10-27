@@ -17,14 +17,6 @@
     chdir: "{{app_code_dir}}"
   when: existing_app_code_dir.stat.isdir is defined
 
-- name: check if virtualenv already exists
-  stat: path={{virtualenv_dir}}
-  register: venv_dir
-
-- name: create virtualenv for Django web application
-  shell: virtualenv -p /usr/bin/python3 {{virtualenv_dir}}
-  when: venv_dir.stat.isdir is not defined
-
 - name: install web application dependencies listed in requirements.txt
   pip: requirements={{requirements_file}}
        virtualenv={{virtualenv_dir}}

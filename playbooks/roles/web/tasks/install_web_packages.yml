@@ -6,11 +6,12 @@
   sudo: yes
 
 - name: ensure web server packages are installed
-  apt: name={{item}} state=latest
+  apt: name={{item}}
   sudo: yes
   with_items:
     - git
-    - python3
+    - openssl
+    - libssl-dev
     - python-dev
     - libevent-dev
     - libpq-dev
