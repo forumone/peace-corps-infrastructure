@@ -14,7 +14,7 @@
 - name: pull for latest from the master branch if code directoy exists
   command: git pull origin master
   args:
-    chdir: {{app_code_dir}}
+    chdir: "{{app_code_dir}}"
   when: existing_app_code_dir.stat.isdir is defined
 
 - name: check if virtualenv already exists
