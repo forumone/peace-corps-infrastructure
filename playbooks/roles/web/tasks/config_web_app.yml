@@ -37,13 +37,6 @@
   command: mkdir {{app_code_dir}}/static
   when: static_dir.stat.isdir is not defined
 
-- name: Django collectstatic
-  django_manage: command=collectstatic
-                 app_path={{app_exec_dir}}
-                 virtualenv={{virtualenv_dir}}
-                 settings={{django_settings}}
-  environment: django_env_vars
-
 - name: Django syncdb
   django_manage: command=syncdb
                  app_path={{app_exec_dir}}
