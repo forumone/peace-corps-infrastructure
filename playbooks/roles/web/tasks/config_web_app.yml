@@ -39,28 +39,28 @@
 
 - name: Django collectstatic
   django_manage: command=collectstatic
-                 app_path={{app_code_dir}}
+                 app_path={{app_exec_dir}}
                  virtualenv={{virtualenv_dir}}
                  settings={{django_settings}}
   environment: django_env_vars
 
 - name: Django syncdb
   django_manage: command=syncdb
-                 app_path={{app_code_dir}}
+                 app_path={{app_exec_dir}}
                  virtualenv={{virtualenv_dir}}
                  settings={{django_settings}}
   environment: django_env_vars
 
 - name: Django migrate
   django_manage: command=migrate
-                 app_path={{app_code_dir}}
+                 app_path={{app_exec_dir}}
                  virtualenv={{virtualenv_dir}}
                  settings={{django_settings}}
   environment: django_env_vars
 
 - name: Django loaddata
   django_manage: command=loaddata
-                 app_path={{app_code_dir}}
+                 app_path={{app_exec_dir}}
                  virtualenv={{virtualenv_dir}}
                  fixtures={{fixtures_file}}
                  settings={{django_settings}}
