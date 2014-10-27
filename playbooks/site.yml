@@ -7,7 +7,7 @@
 - name: Installs the Django Web Application
   hosts: tag_role_webserver
   roles:
-    - role: ansible-galaxy-pyenv
+    - role: pyenv
       pyenv_path: "{{deploy_user}}/pyenv"
       pyenv_owner: "{{deploy_user}}"
       pyenv_python_versions:
