@@ -27,7 +27,7 @@ provider "aws" {
 resource "aws_vpc" "peace-corps" {
     cidr_block = "10.19.61.0/24"
     tags {
-        name = "peacecorps"
+        Name = "peacecorps"
     }
 }
 
@@ -45,7 +45,7 @@ resource "aws_instance" "us-east-1a-nat" {
   associate_public_ip_address = false
   source_dest_check = false
   tags {
-        name = "NAT 1A"
+        Name = "NAT 1A"
         agency = "peacecorps"
   }
 }
@@ -60,7 +60,7 @@ resource "aws_instance" "us-east-1b-nat" {
   associate_public_ip_address = false
   source_dest_check = false
   tags {
-    name = "NAT 1B"
+    Name = "NAT 1B"
     agency = "peacecorps"
   }
 }
@@ -85,7 +85,7 @@ resource "aws_instance" "config1a" {
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        name = "Configuration Management"
+        Name = "Configuration Management"
         agency = "peacecorps"
         role = "configmanagement"
   }
@@ -100,12 +100,11 @@ resource "aws_instance" "configtest" {
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        name = "Configuration Management Test"
+        Name = "Configuration Management Test"
         agency = "peacecorps"
         role = "webserver"
   }
 }
-
 
 #### DEV SETUP
 # Create a Dev Machine
@@ -117,7 +116,7 @@ resource "aws_instance" "dev" {
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        name = "Dev Box"
+        Name = "Dev Box"
         agency = "peacecorps"
   }
 }
