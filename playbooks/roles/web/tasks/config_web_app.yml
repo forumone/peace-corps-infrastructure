@@ -3,6 +3,10 @@
 # creates a virtualenv, and collects static assets
 #
 ---
+- name: write non-SSL nginx configuration
+  template: src=nginx_no_ssl.conf.j2 dest=/etc/nginx/sites-enabled/{{app_name}}
+  sudo: yes
+
 - name: see if the code repository exists
   stat: path={{app_code_dir}}
   register: existing_app_code_dir
