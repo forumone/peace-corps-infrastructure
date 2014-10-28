@@ -8,7 +8,7 @@
   hosts: tag_role_webserver
   roles:
     - role: pyenv
-      pyenv_path: "{{deploy_user}}/pyenv"
+      pyenv_path: "/home/{{deploy_user}}/pyenv"
       pyenv_owner: "{{deploy_user}}"
       pyenv_python_versions:
         - "3.4.1"
