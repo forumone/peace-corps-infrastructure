@@ -25,6 +25,9 @@
   pip: requirements={{requirements_file}}
        virtualenv={{virtualenv_dir}}
 
+- name: ensure gunicorn is installed
+  pip: name=gunicorn virtualenv={{virtualenv_dir}}
+
 - name: check if app/static directory exists
   stat: path={{app_code_dir}}/static
   register: static_dir
