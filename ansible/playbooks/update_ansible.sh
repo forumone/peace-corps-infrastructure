@@ -16,4 +16,4 @@ done;
 cp secrets/deploy.enc.unencrypted deploy.pem
 chmod 600 deploy.pem
 
-cp secrets/all.secret.unencrypted group_vars/all
+cp secrets/all.secret.enc.unencrypted group_vars/all
