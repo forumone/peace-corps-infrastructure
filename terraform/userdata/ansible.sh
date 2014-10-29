@@ -13,6 +13,7 @@ chown -R ubuntu:ubuntu /home/ubuntu/.bashrc
 
 # Download Deploy Key from S3. It will be encrypted, so you'll need to decrypt it manually before this server will work
 apt-get install -y python-pip
+pip install boto
 pip install awscli
 aws s3 cp --region us-east-1 s3://peacecorps-secrets/deploy.enc /home/ubuntu/deploy.enc
 chown -R ubuntu:ubuntu /home/ubuntu/deploy.enc
