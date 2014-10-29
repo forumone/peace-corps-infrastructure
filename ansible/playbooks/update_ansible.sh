@@ -7,5 +7,5 @@ read key
 
 for filename in secrets/*
 do
-    openssl aes-256-cbc -d -a -salt -pass $key -in $filename -out $filename.enc
+    openssl aes-256-cbc -d -a -salt -pass pass:$key -in $filename -out $filename.enc
 done;
