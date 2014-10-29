@@ -1,5 +1,3 @@
-variable "herron_cidr" {}
-
 resource "aws_security_group" "gsa-access" {
     name = "gsa-access"
     description = "Allows SSH/HTTPS access from GSA"
@@ -19,28 +17,6 @@ resource "aws_security_group" "gsa-access" {
         to_port = 443
         protocol = "tcp"
         cidr_blocks = ["159.142.0.0/16"]
-    }
-}
-
-resource "aws_security_group" "herron-access" {
-    name = "herron-access"
-    description = "Allows SSH/HTTPS access from Sean Herron"
-    vpc_id = "vpc-51971234"
-
-    # SSH access from Sean
-    ingress {
-        from_port = 22
-        to_port = 22
-        protocol = "tcp"
-        cidr_blocks = ["${var.herron_cidr}"]
-    }
-
-    # HTTPS access from Sean
-    ingress {
-        from_port = 443
-        to_port = 443
-        protocol = "tcp"
-        cidr_blocks = ["${var.herron_cidr}"]
     }
 }
 

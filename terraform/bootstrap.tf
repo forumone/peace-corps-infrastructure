@@ -1,6 +1,5 @@
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
-variable "key_path" {}
 variable "key_name" {}
 variable "aws_region" {
     default = "us-east-1"
@@ -40,7 +39,7 @@ resource "aws_instance" "us-east-1a-nat" {
   availability_zone = "us-east-1a"
   instance_type = "t2.micro"
   key_name = "peacecorps"
-  security_groups = ["${aws_security_group.nat.id}", "${aws_security_group.herron-access.id}"]
+  security_groups = ["${aws_security_group.nat.id}"]
   subnet_id = "${aws_subnet.us-east-1a-public.id}"
   associate_public_ip_address = false
   source_dest_check = false
@@ -55,7 +54,7 @@ resource "aws_instance" "us-east-1b-nat" {
   availability_zone = "us-east-1b"
   instance_type = "t2.micro"
   key_name = "peacecorps"
-  security_groups = ["${aws_security_group.nat.id}", "${aws_security_group.herron-access.id}"]
+  security_groups = ["${aws_security_group.nat.id}"]
   subnet_id = "${aws_subnet.us-east-1b-public.id}"
   associate_public_ip_address = false
   source_dest_check = false
