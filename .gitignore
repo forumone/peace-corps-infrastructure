@@ -1,5 +1,6 @@
 .tfvars
 *.secret
+*.secret.enc
 keys/*
 terraform.tfvars
 *.log
