@@ -13,7 +13,7 @@ do
 done;
 
 # We have to go file by file for this, which kind of sucks!
-cp secrets/deploy.enc.unencrypted deploy.pem
+cp secrets/deploy.enc.unencrypted ../deploy.pem
 chmod 600 deploy.pem
 
-cp secrets/all.secret.enc.unencrypted playbooks/group_vars/all
+cp secrets/all.secret.enc.unencrypted group_vars/all
