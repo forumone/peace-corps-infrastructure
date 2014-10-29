@@ -99,6 +99,7 @@ resource "aws_instance" "configtest" {
   security_groups = ["${aws_security_group.private.id}"]
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
+  iam_instance_profile = "peacecorps-secrets"
   tags {
         Name = "Configuration Management Test"
         agency = "peacecorps"
