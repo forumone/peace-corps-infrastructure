@@ -83,6 +83,8 @@ resource "aws_instance" "config1a" {
   security_groups = ["${aws_security_group.private.id}"]
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
+  iam_instance_profile = "peacecorps-secrets"
+  user_data = "${file("userdata/ansible.sh")}"
   tags {
         Name = "Configuration Management"
         agency = "peacecorps"
@@ -94,11 +96,10 @@ resource "aws_instance" "config1a" {
 resource "aws_instance" "configtest" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
-  key_name = "peacecorps"
+  key_name = "peacecorps-deploy"
   security_groups = ["${aws_security_group.private.id}"]
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
-  iam_instance_profile = "peacecorps-secrets"
   tags {
         Name = "Configuration Management Test"
         agency = "peacecorps"
