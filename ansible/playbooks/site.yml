@@ -6,7 +6,6 @@
 
 - name: Installs the Django Web Application
   hosts: tag_role_webserver
-  sudo: yes
   roles:
     - role: pyenv
       pyenv_path: "/home/{{deploy_user}}/pyenv"
