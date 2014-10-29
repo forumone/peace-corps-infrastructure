@@ -9,5 +9,5 @@ export PC_ENC_KEY=$pcenckey
 
 for filename in secrets/*
 do
-    openssl aes-256-cbc -d -a -salt -pass env:PC_ENC_KEY -in $filename -out $filename.enc
+    openssl aes-256-cbc -d -a -salt -pass env:PC_ENC_KEY -in $filename -out $filename.unencrypted
 done;
