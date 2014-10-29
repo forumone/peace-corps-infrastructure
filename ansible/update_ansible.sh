@@ -17,3 +17,5 @@ cp secrets/deploy.enc.unencrypted deploy.pem
 chmod 600 deploy.pem
 
 cp secrets/all.secret.enc.unencrypted playbooks/group_vars/all
+
+ansible-playbook -i ec2.py --private-key deploy.pem --sudo playbooks/site.yml
