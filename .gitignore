@@ -5,3 +5,4 @@ terraform.tfvars
 keyfile
 *.tfstate
 *.tfstate.backup
+terraform.tfstate.backup
