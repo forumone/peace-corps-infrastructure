@@ -27,7 +27,7 @@ resource "aws_route53_record" "donate-peacecorps-dev" {
 resource "aws_route53_record" "pay-donate-peacecorps-dev" {
    zone_id = "${var.r53_zone_id}"
    name = "pay.donate.peacecorps-dev.18f.us"
-   type = "CNAME"
+   type = "A"
    ttl = "60"
-   records = ["${aws_elb.dev.dns_name}"]
+   records = ["${aws_eip.us-east-1a-nat.public_ip}", "${aws_eip.us-east-1b-nat.public_ip}"]
 }
