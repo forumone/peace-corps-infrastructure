@@ -1,0 +1,14 @@
+server {
+  listen 80;
+  server_name *;
+
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log info;
+
+  location / {
+    if (!-f $request_filename) {
+      proxy_pass http://peacecorps-configtest-elb-2015680413.us-east-1.elb.amazonaws.com;
+      break;
+    }
+  }
+}

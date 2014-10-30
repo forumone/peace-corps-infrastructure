@@ -14,3 +14,25 @@
 
 - name: Ensure iptables at boot
   lineinfile: dest=/etc/rc.local regexp='^exit 0' insertbefore='^#exit 0' line='iptables -t nat -A POSTROUTING -o eth0 -s 10.19.61.0/24 -j MASQUERADE'
+
+- name: Install nginx
+  apt: name=nginx state=latest
+
+- name: Start nginx
+  service: name=nginx state=started enabled=yes
+
+- name: check if nginx has default symlink host file
+  stat: path=/etc/nginx/sites-enabled/default
+  register: nginx_default_file
+
+- name: delete default symlink website on nginx
+  command: rm /etc/nginx/sites-enabled/default
+  sudo: yes
+  when: nginx_default_file.stat.exists
+  notify:
+    - restart nginx
+
+- name: write non-SSL nginx configuration
+  template: src=nginx_no_ssl.conf.j2 dest=/etc/nginx/sites-enabled/main
+  notify:
+    - restart nginx
