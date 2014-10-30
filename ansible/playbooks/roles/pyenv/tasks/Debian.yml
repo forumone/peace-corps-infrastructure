@@ -5,6 +5,7 @@
     pkg: "{{ item }}"
     state: present
   with_items:
+    - git
     - libssl-dev
     - libbz2-dev
     - libsqlite3-dev
