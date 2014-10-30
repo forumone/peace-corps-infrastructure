@@ -9,6 +9,7 @@
   roles:
     - builder
     - role: pyenv
+      sudo_user: "{{deploy_user}}"
       pyenv_path: "/home/{{deploy_user}}/pyenv"
       pyenv_owner: "{{deploy_user}}"
       pyenv_python_versions:
