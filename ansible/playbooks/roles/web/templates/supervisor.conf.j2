@@ -1,5 +1,5 @@
 [program:{{app_name}}]
-environment={% for k, v in django_env_vars.iteritems() %}{% if not loop.first %},{% endif %}{{ k }}="{{ v }}"{% endfor %}{% if tag_role_admin %},DJANGO_SETTINGS_MODULE="peacecorps.settings.production_admin"{% endif %}
+environment={% for k, v in django_env_vars.iteritems() %}{% if not loop.first %},{% endif %}{{ k }}="{{ v }}"{% endfor %}
 
 command={{virtualenv_dir}}/bin/gunicorn {{app_name}}.wsgi:application
 directory={{django_settings_dir_name}}
