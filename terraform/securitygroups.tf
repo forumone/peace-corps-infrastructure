@@ -45,6 +45,26 @@ resource "aws_security_group" "nat" {
   }
 }
 
+resource "aws_security_group" "admin" {
+  name = "peace-corps-admin"
+  description = "Allow access to the admin webservers"
+  vpc_id = "vpc-51971234"
+  
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_security_group" "rds" {
     name = "peace-corps-rds"
     description = "Peace Corps RDS default security group"

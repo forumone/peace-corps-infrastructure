@@ -22,3 +22,17 @@
         - venv_name: "{{app_name}}-3.4.1"
           py_version: "3.4.1"
     - web
+
+- name: Installs an Admin instance
+  hosts: tag_role_admin
+  roles:
+    - builder
+    - role: pyenv
+      pyenv_path: "/home/{{deploy_user}}/pyenv"
+      pyenv_owner: "{{deploy_user}}"
+      pyenv_python_versions:
+        - "3.4.1"
+      pyenv_virtualenvs:
+        - venv_name: "{{app_name}}-3.4.1"
+          py_version: "3.4.1"
+    - web

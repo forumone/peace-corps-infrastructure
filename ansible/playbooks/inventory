@@ -6,6 +6,11 @@
 [webservers:children]
 tag_role_webserver
 
+[tag_role_admin]
+
+[admin:children]
+tag_role_admin
+
 [tag_role_nat]
 
 [nats:children]
