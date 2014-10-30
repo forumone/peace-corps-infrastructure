@@ -21,6 +21,9 @@
 - name: Start nginx
   service: name=nginx state=started enabled=yes
 
+- name: Download SSL Rules
+  command: curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/ssl.rules
+
 - name: check if nginx has default symlink host file
   stat: path=/etc/nginx/sites-enabled/default
   register: nginx_default_file
@@ -32,8 +35,8 @@
   notify:
     - restart nginx
 
-- name: write non-SSL nginx configuration
-  template: src=nginx_no_ssl.conf.j2 dest=/etc/nginx/sites-enabled/main
+- name: write nginx configuration
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-enabled/main
   notify:
     - restart nginx
 

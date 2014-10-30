@@ -1,6 +1,10 @@
 server {
-  listen 80;
-  server_name *.18f.us "";
+  listen 443 ssl spdy;
+  server_name pay.donate.peacecorps-dev.18f.us;
+
+  ssl_certificate      /etc/nginx/ssl/keys/pay.crt;
+  ssl_certificate_key  /etc/nginx/ssl/keys/pay.key;
+  include ssl/ssl.rules;
 
   access_log /var/log/nginx/access.log;
   error_log /var/log/nginx/error.log info;
