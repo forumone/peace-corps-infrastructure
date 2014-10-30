@@ -3,7 +3,7 @@ environment={% for k, v in django_env_vars.iteritems() %}{% if not loop.first %}
 
 command={{virtualenv_dir}}/bin/gunicorn {{app_name}}.wsgi:application
 directory={{django_settings_dir_name}}
-user={{deploy_user}}
+user=ubuntu
 autostart=true
 autorestart=true
 redirect_stderr=True
