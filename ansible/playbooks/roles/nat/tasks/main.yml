@@ -31,10 +31,10 @@
   command: curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/ssl.rules
 
 - name: Place SSL Certificate
-  copy: src=files/pay.donate.crt dest=/etc/nginx/ssl/keys/pay.crt;
+  copy: src=pay.donate.crt dest=/etc/nginx/ssl/keys/pay.crt;
 
 - name: Place SSL Key
-  copy: src=files/pay.donate.peacecorps-dev.18f.us.key dest=/etc/nginx/ssl/keys/pay.key;
+  copy: src=pay.donate.peacecorps-dev.18f.us.key dest=/etc/nginx/ssl/keys/pay.key;
 
 - name: check if nginx has default symlink host file
   stat: path=/etc/nginx/sites-enabled/default
