@@ -64,6 +64,38 @@ resource "aws_instance" "us-east-1b-nat" {
   }
 }
 
+resource "aws_instance" "us-east-1a-nat-new" {
+  ami = "${lookup(var.aws_amis, var.aws_region)}"
+  availability_zone = "us-east-1a"
+  instance_type = "t2.micro"
+  key_name = "peacecorps-deploy"
+  security_groups = ["${aws_security_group.nat.id}"]
+  subnet_id = "${aws_subnet.us-east-1a-public.id}"
+  associate_public_ip_address = true
+  source_dest_check = false
+  tags {
+        Name = "NAT 1A New"
+        agency = "peacecorps"
+        role = "nat"
+  }
+}
+
+resource "aws_instance" "us-east-1b-nat-new" {
+  ami = "${lookup(var.aws_amis, var.aws_region)}"
+  availability_zone = "us-east-1b"
+  instance_type = "t2.micro"
+  key_name = "peacecorps-deploy"
+  security_groups = ["${aws_security_group.nat.id}"]
+  subnet_id = "${aws_subnet.us-east-1b-public.id}"
+  associate_public_ip_address = true
+  source_dest_check = false
+  tags {
+        Name = "NAT 1B New"
+        agency = "peacecorps"
+        role = "nat"
+  }
+}
+
 resource "aws_eip" "us-east-1a-nat" {
     instance = "${aws_instance.us-east-1a-nat.id}"
     vpc = true
