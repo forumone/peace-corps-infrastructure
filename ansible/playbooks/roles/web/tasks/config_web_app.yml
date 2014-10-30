@@ -13,19 +13,23 @@
 
 - name: checkout web app code if the directory does not exist
   git: repo={{code_repository}} dest={{app_code_dir}}
+  sudo_user: "{{deploy_user}}"
   when: existing_app_code_dir.stat.isdir is not defined
 
 - name: pull for latest from the master branch if code directoy exists
   command: git pull origin master
+  sudo_user: "{{deploy_user}}"
   args:
     chdir: "{{app_code_dir}}"
   when: existing_app_code_dir.stat.isdir is defined
 
 - name: install web application dependencies listed in requirements.txt
+  sudo_user: "{{deploy_user}}"
   pip: requirements={{requirements_file}}
        virtualenv={{virtualenv_dir}}
 
 - name: ensure gunicorn is installed
+  sudo_user: "{{deploy_user}}"
   pip: name=gunicorn virtualenv={{virtualenv_dir}}
 
 - name: check if app/static directory exists
@@ -33,10 +37,12 @@
   register: static_dir
 
 - name: create static directory for Django app if it does not exist
+  sudo_user: "{{deploy_user}}"
   command: mkdir {{app_code_dir}}/static
   when: static_dir.stat.isdir is not defined
 
 - name: Django syncdb
+  sudo_user: "{{deploy_user}}"
   django_manage: command=syncdb
                  app_path={{app_exec_dir}}
                  virtualenv={{virtualenv_dir}}
@@ -44,6 +50,7 @@
   environment: django_env_vars
 
 - name: Django migrate
+  sudo_user: "{{deploy_user}}"
   django_manage: command=migrate
                  app_path={{app_exec_dir}}
                  virtualenv={{virtualenv_dir}}
@@ -51,6 +58,7 @@
   environment: django_env_vars
 
 - name: Django loaddata
+  sudo_user: "{{deploy_user}}"
   django_manage: command=loaddata
                  app_path={{app_exec_dir}}
                  virtualenv={{virtualenv_dir}}
