@@ -45,6 +45,19 @@ resource "aws_security_group" "nat" {
   }
 }
 
+resource "aws_security_group" "rds" {
+    name = "peace-corps-rds"
+    description = "Peace Corps RDS default security group"
+    vpc_id = "vpc-51971234"
+
+    ingress {
+        cidr_blocks = ["10.19.61.0/24"]
+        from_port = 5432
+        to_port = 5432
+        protocol = "tcp"
+    }
+}
+
 resource "aws_security_group" "app" {
   name = "peace-corps-app"
   description = "Allow services for Application Servers"
