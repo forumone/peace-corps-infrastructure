@@ -8,3 +8,4 @@ keyfile
 *.tfstate
 *.tfstate.backup
 terraform.tfstate.backup
+ansible/secrets/*
