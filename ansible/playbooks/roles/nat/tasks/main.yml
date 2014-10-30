@@ -36,3 +36,5 @@
   template: src=nginx_no_ssl.conf.j2 dest=/etc/nginx/sites-enabled/main
   notify:
     - restart nginx
+
+- authorized_key: user=ubuntu key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/roles/nat/files/peacecorps.pem.pub') }}"

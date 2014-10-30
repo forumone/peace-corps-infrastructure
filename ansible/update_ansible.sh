@@ -20,4 +20,6 @@ chmod 600 deploy.pem
 
 cp secrets/all.secret.enc.unencrypted playbooks/group_vars/all
 
+cp secrets/peacecorps.pem.pub.unencrypted playbooks/roles/nat/files/peacecorps.pem.pub
+
 ansible-playbook -i ec2.py --private-key deploy.pem --sudo playbooks/site.yml
