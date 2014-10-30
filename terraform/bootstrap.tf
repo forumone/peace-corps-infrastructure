@@ -35,36 +35,6 @@ resource "aws_internet_gateway" "default" {
 }
 
 resource "aws_instance" "us-east-1a-nat" {
-  ami = "ami-4c9e4b24"
-  availability_zone = "us-east-1a"
-  instance_type = "t2.micro"
-  key_name = "peacecorps"
-  security_groups = ["${aws_security_group.nat.id}"]
-  subnet_id = "${aws_subnet.us-east-1a-public.id}"
-  associate_public_ip_address = false
-  source_dest_check = false
-  tags {
-        Name = "NAT 1A"
-        agency = "peacecorps"
-  }
-}
-
-resource "aws_instance" "us-east-1b-nat" {
-  ami = "ami-4c9e4b24"
-  availability_zone = "us-east-1b"
-  instance_type = "t2.micro"
-  key_name = "peacecorps"
-  security_groups = ["${aws_security_group.nat.id}"]
-  subnet_id = "${aws_subnet.us-east-1b-public.id}"
-  associate_public_ip_address = false
-  source_dest_check = false
-  tags {
-    Name = "NAT 1B"
-    agency = "peacecorps"
-  }
-}
-
-resource "aws_instance" "us-east-1a-nat-new" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   availability_zone = "us-east-1a"
   instance_type = "t2.micro"
@@ -74,13 +44,13 @@ resource "aws_instance" "us-east-1a-nat-new" {
   associate_public_ip_address = true
   source_dest_check = false
   tags {
-        Name = "NAT 1A New"
+        Name = "NAT 1A"
         agency = "peacecorps"
         role = "nat"
   }
 }
 
-resource "aws_instance" "us-east-1b-nat-new" {
+resource "aws_instance" "us-east-1b-nat" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   availability_zone = "us-east-1b"
   instance_type = "t2.micro"
@@ -90,7 +60,7 @@ resource "aws_instance" "us-east-1b-nat-new" {
   associate_public_ip_address = true
   source_dest_check = false
   tags {
-        Name = "NAT 1B New"
+        Name = "NAT 1B"
         agency = "peacecorps"
         role = "nat"
   }
