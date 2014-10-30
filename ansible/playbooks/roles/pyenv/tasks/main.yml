@@ -1,4 +1,4 @@
 ---
 - include: Debian.yml
   when: ansible_os_family == "Debian"
-  remote_user: {{ pyenv_owner }}
+  remote_user: "{{ pyenv_owner }}"
