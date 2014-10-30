@@ -28,6 +28,11 @@
   pip: requirements={{requirements_file}}
        virtualenv={{virtualenv_dir}}
 
+- name: install web application dependencies listed in dev requirements.txt
+  sudo_user: "{{deploy_user}}"
+  pip: requirements={{devrequirements_file}}
+       virtualenv={{virtualenv_dir}}
+
 - name: ensure gunicorn is installed
   sudo_user: "{{deploy_user}}"
   pip: name=gunicorn virtualenv={{virtualenv_dir}}
