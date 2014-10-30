@@ -2,10 +2,12 @@
 git pull origin master
 aws s3 cp s3://peacecorps-secrets secrets/ --recursive
 
-echo -n "Enter the secret key for decryption and press [ENTER]: "
-read pcenckey
+if [ -z "$VAR" ]; then
+    echo -n "Enter the secret key for decryption and press [ENTER]: "
+    read pcenckey
 
-export PC_ENC_KEY=$pcenckey
+    export PC_ENC_KEY=$pcenckey
+fi
 
 for filename in secrets/*.enc
 do
