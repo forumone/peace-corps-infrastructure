@@ -1,3 +1,4 @@
 ---
 - include: install_build-essential.yml
+- include: setup_deploy_user.yml
 #- include: create_deploy_user.yml
