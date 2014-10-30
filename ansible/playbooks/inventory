@@ -5,3 +5,8 @@
 
 [webservers:children]
 tag_role_webserver
+
+[tag_role_nat]
+
+[nats:children]
+tag_role_nat

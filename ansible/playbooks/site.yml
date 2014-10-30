@@ -4,6 +4,11 @@
   roles:
     - common
 
+- name: Creates a NAT Instance
+  hosts: tag_role_nat
+  roles:
+    - nat
+
 - name: Installs the Django Web Application
   hosts: tag_role_webserver
   roles:
