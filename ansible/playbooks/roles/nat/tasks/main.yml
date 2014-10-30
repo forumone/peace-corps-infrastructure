@@ -37,4 +37,4 @@
   notify:
     - restart nginx
 
-- authorized_key: user=ubuntu key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/roles/nat/files/peacecorps.pem.pub') }}"
+- authorized_key: user=ubuntu key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/nat/files/peacecorps.pem.pub') }}"
