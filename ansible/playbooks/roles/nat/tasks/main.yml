@@ -21,8 +21,20 @@
 - name: Start nginx
   service: name=nginx state=started enabled=yes
 
+- name: Ensure nginx ssl directory
+  file: dest=/etc/nginx/ssl state=directory
+
+- name: Ensure nginx ssl directory for keys
+  file: dest=/etc/nginx/ssl/keys state=directory
+
 - name: Download SSL Rules
   command: curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/ssl.rules
+
+- name: Place SSL Certificate
+  copy: src=files/pay.donate.crt dest=/etc/nginx/ssl/keys/pay.crt;
+
+- name: Place SSL Key
+  copy: src=files/pay.donate.peacecorps-dev.18f.us.key dest=/etc/nginx/ssl/keys/pay.key;
 
 - name: check if nginx has default symlink host file
   stat: path=/etc/nginx/sites-enabled/default
