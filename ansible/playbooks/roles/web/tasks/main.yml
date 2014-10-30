@@ -1,5 +1,5 @@
 ---
-- include: setup_peacecorps_user.yml
+- include: setup_deploy_user.yml
 - include: install_web_packages.yml
 - include: install_nginx.yml
 - include: config_web_server.yml

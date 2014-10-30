@@ -1,6 +1,0 @@
----
-
-- user:
-    name:"{{deploy_user}}"
-    comment:"Peace Corps User"
-    group:peacecorps

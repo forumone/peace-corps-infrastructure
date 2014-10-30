@@ -1,0 +1,4 @@
+---
+
+- name: Create Deployment User
+  user: name="{{deploy_user}}" comment="Deployment User" group="{{deploy_user}}"
