@@ -50,11 +50,7 @@
   copy: src=webserver-dev.sh dest=/home/ubuntu/webserver-dev.sh
 
 - name: add environmental variables for the environment
-  lineinfile: dest=/home/ubuntu/.bashrc
-              state=present
-              backrefs=yes
-              regexp='source /home/ubuntu/webserver-dev.sh'
-              line='source /home/ubuntu/webserver-dev.sh'
+  lineinfile: dest=/home/ubuntu/.bashrc line="source /home/ubuntu/webserver-dev.sh"
 
 - name: Django syncdb
   sudo_user: "{{deploy_user}}"

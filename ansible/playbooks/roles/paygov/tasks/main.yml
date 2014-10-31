@@ -4,8 +4,4 @@
   copy: src=pay-dev.sh dest=/home/ubuntu/pay-dev.sh
 
 - name: add environmental variables for the environment
-  lineinfile: dest=/home/ubuntu/.bashrc
-              state=present
-              backrefs=yes
-              regexp='source /home/ubuntu/pay-dev.sh'
-              line='source /home/ubuntu/pay-dev.sh'
+  lineinfile: dest=/home/ubuntu/.bashrc line="source /home/ubuntu/pay-dev.sh"
