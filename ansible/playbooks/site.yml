@@ -23,7 +23,7 @@
   hosts:
     - tag_role_webserver
     - tag_role_admin
-    - paygov
+    - tag_role_paygov
   roles:
     - builder
     - role: pyenv
