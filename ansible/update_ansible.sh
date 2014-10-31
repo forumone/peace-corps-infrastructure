@@ -20,7 +20,7 @@ chmod 600 deploy.pem
 
 cp secrets/all.secret.enc.unencrypted playbooks/group_vars/all
 
-cp secrets/pay.donate.crt.enc.unencrypted playbooks/roles/nat/files/pay.donate.crt
+cp secrets/pay.donate.ssl-bundle.crt.enc.unencrypted playbooks/roles/nat/files/pay.donate.crt
 cp secrets/pay.donate.peacecorps-dev.18f.us.key.enc.unencrypted playbooks/roles/nat/files/pay.donate.peacecorps-dev.18f.us.key
 
 cp secrets/peacecorps.pem.pub playbooks/roles/nat/files/peacecorps.pem.pub
