@@ -1,1 +1,1 @@
-../../../../secrets/pay-dev.sh.unencrypted
+../../../../secrets/pay-dev.sh.enc.unencrypted
