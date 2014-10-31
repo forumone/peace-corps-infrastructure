@@ -53,8 +53,8 @@
   lineinfile: dest=/home/ubuntu/.bashrc
               state=present
               backrefs=yes
-              regexp='source /home/ubuntu/webserver.sh'
-              line='source /home/ubuntu/webserver.sh'
+              regexp='source /home/ubuntu/webserver-dev.sh'
+              line='source /home/ubuntu/webserver-dev.sh'
 
 - name: Django syncdb
   sudo_user: "{{deploy_user}}"
