@@ -1,0 +1,41 @@
+---
+
+ - name: add django settings module
+    lineinfile: >
+    dest=/home/{{deploy_user}}/.bashrc
+    state=present
+    backrefs=yes
+    regexp='export DJANGO_SETTINGS_MODULE="{{django_settings_module}}"'
+    line='export DJANGO_SETTINGS_MODULE="{{django_settings_module}}"'
+
+ - name: add gnupg home
+    lineinfile: >
+    dest=/home/{{deploy_user}}/.bashrc
+    state=present
+    backrefs=yes
+    regexp='export GNUPG_HOME="{{gnupg_home}}"'
+    line='export GNUPG_HOME="{{gnupg_home}}"'
+
+ - name: add GPG_ENCRYPT_ID
+    lineinfile: >
+    dest=/home/{{deploy_user}}/.bashrc
+    state=present
+    backrefs=yes
+    regexp='export GPG_ENCRYPT_ID="{{gpg_encrypt_id}}"'
+    line='export GPG_ENCRYPT_ID="{{gpg_encrypt_id}}"'
+
+ - name: add PAY_GOV_OCI_URL
+    lineinfile: >
+    dest=/home/{{deploy_user}}/.bashrc
+    state=present
+    backrefs=yes
+    regexp='export PAY_GOV_OCI_URL="{{pay_gov_oci_url}}"'
+    line='export PAY_GOV_OCI_URL="{{pay_gov_oci_url}}"'
+
+ - name: add use_paygov
+    lineinfile: >
+    dest=/home/{{deploy_user}}/.bashrc
+    state=present
+    backrefs=yes
+    regexp='export PAY_GOV_OCI_URL="{{pay_gov_oci_url}}"'
+    line='export PAY_GOV_OCI_URL="{{pay_gov_oci_url}}"'

@@ -106,10 +106,11 @@ resource "aws_instance" "configtest" {
         Name = "Configuration Management Test"
         agency = "peacecorps"
         role = "webserver"
+        environment = "dev"
   }
 }
 
-resource "aws_instance" "admin" {
+resource "aws_instance" "paygov" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
@@ -117,11 +118,13 @@ resource "aws_instance" "admin" {
   subnet_id = "${aws_subnet.us-east-1a-public.id}"
   associate_public_ip_address = true
   tags {
-        Name = "Peace Corps Admin"
+        Name = "Peace Corps Pay.Gov Server"
         agency = "peacecorps"
-        role = "admin"
+        role = "paygov"
+        environment = "dev"
   }
 }
+
 
 #### DEV SETUP
 # Create a Dev Machine

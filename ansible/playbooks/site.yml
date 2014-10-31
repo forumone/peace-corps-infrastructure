@@ -15,6 +15,12 @@
     - lineinfile: dest=/home/ubuntu/.bashrc regexp='^export DJANGO_SETTINGS_MODULE="peacecorps.settings.production-admin"' state=absent
     - lineinfile: dest=/home/ubuntu/.bashrc regexp='' insertafter=EOF line='export DJANGO_SETTINGS_MODULE="peacecorps.settings.production-admin"'
 
+- name: Ensure pay.gov instances get the proper setup
+  host: tag_role_paygov
+  roles:
+    - paygov
+
+
 - name: Installs the Django Web Application
   hosts:
     - tag_role_webserver
