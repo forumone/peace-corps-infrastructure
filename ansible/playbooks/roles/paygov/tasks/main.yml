@@ -1,7 +1,7 @@
 ---
 
 - name: place environmental variables file
-  template: src=pay-dev.sh dest=/home/ubuntu/pay-dev.sh
+  copy: src=pay-dev.sh dest=/home/ubuntu/pay-dev.sh
 
 - name: add environmental variables for the environment
   lineinfile: dest=/home/ubuntu/.bashrc

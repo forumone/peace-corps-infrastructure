@@ -11,9 +11,7 @@
 
 - name: Ensure Admin instances get the proper environment set
   hosts: tag_role_admin
-  tasks:
-    - lineinfile: dest=/home/ubuntu/.bashrc regexp='^export DJANGO_SETTINGS_MODULE="peacecorps.settings.production-admin"' state=absent
-    - lineinfile: dest=/home/ubuntu/.bashrc regexp='' insertafter=EOF line='export DJANGO_SETTINGS_MODULE="peacecorps.settings.production-admin"'
+
 
 - name: Ensure pay.gov instances get the proper setup
   hosts: tag_role_paygov
