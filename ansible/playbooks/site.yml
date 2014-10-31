@@ -16,7 +16,7 @@
     - lineinfile: dest=/home/ubuntu/.bashrc regexp='' insertafter=EOF line='export DJANGO_SETTINGS_MODULE="peacecorps.settings.production-admin"'
 
 - name: Ensure pay.gov instances get the proper setup
-  host: tag_role_paygov
+  hosts: tag_role_paygov
   roles:
     - paygov
 
