@@ -46,6 +46,16 @@
   command: mkdir {{app_code_dir}}/static
   when: static_dir.stat.isdir is not defined
 
+- name: place environmental variables file
+  template: src=webserver.sh dest=/home/ubuntu/webserver.sh
+
+- name: add environmental variables for the environment
+  lineinfile: dest=/home/ubuntu/.bashrc
+              state=present
+              backrefs=yes
+              regexp='source /home/ubuntu/webserver.sh'
+              line='source /home/ubuntu/webserver.sh'
+
 - name: Django syncdb
   sudo_user: "{{deploy_user}}"
   django_manage: command=syncdb
