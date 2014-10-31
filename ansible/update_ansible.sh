@@ -20,4 +20,4 @@ chmod 600 deploy.pem
 
 ansible-playbook -i ec2.py --private-key deploy.pem --sudo playbooks/site.yml
 
-rm -rf secrets/*
+#rm -rf secrets/*
