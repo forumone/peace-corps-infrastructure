@@ -47,7 +47,7 @@
   when: static_dir.stat.isdir is not defined
 
 - name: place environmental variables file
-  template: src=webserver.sh dest=/home/ubuntu/webserver.sh
+  copy: src=webserver-dev.sh dest=/home/ubuntu/webserver-dev.sh
 
 - name: add environmental variables for the environment
   lineinfile: dest=/home/ubuntu/.bashrc
