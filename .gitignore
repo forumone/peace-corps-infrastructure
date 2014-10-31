@@ -1,6 +1,4 @@
 .tfvars
-*.secret
-*.secret.enc
 keys/*
 terraform.tfvars
 *.log
@@ -9,5 +7,3 @@ keyfile
 *.tfstate.backup
 terraform.tfstate.backup
 ansible/secrets/*
-ansible/playbooks/group_vars/*
-!ansible/playbooks/group_vars/example
