@@ -47,10 +47,12 @@
   when: static_dir.stat.isdir is not defined
 
 - name: place environmental variables file
-  copy: src=webserver-dev.sh dest=/home/ubuntu/webserver-dev.sh
+  copy: src=webserver-dev.sh dest="/home/{{deploy_user}}/webserver-dev.sh"
+  sudo_user: "{{deploy_user}}"
 
 - name: add environmental variables for the environment
-  lineinfile: dest=/home/ubuntu/.bashrc line="source /home/ubuntu/webserver-dev.sh"
+  lineinfile: dest="/home/{{deploy_user}}/.bashrc" line="source /home/{{deploy_user}}/webserver-dev.sh"
+  sudo_user: "{{deploy_user}}"
 
 - name: Django syncdb
   sudo_user: "{{deploy_user}}"
