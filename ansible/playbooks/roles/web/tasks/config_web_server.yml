@@ -13,7 +13,7 @@
   notify:
     - restart nginx
 
- name: Ensure nginx ssl directory
+- name: Ensure nginx ssl directory
   file: dest=/etc/nginx/ssl state=directory
 
 - name: Ensure nginx ssl directory for keys
