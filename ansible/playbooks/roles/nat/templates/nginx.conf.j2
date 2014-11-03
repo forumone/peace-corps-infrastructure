@@ -11,7 +11,7 @@ server {
 
   location / {
     if (!-f $request_filename) {
-      proxy_pass http://peacecorps-configtest-elb-2015680413.us-east-1.elb.amazonaws.com;
+      proxy_pass http://peacecorps-paygov-elb-370703090.us-east-1.elb.amazonaws.com;
       break;
     }
   }
