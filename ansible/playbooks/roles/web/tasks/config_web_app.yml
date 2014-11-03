@@ -76,3 +76,6 @@
                  fixtures={{fixtures_file}}
                  settings={{django_settings}}
   environment: django_env_vars
+  notify:
+  - restart supervisor
+  - restart nginx

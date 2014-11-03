@@ -4,7 +4,7 @@ upstream app_server_djangoapp {
 
 server {
   listen 80;
-  server_name www.{{root_domain_name}};
+  server_name localhost;
 
   ssl                  off;
 
@@ -21,7 +21,7 @@ server {
 
   location / {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
+    proxy_set_header Host localhost;
     proxy_redirect off;
 
     if (!-f $request_filename) {
