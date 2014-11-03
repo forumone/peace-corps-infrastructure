@@ -167,7 +167,7 @@ resource "aws_elb" "dev" {
     lb_protocol = "tcp"
   }
 
-  instances = ["${aws_instance.dev.id}"]
+  instances = ["${aws_instance.configtest.id}"]
 }
 
 # Create a new load balancer

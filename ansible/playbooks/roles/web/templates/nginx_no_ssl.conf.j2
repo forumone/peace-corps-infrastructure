@@ -3,10 +3,12 @@ upstream app_server_djangoapp {
 }
 
 server {
-  listen 80;
+  listen 443 ssl spdy;
   server_name localhost;
 
-  ssl                  off;
+  ssl_certificate      /etc/nginx/ssl/keys/donate.crt;
+  ssl_certificate_key  /etc/nginx/ssl/keys/donate.key;
+  include ssl/ssl.rules;
 
   access_log /var/log/nginx/{{root_domain_name}}.access.log;
   error_log /var/log/nginx/{{root_domain_name}}.error.log info;
