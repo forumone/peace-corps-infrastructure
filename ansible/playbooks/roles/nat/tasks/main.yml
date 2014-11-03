@@ -15,6 +15,9 @@
 - name: Ensure iptables at boot
   lineinfile: dest=/etc/rc.local regexp='^exit 0' insertbefore='^#exit 0' line='iptables -t nat -A POSTROUTING -o eth0 -s 10.19.61.0/24 -j MASQUERADE'
 
+- name: Get the more recent nginx repository
+  apt_repository: repo='ppa:nginx/stable'
+
 - name: Install nginx
   apt: name=nginx state=latest
 
