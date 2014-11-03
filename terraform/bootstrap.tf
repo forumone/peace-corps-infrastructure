@@ -99,7 +99,7 @@ resource "aws_instance" "configtest" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
-  security_groups = ["${aws_security_group.private.id}"]
+  security_groups = ["${aws_security_group.private.id}", "${aws_security_group.app.id}"]
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
@@ -114,7 +114,7 @@ resource "aws_instance" "paygov" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
-  security_groups = ["${aws_security_group.admin.id}"]
+  security_groups = ["${aws_security_group.private.id}", "${aws_security_group.paygov.id}"]
   subnet_id = "${aws_subnet.us-east-1a-public.id}"
   associate_public_ip_address = true
   tags {
@@ -137,7 +137,7 @@ resource "aws_instance" "dev" {
   associate_public_ip_address = false
   tags {
         Name = "Dev Box"
-        agency = "peacecorps"
+        agency = "peacecorps-legacy"
   }
 }
 

@@ -34,7 +34,7 @@
 
 - name: Generate our own DH 2048 Params
   command: openssl dhparam -outform pem -out /etc/nginx/ssl/dhparam2048.pem 2048
-  when: dhparam2048.stat.exists is not defined
+  when: not dhparam2048.stat.exists
 
 - name: Place SSL Certificate
   copy: src=donate.crt dest=/etc/nginx/ssl/keys/donate.crt

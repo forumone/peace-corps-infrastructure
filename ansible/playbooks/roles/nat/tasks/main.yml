@@ -47,7 +47,7 @@
   command: openssl dhparam -outform pem -out dhparam2048.pem 2048
   args:
     chdir: /etc/nginx/ssl
-  when: dhparam2048.stat.exists is not defined
+  when: not dhparam2048.stat.exists
 
 - name: Place SSL Certificate
   copy: src=pay.donate.crt dest=/etc/nginx/ssl/keys/pay.crt
