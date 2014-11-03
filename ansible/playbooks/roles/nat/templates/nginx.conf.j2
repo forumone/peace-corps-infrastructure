@@ -1,17 +1,17 @@
 server {
   listen 443 ssl spdy;
-  server_name pay.donate.peacecorps-dev.18f.us;
+  server_name {{pay_domain_name}};
 
   ssl_certificate      /etc/nginx/ssl/keys/pay.crt;
   ssl_certificate_key  /etc/nginx/ssl/keys/pay.key;
   include ssl/ssl.rules;
 
-  access_log /var/log/nginx/access.log;
-  error_log /var/log/nginx/error.log info;
+  access_log /var/log/nginx/{{pay_domain_name}}.access.log;
+  error_log /var/log/nginx/{{pay_domain_name}}.error.log info;
 
   location / {
     if (!-f $request_filename) {
-      proxy_pass http://peacecorps-paygov-elb-370703090.us-east-1.elb.amazonaws.com;
+      proxy_pass {{pay_source_domain_name}};
       break;
     }
   }
