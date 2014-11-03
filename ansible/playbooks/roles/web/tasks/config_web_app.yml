@@ -67,7 +67,11 @@
                  virtualenv={{virtualenv_dir}}
                  settings={{django_settings}}
   environment: django_env_vars
+  notify:
+    - restart supervisor
+    - restart nginx
 
+'''
 - name: Django loaddata
   sudo_user: "{{deploy_user}}"
   django_manage: command=loaddata
@@ -79,3 +83,4 @@
   notify:
   - restart supervisor
   - restart nginx
+  '''
