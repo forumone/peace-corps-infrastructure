@@ -7,11 +7,6 @@
   template: src=nginx.conf.j2 dest=/etc/nginx/sites-enabled/{{app_name}}
   sudo: yes
 
-- name: write htpassword configuration
-  template: src=nginx.htpasswd.j2 dest=/etc/nginx/.htpasswd
-  sudo: yes
-  when: http_auth
-
 - name: see if the code repository exists
   stat: path={{app_code_dir}}
   register: existing_app_code_dir
@@ -58,22 +53,6 @@
 - name: place start file
   template: src=start.sh.j2 dest=/home/{{deploy_user}}/start.sh mode=700
   sudo_user: "{{deploy_user}}"
-
-- name: Django syncdb
-  sudo_user: "{{deploy_user}}"
-  django_manage: command=syncdb
-                 app_path={{app_exec_dir}}
-                 virtualenv={{virtualenv_dir}}
-                 settings={{django_settings}}
-  environment: django_env_vars
-
-- name: Django migrate
-  sudo_user: "{{deploy_user}}"
-  django_manage: command=migrate
-                 app_path={{app_exec_dir}}
-                 virtualenv={{virtualenv_dir}}
-                 settings={{django_settings}}
-  environment: django_env_vars
   notify:
     - restart supervisor
     - restart nginx
