@@ -167,6 +167,8 @@ resource "aws_elb" "dev" {
 resource "aws_elb" "paygov" {
   name = "peacecorps-paygov-elb"
   subnets = ["${aws_subnet.us-east-1a-public.id}", "${aws_subnet.us-east-1b-public.id}"]
+  security_groups = ["${aws_security_group.gsa-access.id}", "${aws_security_group.paygov.id}"]
+
 
   listener {
     instance_port = 80

@@ -1,7 +1,9 @@
 ---
 
 - name: place environmental variables file
-  copy: src=pay-dev.sh dest=/home/ubuntu/pay-dev.sh
+  copy: src=pay-dev.sh dest="/home/{{deploy_user}}/pay-dev.sh"
+  sudo_user: "{{deploy_user}}"
 
 - name: add environmental variables for the environment
-  lineinfile: dest=/home/ubuntu/.bashrc line="source /home/ubuntu/pay-dev.sh"
+  lineinfile: dest="/home/{{deploy_user}}/.bashrc" line="source /home/{{deploy_user}}/pay-dev.sh"
+  sudo_user: "{{deploy_user}}"
