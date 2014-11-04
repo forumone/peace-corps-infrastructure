@@ -53,10 +53,10 @@
   file: path=/gpg owner={{deploy_user}} state=directory
 
 - name: copy gpg public key store
-  copy: src=public.gpg dest=/gpg/public.gpg
+  copy: src=public.gpg dest=/gpg/public.gpg owner={{deploy_user}}
 
 - name: copy gpg trust store
-  copy: src=trustdb.gpg dest=/gpg/trustdb.gpg
+  copy: src=trustdb.gpg dest=/gpg/trustdb.gpg owner={{deploy_user}}
 
 - name: place environmental variables file
   copy: src=webserver-dev.sh dest="/home/{{deploy_user}}/webserver-dev.sh"
