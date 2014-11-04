@@ -77,16 +77,3 @@
   notify:
     - restart supervisor
     - restart nginx
-
-
-#- name: Django loaddata
-#  sudo_user: "{{deploy_user}}"
-#  django_manage: command=loaddata
-#                 app_path={{app_exec_dir}}
-#                 virtualenv={{virtualenv_dir}}
-#                 fixtures={{fixtures_file}}
-#                 settings={{django_settings}}
-#  environment: django_env_vars
-# notify:
-# - restart supervisor
-# - restart nginx

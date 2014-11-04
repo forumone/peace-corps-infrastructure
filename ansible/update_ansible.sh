@@ -18,6 +18,6 @@ done;
 cp secrets/deploy.enc.unencrypted deploy.pem
 chmod 600 deploy.pem
 
-ansible-playbook -i ec2.py --private-key deploy.pem --sudo playbooks/site.yml
+ansible-playbook -i ec2.py --private-key deploy.pem --sudo playbooks/dev.yml
 
 #rm -rf secrets/*
