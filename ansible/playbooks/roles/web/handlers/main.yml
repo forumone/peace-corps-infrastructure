@@ -3,5 +3,8 @@
   sudo: yes
 
 - name: restart supervisor
-  command: "service supervisor stop && service supervisor start"
+  command: "{{ item }}"
+  with_items:
+    - service supervisor stop
+    - service supervisor start
   sudo: yes
