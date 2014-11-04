@@ -4,3 +4,12 @@
 - include: config_web_server.yml
 - include: config_web_app.yml
 - include: config_supervisor.yml
+
+- name: Ensure everything is restarted and running
+  command: "{{ item }}"
+  sudo: yes
+  with_items:
+    - service supervisor stop
+    - service supervisor start
+    - service nginx stop
+    - service nginx start
