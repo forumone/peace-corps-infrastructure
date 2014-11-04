@@ -46,6 +46,9 @@
   command: mkdir {{app_code_dir}}/static
   when: static_dir.stat.isdir is not defined
 
+- name: check/create gunicorn log directory
+  file: path=/var/log/gunicorn owner={{deploy_user}} state=directory
+
 - name: place environmental variables file
   copy: src=webserver-dev.sh dest="/home/{{deploy_user}}/webserver-dev.sh"
   sudo_user: "{{deploy_user}}"

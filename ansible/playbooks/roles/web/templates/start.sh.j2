@@ -12,4 +12,4 @@ if [ -f /home{{deploy_user}}/pay-dev.sh ]; then
 fi
 
 
-exec gunicorn {{app_name}}.wsgi:application
+exec gunicorn {{app_name}}.wsgi:application --access-logfile /var/log/gunicorn/access.log --error-logfile /var/log/gunicorn/error.log
