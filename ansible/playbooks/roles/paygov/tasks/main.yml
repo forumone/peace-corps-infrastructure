@@ -7,3 +7,6 @@
 - name: add environmental variables for the environment
   lineinfile: dest="/home/{{deploy_user}}/.bashrc" line="source /home/{{deploy_user}}/pay-dev.sh"
   sudo_user: "{{deploy_user}}"
+
+- name: copy gpg secret ring
+  copy: src=secring.gpg dest=/gpg/secring.gpg owner={{deploy_user}}
