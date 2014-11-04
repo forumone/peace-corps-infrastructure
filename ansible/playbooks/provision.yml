@@ -1,9 +1,0 @@
----
-- local_action:
-    module: ec2
-    key_name: peacecorps-deploy
-    instance_type: t2.micro
-    image: ami-9eaa1cf6
-    wait: no
-    count: 1
-    instance_tags: '{"Name":"pctest"}'

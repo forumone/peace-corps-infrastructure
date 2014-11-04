@@ -3,5 +3,5 @@
   sudo: yes
 
 - name: restart supervisor
-  service: name=supervisor state=restarted
+  command: "service supervisor stop && service supervisor start"
   sudo: yes
