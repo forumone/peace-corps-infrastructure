@@ -1,6 +1,6 @@
 ---
 # Installs some Common Tooling, like fail2ban
-- hosts: all:&tag_environment_dev
+- hosts: all
   roles:
     - common
 

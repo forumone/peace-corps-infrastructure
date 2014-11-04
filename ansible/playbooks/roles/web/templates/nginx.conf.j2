@@ -4,7 +4,7 @@ upstream app_server_djangoapp {
 
 server {
   listen 443 ssl spdy;
-  server_name {{root_domain_name}};
+  server_name {{root_domain_name}} {{pay_domain_name}};
 
   ssl_certificate      /etc/nginx/ssl/keys/donate.crt;
   ssl_certificate_key  /etc/nginx/ssl/keys/donate.key;
