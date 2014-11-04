@@ -95,7 +95,7 @@ resource "aws_instance" "config1a" {
 }
 
 
-resource "aws_instance" "configtest" {
+resource "aws_instance" "webapp" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
@@ -103,7 +103,7 @@ resource "aws_instance" "configtest" {
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   tags {
-        Name = "Configuration Management Test"
+        Name = "Web Application Server"
         agency = "peacecorps"
         role = "webserver"
         environment = "dev"
@@ -154,49 +154,13 @@ resource "aws_elb" "dev" {
   }
 
   listener {
-    instance_port = 49521
-    instance_protocol = "tcp"
-    lb_port = 49521
-    lb_protocol = "tcp"
-  }
-
-  listener {
     instance_port = 443
     instance_protocol = "tcp"
     lb_port = 443
     lb_protocol = "tcp"
   }
 
-  instances = ["${aws_instance.configtest.id}"]
-}
-
-# Create a new load balancer
-resource "aws_elb" "configtest" {
-  name = "peacecorps-configtest-elb"
-  subnets = ["${aws_subnet.us-east-1a-public.id}", "${aws_subnet.us-east-1b-public.id}"]
-
-  listener {
-    instance_port = 80
-    instance_protocol = "http"
-    lb_port = 80
-    lb_protocol = "http"
-  }
-
-  listener {
-    instance_port = 49521
-    instance_protocol = "tcp"
-    lb_port = 49521
-    lb_protocol = "tcp"
-  }
-
-  listener {
-    instance_port = 443
-    instance_protocol = "tcp"
-    lb_port = 443
-    lb_protocol = "tcp"
-  }
-
-  instances = ["${aws_instance.configtest.id}"]
+  instances = ["${aws_instance.webapp.id}"]
 }
 
 # Create a new load balancer
@@ -209,13 +173,6 @@ resource "aws_elb" "paygov" {
     instance_protocol = "http"
     lb_port = 80
     lb_protocol = "http"
-  }
-
-  listener {
-    instance_port = 49521
-    instance_protocol = "tcp"
-    lb_port = 49521
-    lb_protocol = "tcp"
   }
 
   listener {
