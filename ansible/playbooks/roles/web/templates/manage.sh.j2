@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd {{django_settings_dir_name}}
+source {{virtualenv_dir}}/bin/activate
+
+if [ -f /home/{{deploy_user}}/webserver-dev.sh ]; then
+    source ~/webserver-dev.sh
+fi
+
+if [ -f /home/{{deploy_user}}/pay-dev.sh ]; then
+    source /home/{{deploy_user}}/pay-dev.sh
+fi
+
+python manage.py $1
