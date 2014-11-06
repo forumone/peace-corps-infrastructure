@@ -16,6 +16,6 @@
 
 - name: make sure database is synchronized
   sudo_user: "{{deploy_user}}"
-  command: {{virtualenv_dir}}/bin/python manage.py migrate
+  command: "{{virtualenv_dir}}/bin/python manage.py migrate"
   args:
-    chdir: {{app_code_dir}}/peacecorps
+    chdir: "{{app_code_dir}}/peacecorps"
