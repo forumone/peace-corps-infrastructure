@@ -62,10 +62,6 @@
   copy: src=webserver-dev.sh dest="/home/{{deploy_user}}/webserver-dev.sh"
   sudo_user: "{{deploy_user}}"
 
-- name: place django management script
-  template: src=manage.sh.j2 dest=/home{{deploy_user}}/manage.sh mode=700
-  sudo_user: "{{deploy_user}}"
-
 - name: place start file
   template: src=start.sh.j2 dest=/home/{{deploy_user}}/start.sh mode=700
   sudo_user: "{{deploy_user}}"
