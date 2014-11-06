@@ -31,3 +31,19 @@ resource "aws_route53_record" "pay-donate-peacecorps-dev" {
    ttl = "60"
    records = ["${aws_eip.us-east-1a-nat.public_ip}", "${aws_eip.us-east-1b-nat.public_ip}"]
 }
+
+resource "aws_route53_record" "donate-peacecorps-internal" {
+   zone_id ="Z3IW27V61YTKKQ"
+   name = "donate.peacecorps.internal"
+   type = "A"
+   ttl = "60"
+   records = ["${aws_instance.webapp.private_ip}"]
+}
+
+resource "aws_route53_record" "pay-donate-peacecorps-internal" {
+   zone_id ="Z3IW27V61YTKKQ"
+   name = "pay.donate.peacecorps.internal"
+   type = "CNAME"
+   ttl = "60"
+   records = ["${aws_elb.paygov.dns_name}"]
+}

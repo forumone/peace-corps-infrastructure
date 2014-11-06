@@ -36,8 +36,18 @@
   command: openssl dhparam -outform pem -out /etc/nginx/ssl/dhparam2048.pem 2048
   when: not dhparam2048.stat.exists
 
-- name: Place SSL Certificate
+- name: Place Donate SSL Certificate
   copy: src=donate.crt dest=/etc/nginx/ssl/keys/donate.crt
+  when: not tag_role_paygov in group_vars
 
-- name: Place SSL Key
+- name: Place Donate SSL Key
   copy: src=donate.key dest=/etc/nginx/ssl/keys/donate.key
+  when: not tag_role_paygov in group_vars
+
+- name: Place Pay Internal SSL Certificate
+  copy: src=pay.donate.peacecorps.internal.crt dest=/etc/nginx/ssl/keys/pay.donate.peacecorps.internal.crt
+  when: tag_role_paygov in group_vars
+
+- name: Place Pay Internal SSL Key
+  copy: src=pay.donate.peacecorps.internal.crt dest=/etc/nginx/ssl/keys/pay.donate.peacecorps.internal.key
+  when: tag_role_paygov in group_vars

@@ -4,10 +4,21 @@ upstream app_server_djangoapp {
 
 server {
   listen 443 ssl spdy;
-  server_name {{root_domain_name}} {{pay_domain_name}};
 
+  {% if 'tag_role_paygov' in group_names %}
+
+  server_name pay.donate.peacecorps.internal;
+
+  ssl_certificate      /etc/nginx/ssl/keys/pay.donate.peacecorps.internal.crt;
+  ssl_certificate_key  /etc/nginx/ssl/keys/pay.donate.peacecorps.internal.key;
+
+  {% else %}
+
+  server_name {{root_domain_name}};
   ssl_certificate      /etc/nginx/ssl/keys/donate.crt;
   ssl_certificate_key  /etc/nginx/ssl/keys/donate.key;
+
+  {% endif %}
   include ssl/ssl.rules;
 
   access_log /var/log/nginx/{{root_domain_name}}.access.log;
