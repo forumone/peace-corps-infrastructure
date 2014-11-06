@@ -11,7 +11,7 @@ server {
 
   location / {
     if (!-f $request_filename) {
-      proxy_pass {{pay_source_domain_name}};
+      proxy_pass pay.donate.peacecorps.internal;
       break;
     }
   }
