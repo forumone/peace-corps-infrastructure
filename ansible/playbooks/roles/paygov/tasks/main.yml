@@ -13,3 +13,9 @@
 
 - cron: name="clear stale donors" minute=53 user={{deploy_user}}
         job="cd {{app_code_dir}}/peacecorps/ && {{virtualenv_dir}}/bin/python manage.py clear_stale_donors"
+
+- name: make sure database is synchronized
+  sudo_user: "{{deploy_user}}"
+  command: {{virtualenv_dir}}/bin/python manage.py migrate
+  args:
+    chdir: {{app_code_dir}}/peacecorps
