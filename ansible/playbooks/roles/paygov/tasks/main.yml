@@ -10,3 +10,6 @@
 
 - name: copy gpg secret ring
   copy: src=secring.gpg dest=/gpg/secring.gpg owner={{deploy_user}}
+
+- cron: name="clear stale donors" minute=53 user={{deploy_user}}
+        job="cd {{app_code_dir}}/peacecorps/ && {{virtualenv_dir}}/bin/python manage.py clear_stale_donors"
