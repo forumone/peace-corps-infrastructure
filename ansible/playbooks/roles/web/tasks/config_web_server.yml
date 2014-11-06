@@ -38,11 +38,9 @@
 
 - name: Place Donate SSL Certificate
   copy: src=donate.crt dest=/etc/nginx/ssl/keys/donate.crt
-  when: not tag_role_paygov in group_vars
 
 - name: Place Donate SSL Key
   copy: src=donate.key dest=/etc/nginx/ssl/keys/donate.key
-  when: not tag_role_paygov in group_vars
 
 - name: Place Pay Internal SSL Certificate
   copy: src=pay.donate.peacecorps.internal.crt dest=/etc/nginx/ssl/keys/pay.donate.peacecorps.internal.crt
