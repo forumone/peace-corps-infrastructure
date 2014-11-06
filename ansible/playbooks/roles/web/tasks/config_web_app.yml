@@ -38,13 +38,7 @@
   pip: name=gunicorn virtualenv={{virtualenv_dir}}
 
 - name: check if app/static directory exists
-  stat: path={{app_code_dir}}/static
-  register: static_dir
-
-- name: create static directory for Django app if it does not exist
-  sudo_user: "{{deploy_user}}"
-  command: mkdir {{app_code_dir}}/static
-  when: static_dir.stat.isdir is not defined
+  file: path=/var/www/static owner={{deploy_user}} state=directory
 
 - name: check/create gunicorn log directory
   file: path=/var/log/gunicorn owner={{deploy_user}} state=directory
@@ -61,6 +55,14 @@
 - name: place environmental variables file
   copy: src=webserver-dev.sh dest="/home/{{deploy_user}}/webserver-dev.sh"
   sudo_user: "{{deploy_user}}"
+
+- name: place django management script
+  template: src=manage.sh.j2 dest=/home/{{deploy_user}}/manage.sh mode=700
+  sudo_user: "{{deploy_user}}"
+
+- name: collect static files
+  sudo_user: "{{deploy_user}}"
+  command: "/home/{{deploy_user}}/manage.sh collectstatic"
 
 - name: place start file
   template: src=start.sh.j2 dest=/home/{{deploy_user}}/start.sh mode=700

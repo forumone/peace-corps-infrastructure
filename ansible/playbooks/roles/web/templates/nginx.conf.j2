@@ -17,8 +17,7 @@ server {
 
   # nginx should serve up static files and never send to the WSGI server
   location /static {
-    autoindex on; 
-    alias {{app_code_dir}}/peacecorps/peacecorps/static;
+    alias /var/www/static;
   }
 
   location / {
