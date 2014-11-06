@@ -46,4 +46,4 @@
   copy: src=pay.donate.peacecorps.internal.crt dest=/etc/nginx/ssl/keys/pay.donate.peacecorps.internal.crt
 
 - name: Place Pay Internal SSL Key
-  copy: src=pay.donate.peacecorps.internal.crt dest=/etc/nginx/ssl/keys/pay.donate.peacecorps.internal.key
+  copy: src=pay.donate.peacecorps.internal.key dest=/etc/nginx/ssl/keys/pay.donate.peacecorps.internal.key
