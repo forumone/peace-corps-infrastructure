@@ -11,4 +11,4 @@ if [ -f /home/{{deploy_user}}/pay-dev.sh ]; then
     source /home/{{deploy_user}}/pay-dev.sh
 fi
 
-python manage.py $1
+python manage.py "$@"
