@@ -49,3 +49,13 @@ server {
     }
   }
 }
+
+server {
+    listen 80;
+    {% if 'tag_role_paygov' in group_names %}
+      server_name pay.donate.peacecorps.internal;
+    {% else %}
+      server_name {{root_domain_name}};
+    {% endif %}
+    return 301 https://$host$request_uri;
+}
