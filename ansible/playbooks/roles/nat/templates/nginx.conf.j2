@@ -16,3 +16,9 @@ server {
     }
   }
 }
+
+server {
+    listen 80;
+    server_name {{pay_domain_name}};
+    return 301 https://$host$request_uri;
+}
