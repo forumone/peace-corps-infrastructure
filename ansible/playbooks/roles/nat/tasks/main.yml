@@ -50,7 +50,7 @@
   when: not dhparam2048.stat.exists
 
 - name: Place SSL Certificate
-  copy: src=pay.donate.crt dest=/etc/nginx/ssl/keys/pay.crt
+  copy: src=pay.donate.peacecorps-dev.18f.us.crt dest=/etc/nginx/ssl/keys/pay.crt
 
 - name: Place SSL Key
   copy: src=pay.donate.peacecorps-dev.18f.us.key dest=/etc/nginx/ssl/keys/pay.key
