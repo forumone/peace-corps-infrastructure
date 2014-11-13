@@ -21,7 +21,7 @@ resource "aws_route53_record" "donate-peacecorps-dev" {
    name = "donate.peacecorps-dev.18f.us"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_elb.dev.dns_name}"]
+   records = ["${aws_elb.webapp-dev.dns_name}"]
 }
 
 resource "aws_route53_record" "pay-donate-peacecorps-dev" {
@@ -35,9 +35,9 @@ resource "aws_route53_record" "pay-donate-peacecorps-dev" {
 resource "aws_route53_record" "donate-peacecorps-internal" {
    zone_id ="Z3IW27V61YTKKQ"
    name = "donate.peacecorps.internal"
-   type = "A"
+   type = "CNAME"
    ttl = "60"
-   records = ["${aws_instance.webapp.private_ip}"]
+   records = ["${aws_elb.webapp-dev.dns_name}"]
 }
 
 resource "aws_route53_record" "pay-donate-peacecorps-internal" {
@@ -45,5 +45,5 @@ resource "aws_route53_record" "pay-donate-peacecorps-internal" {
    name = "pay.donate.peacecorps.internal"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_elb.paygov.dns_name}"]
+   records = ["${aws_elb.paygov-dev.dns_name}"]
 }
