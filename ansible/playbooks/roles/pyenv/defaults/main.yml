@@ -1,7 +1,5 @@
 ---
 # defaults file for pyenv
-pyenv_path: "{{ ansible_env.HOME }}/pyenv"
-pyenv_owner: "{{ ansible_env.USER }}"
 pyenv_python_versions:
   - 3.4.1
 pyenv_virtualenvs:
