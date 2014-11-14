@@ -39,14 +39,12 @@
               line="source {{ pyenv_path }}/.pyenvrc"
               state=present
 
-- name: Install Python interpreters {{ pyenv_python_versions }}
+- name: Install Python interpreters 3.4.1
   sudo_user: "{{deploy_user}}"
-  shell: . {{ pyenv_path }}/.pyenvrc && pyenv install {{ item }}
-         creates="{{ pyenv_path }}/versions/{{ item }}/bin/python"
-  with_items: pyenv_python_versions
+  shell: . {{ pyenv_path }}/.pyenvrc && pyenv install 3.4.1
+         creates="{{ pyenv_path }}/versions/3.4.1/bin/python"
 
 - name: Create virtual environments
   sudo_user: "{{deploy_user}}"
-  shell: . {{ pyenv_path }}/.pyenvrc && pyenv virtualenv {{ item.py_version }} {{ item.venv_name }}
-         creates="{{ pyenv_path }}/versions/{{ item.venv_name }}/bin/python"
-  with_items: pyenv_virtualenvs
+  shell: . {{ pyenv_path }}/.pyenvrc && pyenv virtualenv 3.4.1 {{app_name}}-3.4.1
+         creates="{{ pyenv_path }}/versions/{{app_name}}-3.4.1/bin/python"
