@@ -6,6 +6,9 @@
 - name: Add Elasticsearch repository
   apt_repository: repo='deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' state=present
 
+- name: Deal with the Oracle license 
+  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+
 - name: Install Java 7
   apt: name=oracle-java7-installer state=latest update_cache=yes
 
