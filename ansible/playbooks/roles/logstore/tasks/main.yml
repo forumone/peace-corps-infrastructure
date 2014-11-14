@@ -16,4 +16,4 @@
   apt: name=oracle-java7-installer state=latest update_cache=yes
 
 - name: Install Elasticsearch
-  apt: name=elasticsearch state=present update_cache=yes force=yes
+  apt: name=elasticsearch=1.4.0 state=present update_cache=yes force=yes
