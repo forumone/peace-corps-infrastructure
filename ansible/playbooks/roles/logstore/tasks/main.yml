@@ -3,6 +3,9 @@
 - name: Get the more recent java repository
   apt_repository: repo='ppa:webupd8team/java'
 
+- name: Add Elasticsearch apt-key
+  apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
+
 - name: Add Elasticsearch repository
   apt_repository: repo='deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' state=present
 
@@ -13,4 +16,4 @@
   apt: name=oracle-java7-installer state=latest update_cache=yes
 
 - name: Install Elasticsearch
-  apt: name=elasticsearch state=present update_cache=yes
+  apt: name=elasticsearch state=present update_cache=yes force=yes
