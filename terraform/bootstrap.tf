@@ -103,6 +103,7 @@ resource "aws_instance" "logging-1a" {
   security_groups = ["${aws_security_group.private.id}", "${aws_security_group.app.id}"]
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
+  iam_instance_profile = "peacecorps-logs"
   tags {
         Name = "Logging Server"
         agency = "peacecorps"
@@ -116,6 +117,7 @@ resource "aws_instance" "logging-1b" {
   security_groups = ["${aws_security_group.private.id}", "${aws_security_group.app.id}"]
   subnet_id = "${aws_subnet.us-east-1b-private.id}"
   associate_public_ip_address = false
+  iam_instance_profile = "peacecorps-logs"
   tags {
         Name = "Logging Server"
         agency = "peacecorps"

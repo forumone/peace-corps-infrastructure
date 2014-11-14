@@ -1,0 +1,13 @@
+---
+
+- name: Get the more recent java repository
+  apt_repository: repo='ppa:webupd8team/java'
+
+- name: Add Elasticsearch repository
+  apt_repository: repo='deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' state=present
+
+- name: Install Java 7
+  apt: name=oracle-java7-installer state=latest update_cache=yes
+
+- name: Install Elasticsearch
+  apt: name=elasticsearch=1.4 state=present update_cache=yes

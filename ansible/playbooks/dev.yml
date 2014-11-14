@@ -9,6 +9,11 @@
   roles:
     - nat
 
+- name: Initialize the logging servers
+  hosts: tag_role_logging
+  roles:
+    - logstore
+
 - name: Ensure Admin instances get the proper environment set
   hosts: tag_role_admin:&tag_environment_dev
 
@@ -17,7 +22,6 @@
   hosts: tag_role_paygov:&tag_environment_dev
   roles:
     - paygov
-
 
 - name: Installs the Django Web Application
   hosts:
