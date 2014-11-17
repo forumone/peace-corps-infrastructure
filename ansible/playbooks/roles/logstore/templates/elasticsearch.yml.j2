@@ -391,19 +391,6 @@ script.disable_dynamic: true
 
 plugin.mandatory: cloud-aws
 
-cloud:
-    aws:
-        protocol: https
-        region: us-east-1
-        s3:
-            protocol: https
-        ec2:
-            protocol: https
-
-discovery:
-    type: ec2
-    ec2.tag.role:logging
-    zen:
-        ping:
-            multicast:
-                enabled: false
+cloud.aws.region:us-east
+discovery.type:ec2
+discovery.ec2.tag.role:logging
