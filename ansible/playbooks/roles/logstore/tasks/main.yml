@@ -39,5 +39,6 @@
   command: bin/plugin -install elasticsearch/elasticsearch-cloud-aws/2.4.0
   args:
     chdir: /usr/share/elasticsearch/
+    creates: /usr/share/elasticsearch/plugins/cloud-aws
   notify:
     - restart elasticsearch
