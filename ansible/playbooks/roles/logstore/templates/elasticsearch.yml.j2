@@ -388,3 +388,30 @@ network.host: localhost
 
 # Disable dynamic scripting
 script.disable_dynamic: true
+
+plugin.mandatory: cloud-aws
+
+cloud:
+    aws:
+        protocol: https
+        region: us-east-1
+        s3:
+            protocol: https
+        ec2:
+            protocol: https
+
+gateway:
+  type: s3
+  s3:
+    bucket: peacecorps-logs
+
+discovery:
+    type: ec2
+    ec2:
+        tag:
+            agency: peacecorps
+            role: logging
+    zen:
+        ping:
+            multicast:
+                enabled: false
