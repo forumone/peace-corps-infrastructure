@@ -391,6 +391,14 @@ script.disable_dynamic: true
 
 plugin.mandatory: cloud-aws
 
-cloud.aws.region: us-east-1
-discovery.type: ec2
-discovery.ec2.tag.role: peacecorps-logging
+cloud:
+    aws:
+        region: us-east-1
+
+discovery:
+    type: ec2
+    ec2:
+        host_type:private_ip
+        ping_timeout:5m
+        tag:
+            role:peacecorps-logging
