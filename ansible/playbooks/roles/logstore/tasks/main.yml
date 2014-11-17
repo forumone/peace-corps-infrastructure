@@ -2,18 +2,42 @@
 
 - name: Get the more recent java repository
   apt_repository: repo='ppa:webupd8team/java'
+  sudo: yes
 
 - name: Add Elasticsearch apt-key
   apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
+  sudo: yes
 
 - name: Add Elasticsearch repository
   apt_repository: repo='deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' state=present
+  sudo: yes
 
 - name: Deal with the Oracle license 
   shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+  sudo: yes
 
 - name: Install Java 7
   apt: name=oracle-java7-installer state=latest update_cache=yes
+  sudo: yes
 
 - name: Install Elasticsearch
   apt: name=elasticsearch=1.4.0 state=present update_cache=yes force=yes
+  sudo: yes
+
+- name: Ensure the Elasticsearch template file is present
+  template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml
+  sudo: yes
+  notify:
+    - restart elasticsearch
+
+- name: Ensure Elasticsearch starts up on restart
+  sudo: yes
+  command: update-rc.d elasticsearch defaults 95 10
+
+- name: Install the Elasticsearch Cloud Plugin
+  sudo: yes
+  command: bin/plugin -install elasticsearch/elasticsearch-cloud-aws/2.4.0
+  args:
+    chdir: /usr/share/elasticsearch/
+  notify:
+    - restart elasticsearch
