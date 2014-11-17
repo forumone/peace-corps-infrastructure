@@ -10,7 +10,7 @@
     - nat
 
 - name: Initialize the logging servers
-  hosts: tag_role_logging
+  hosts: tag_role_peacecorps-logging
   roles:
     - logstore
 

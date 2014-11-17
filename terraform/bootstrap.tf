@@ -107,7 +107,7 @@ resource "aws_instance" "logging-1a" {
   tags {
         Name = "Logging Server"
         agency = "peacecorps"
-        role = "logging"
+        role = "peacecorps-logging"
   }
 }
 resource "aws_instance" "logging-1b" {
@@ -121,7 +121,7 @@ resource "aws_instance" "logging-1b" {
   tags {
         Name = "Logging Server"
         agency = "peacecorps"
-        role = "logging"
+        role = "peacecorps-logging"
   }
 }
 
