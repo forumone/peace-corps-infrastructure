@@ -42,3 +42,7 @@
     creates: /usr/share/elasticsearch/plugins/cloud-aws
   notify:
     - restart elasticsearch
+
+- name: Ensure Elasticsearch is running
+  service: name=elasticsearch state=started
+  sudo: yes
