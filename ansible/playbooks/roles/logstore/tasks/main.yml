@@ -24,18 +24,18 @@
   apt: name=elasticsearch=1.4.0 state=present update_cache=yes force=yes
   sudo: yes
 
-- name: Ensure the Elasticsearch template file is present
-  template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml
-  sudo: yes
-  notify:
-    - restart elasticsearch
-
 - name: Install the Elasticsearch Cloud Plugin
   sudo: yes
   command: bin/plugin -install elasticsearch/elasticsearch-cloud-aws/2.4.0
   args:
     chdir: /usr/share/elasticsearch/
     creates: /usr/share/elasticsearch/plugins/cloud-aws
+  notify:
+    - restart elasticsearch
+
+- name: Ensure the Elasticsearch template file is present
+  template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml
+  sudo: yes
   notify:
     - restart elasticsearch
 
