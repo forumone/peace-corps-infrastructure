@@ -34,7 +34,10 @@
     - restart elasticsearch
 
 - name: Ensure the Elasticsearch template file is present
-  template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml
+  template: "src={{ item.src }} dest={{ item.dest }}"
+  with_items:
+    - {src: 'elasticsearch.yml.j2', dest: '/etc/elasticsearch/elasticsearch.yml'}
+    - {src: 'logging.yml.j2', dest: '/etc/elasticsearch/logging.yml'}
   sudo: yes
   notify:
     - restart elasticsearch
