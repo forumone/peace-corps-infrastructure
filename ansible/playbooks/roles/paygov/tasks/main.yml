@@ -12,7 +12,7 @@
   copy: src=secring.gpg dest=/gpg/secring.gpg owner={{deploy_user}}
 
 - cron: name="clear stale donors" minute=53 user={{deploy_user}}
-        job="/home/{{deploy_user}}/manage.sh clear_state_donors"
+        job="/home/{{deploy_user}}/manage.sh clear_stale_donors"
 
 - name: synchronize database
   sudo_user: "{{deploy_user}}"
