@@ -24,6 +24,24 @@ resource "aws_security_group" "private" {
     }
 }
 
+resource "aws_security_group" "logging" {
+    name = "logging"
+    description = "Allows Logging Access"
+    vpc_id = "vpc-51971234"
+    ingress {
+        from_port = 22
+        to_port = 22
+        protocol = "tcp"
+        cidr_blocks = ["10.19.61.0/0"]
+    }
+    ingress {
+        from_port = 9200
+        to_port = 9400
+        protocol = "tcp"
+        self = true
+    }
+}
+
 resource "aws_security_group" "nat" {
   name = "peace-corps-nat"
   description = "Allow services from the private subnet through NAT"

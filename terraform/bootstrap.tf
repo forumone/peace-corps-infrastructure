@@ -100,7 +100,7 @@ resource "aws_instance" "logging-1a" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "m3.large"
   key_name = "peacecorps-deploy"
-  security_groups = ["${aws_security_group.private.id}", "${aws_security_group.app.id}"]
+  security_groups = ["${aws_security_group.logging.id}"]
   subnet_id = "${aws_subnet.us-east-1a-private.id}"
   associate_public_ip_address = false
   iam_instance_profile = "peacecorps-logs"
@@ -114,7 +114,7 @@ resource "aws_instance" "logging-1b" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "m3.large"
   key_name = "peacecorps-deploy"
-  security_groups = ["${aws_security_group.private.id}", "${aws_security_group.app.id}"]
+  security_groups = ["${aws_security_group.logging.id}"]
   subnet_id = "${aws_subnet.us-east-1b-private.id}"
   associate_public_ip_address = false
   iam_instance_profile = "peacecorps-logs"
