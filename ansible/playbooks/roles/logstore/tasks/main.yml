@@ -27,6 +27,8 @@
 - name: Ensure the Elasticsearch template file is present
   template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml
   sudo: yes
+  notify:
+    - restart elasticsearch
 
 - name: Install the Elasticsearch Cloud Plugin
   sudo: yes
@@ -34,6 +36,8 @@
   args:
     chdir: /usr/share/elasticsearch/
     creates: /usr/share/elasticsearch/plugins/cloud-aws
+  notify:
+    - restart elasticsearch
 
 - name: Ensure Elasticsearch is running
   service: name=elasticsearch state=started enabled=yes
