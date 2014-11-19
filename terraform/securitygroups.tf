@@ -1,5 +1,5 @@
-resource "aws_security_group" "gsa-access" {
-    name = "gsa-access"
+resource "aws_security_group" "gsa" {
+    name = "gsa"
     description = "Allows access from GSA"
     vpc_id = "vpc-51971234"
 
