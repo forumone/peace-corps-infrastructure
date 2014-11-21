@@ -1,0 +1,16 @@
+server {
+  listen 443 ssl spdy;
+  server_name           peacecorps-kibana.18f.us;
+
+  ssl_certificate      /etc/nginx/ssl/keys/star.18f.us.crt;
+  ssl_certificate_key  /etc/nginx/ssl/keys/star.18f.us.key;
+  include ssl/ssl.rules;
+
+  access_log            /var/log/nginx/peacecorps-kibana.18f.us.access.log;
+  error_log             /var/log/nginx/peacecorps-kibana.18f.us.access.log;
+
+  location / {
+    proxy_pass http://localhost:5601;
+    proxy_read_timeout 90;
+  }
+}

@@ -1,0 +1,9 @@
+[program:kibana]
+
+command=/home/{{deploy_user}}/kibana/bin/kibana
+directory=/home/{{deploy_user}}/kibana
+user={{deploy_user}}
+group={{deploy_user}}
+autostart=true
+autorestart=true
+redirect_stderr=True
