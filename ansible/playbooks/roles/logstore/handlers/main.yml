@@ -8,3 +8,7 @@
     - service supervisor stop
     - service supervisor start
   sudo: yes
+
+- name: restart nginx
+  service: name=nginx state=restarted
+  sudo: yes
