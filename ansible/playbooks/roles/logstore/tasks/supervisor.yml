@@ -3,6 +3,10 @@
 # that can sometimes occur with supervisor.sock
 #
 ---
+- name: ensure web server packages are installed
+  apt: name={{item}}
+  with_items:
+    - supervisor
 
 - name: check if supervisor.sock exists
   stat: path=/var/run/supervisor.sock
