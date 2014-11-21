@@ -1,3 +1,10 @@
 - name: restart elasticsearch
   service: name=elasticsearch state=restarted
   sudo: yes
+
+- name: restart supervisor
+  command: "{{ item }}"
+  with_items:
+    - service supervisor stop
+    - service supervisor start
+  sudo: yes
