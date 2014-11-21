@@ -51,7 +51,7 @@
   sudo_user: "{{ deploy_user }}"
 
 - name: Extract Kibana
-  unarchive: src="/home/{{ deploy_user }}/kibana-4.0.0-BETA2.zip" dest="/home/{{ deploy_user }}/" copy=no
+  command: unzip /home/{{ deploy_user }}/kibana-4.0.0-BETA2.zip -d /home/{{ deploy_user }}
   sudo_user: "{{ deploy_user }}"
 
 - name: Get Kibana Config in place
