@@ -47,6 +47,9 @@
 - name: check/create gunicorn log directory
   file: path=/var/log/gunicorn owner={{deploy_user}} state=directory
 
+- name: check/create app log file
+  file: path=/var/log/webapp.log owner={{deploy_user}} state=touch
+
 - name: check/create gpg directory
   file: path=/gpg owner={{deploy_user}} state=directory
 
