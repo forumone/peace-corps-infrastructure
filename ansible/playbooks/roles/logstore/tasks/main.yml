@@ -51,7 +51,7 @@
   sudo_user: "{{ deploy_user }}"
 
 - name: Extract Kibana
-  command: tar -C /home/{{ deploy_user }}/kibana -zxvf /home/{{ deploy_user }}/kibana-4.0.0-BETA2.tar.gz
+  command: tar -zxvf /home/{{ deploy_user }}/kibana-4.0.0-BETA2.tar.gz -C /home/{{ deploy_user }}/kibana
   sudo_user: "{{ deploy_user }}"
 
 - name: Get Kibana Config in place
