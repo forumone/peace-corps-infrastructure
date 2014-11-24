@@ -9,7 +9,7 @@
   sudo: yes
 
 - name: Install Elasticsearch
-  apt: name=logstash=1.4.2 state=present update_cache=yes force=yes
+  apt: name=logstash=1.4 state=present update_cache=yes force=yes
   sudo: yes
 
 - name: Ensure the right key directory structure
