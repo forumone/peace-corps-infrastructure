@@ -52,4 +52,7 @@
 - name: Extract Kibana
   command: tar -zxvf /var/www/kibana-3.1.2.tar.gz -C /var/www
 
+- name: Place kibana config file
+  template: src=config.js.j2 dest=/var/www/kibana-3.1.2/config.js
+
 - include: nginx.yml
