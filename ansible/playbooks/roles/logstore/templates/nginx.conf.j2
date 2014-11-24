@@ -7,12 +7,51 @@ server {
   include ssl/ssl.rules;
 
   access_log            /var/log/nginx/peacecorps-kibana.18f.us.access.log;
-  error_log             /var/log/nginx/peacecorps-kibana.18f.us.access.log;
+  error_log             /var/log/nginx/peacecorps-kibana.18f.us.error.log;
 
   location / {
-    proxy_pass http://localhost:5601$request_uri;
-    proxy_set_header Host $http_host;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+    root  /var/www/kibana-3.1.2;
+    index  index.html  index.htm;
+  }
+
+  location ~ ^/_aliases$ {
+    proxy_pass http://{{ ec2_private_ip_address }}:9200;
+    proxy_read_timeout 90;
+  }
+  location ~ ^/.*/_aliases$ {
+    proxy_pass http://{{ ec2_private_ip_address }}:9200;
+    proxy_read_timeout 90;
+  }
+  location ~ ^/_nodes$ {
+    proxy_pass http://{{ ec2_private_ip_address }}:9200;
+    proxy_read_timeout 90;
+  }
+  location ~ ^/.*/_search$ {
+    proxy_pass http://{{ ec2_private_ip_address }}:9200;
+    proxy_read_timeout 90;
+  }
+  location ~ ^/.*/_mapping {
+    proxy_pass http://{{ ec2_private_ip_address }}:9200;
+    proxy_read_timeout 90;
+  }
+
+  # Password protected end points
+  location ~ ^/kibana-int/dashboard/.*$ {
+    proxy_pass http://{{ ec2_private_ip_address }}:9200;
+    proxy_read_timeout 90;
+    limit_except GET {
+      proxy_pass http://{{ ec2_private_ip_address }}:9200;
+      #auth_basic "Restricted";
+      #auth_basic_user_file /etc/nginx/conf.d/kibana.myhost.org.htpasswd;
+    }
+  }
+  location ~ ^/kibana-int/temp.*$ {
+    proxy_pass http://{{ ec2_private_ip_address }}:9200;
+    proxy_read_timeout 90;
+    limit_except GET {
+      proxy_pass http://{{ ec2_private_ip_address }}:9200;
+      #auth_basic "Restricted";
+      #auth_basic_user_file /etc/nginx/conf.d/kibana.myhost.org.htpasswd;
+    }
   }
 }

@@ -46,17 +46,10 @@
   service: name=elasticsearch state=started enabled=yes
   sudo: yes
 
-- name: Download Kibana 4
-  get_url: url=https://download.elasticsearch.org/kibana/kibana/kibana-4.0.0-BETA2.tar.gz dest=/home/{{ deploy_user }}/kibana-4.0.0-BETA2.tar.gz
-  sudo_user: "{{ deploy_user }}"
+- name: Download Kibana 3
+  get_url: url=https://download.elasticsearch.org/kibana/kibana/kibana-3.1.2.tar.gz dest=/var/www/kibana-3.1.2.tar.gz
 
 - name: Extract Kibana
-  command: tar -zxvf /home/{{ deploy_user }}/kibana-4.0.0-BETA2.tar.gz -C /home/{{ deploy_user }}
-  sudo_user: "{{ deploy_user }}"
-
-- name: Get Kibana Config in place
-  template: src=kibana.yml.j2 dest=/home/{{ deploy_user }}//kibana-4.0.0-BETA2/config/kibana.yml
-  sudo_user: "{{ deploy_user }}"
+  command: tar -zxvf /var/www/kibana-3.1.2.tar.gz -C /var/www
 
 - include: nginx.yml
-- include: supervisor.yml
