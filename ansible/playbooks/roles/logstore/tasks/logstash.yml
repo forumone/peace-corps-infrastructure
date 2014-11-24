@@ -21,3 +21,18 @@
   with_items:
     - {src: "logstash-forwarder.crt", dest: "/etc/pki/tls/certs/logstash-forwarder.crt"}
     - {src: "logstash-forwarder.key", dest: "/etc/pki/tls/private/logstash-forwarder.key"}
+
+- name: Ensure our patterns directory exists
+  file: path=/etc/logstash/conf.d/patterns state=directory
+  sudo: yes
+
+- name: Place nginx grox pattern
+  copy: src=nginx.grok dest=/etc/logstash/conf.d/patterns/nginx.grok
+
+- name: Place logstash configs
+  copy: src=logstash-conf/{{ item }} dest=/etc/logstash/conf.d/{{ item }}
+  sudo: yes
+  with_items:
+    - 01-inputs.conf
+    - 10-nginx.conf
+    - 30-output.conf
