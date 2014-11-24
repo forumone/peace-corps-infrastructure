@@ -30,7 +30,7 @@
   copy: src=nginx.grok dest=/etc/logstash/conf.d/patterns/nginx.grok
 
 - name: Place logstash configs
-  copy: src=logstash-conf/{{ item }} dest=/etc/logstash/conf.d/{{ item }}
+  template: src=logstash-conf/{{ item }} dest=/etc/logstash/conf.d/{{ item }}
   sudo: yes
   with_items:
     - 01-inputs.conf
