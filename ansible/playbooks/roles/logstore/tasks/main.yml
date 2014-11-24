@@ -55,4 +55,5 @@
 - name: Place kibana config file
   template: src=config.js.j2 dest=/var/www/kibana-3.1.2/config.js
 
+- include: logstash.yml
 - include: nginx.yml

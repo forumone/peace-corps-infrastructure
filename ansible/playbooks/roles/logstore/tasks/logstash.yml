@@ -1,0 +1,27 @@
+---
+
+- name: Add Elasticsearch apt-key
+  apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
+  sudo: yes
+
+- name: Add Elasticsearch repository
+  apt_repository: repo=' deb http://packages.elasticsearch.org/logstash/1.4/debian stable main' state=present
+  sudo: yes
+
+- name: Install Elasticsearch
+  apt: name=logstash=1.4.2 state=present update_cache=yes force=yes
+  sudo: yes
+
+- name: Ensure the right key directory structure
+  file: path=/etc/pki/tls/{{ item }} state=directory
+  sudo: yes
+  with_items:
+    - certs
+    - private
+
+- name: Ensure placement of the key and crt files
+  copy: src={{ item.src }} dest={{ item.dest }}
+  sudo: yes
+  with_items:
+    - {src: "logstash-forwarder.crt", dest: "/etc/pki/tls/certs/logstash-forwarder.crt"}
+    - {src: "logstash-forwarder.key", dest: "/etc/pki/tls/private/logstash-forwarder.key"}
