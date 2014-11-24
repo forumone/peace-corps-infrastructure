@@ -74,3 +74,6 @@
 - authorized_key: user=ubuntu key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/nat/files/peacecorps.pem.pub') }}"
 
 - authorized_key: user=ubuntu key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/nat/files/cm.pem.pub') }}"
+
+- name: Restart nginx at the end of all this madness
+  service: name=nginx state=restarted
