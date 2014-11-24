@@ -8,6 +8,9 @@
   with_items:
     - supervisor
 
+- name: Install supervisor
+  apt: name=supervisor
+
 - name: check if supervisor.sock exists
   stat: path=/var/run/supervisor.sock
   register: supervisor_sock_file
