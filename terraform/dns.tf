@@ -16,6 +16,14 @@ resource "aws_route53_record" "natb" {
    records = ["${aws_eip.us-east-1b-nat.public_ip}"]
 }
 
+resource "aws_route53_record" "peacecorps-logging" {
+   zone_id = "${var.r53_zone_id}"
+   name = "peacecorps-logging.18f.us"
+   type = "CNAME"
+   ttl = "300"
+   records = ["${aws_elb.logging.dns_name}"]
+}
+
 resource "aws_route53_record" "donate-peacecorps-dev" {
    zone_id = "${var.r53_zone_id}"
    name = "donate.peacecorps-dev.18f.us"
@@ -46,4 +54,12 @@ resource "aws_route53_record" "pay-donate-peacecorps-internal" {
    type = "CNAME"
    ttl = "60"
    records = ["${aws_elb.paygov-dev.dns_name}"]
+}
+
+resource "aws_route53_record" "logging-peacecorps-internal" {
+   zone_id ="Z3IW27V61YTKKQ"
+   name = "logging.peacecorps.internal"
+   type = "A"
+   ttl = "60"
+   records = ["${aws_instance.logging-1a.private_ip}", "${aws_instance.logging-1b.private_ip}"]
 }

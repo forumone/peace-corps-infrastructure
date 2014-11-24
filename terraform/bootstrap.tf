@@ -243,3 +243,25 @@ resource "aws_elb" "paygov-dev" {
 
   instances = ["${aws_instance.paygov-dev-1a.id}", "${aws_instance.paygov-dev-1b.id}"]
 }
+
+# Create a new load balancer
+resource "aws_elb" "logging" {
+  name = "peacecorps-logging"
+  subnets = ["${aws_subnet.us-east-1a-public.id}", "${aws_subnet.us-east-1b-public.id}"]
+
+  listener {
+    instance_port = 80
+    instance_protocol = "http"
+    lb_port = 80
+    lb_protocol = "http"
+  }
+
+  listener {
+    instance_port = 443
+    instance_protocol = "tcp"
+    lb_port = 443
+    lb_protocol = "tcp"
+  }
+
+  instances = ["${aws_instance.logging-1a.id}", "${aws_instance.logging-1b.id}"]
+}
