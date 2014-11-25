@@ -9,7 +9,7 @@
   user: name=filetransfer group=filetransfer shell=/sbin/nologin
 
 - name: (test) Add Sean as a authorized_key
-  authorized_key: user=filetransfer key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/filetransfer/files/sean_id_rsa.pub') }}"
+  authorized_key: user=filetransfer path=/sftp/filetransfer manage_dir=no key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/filetransfer/files/sean_id_rsa.pub') }}"
 
 - name: Create SFTP folder
   file: path=/sftp state=directory
