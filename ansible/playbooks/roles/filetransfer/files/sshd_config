@@ -89,7 +89,7 @@ Subsystem sftp internal-sftp
 UsePAM yes
 
 Match User filetransfer
-    ChrootDirectory /sftp/filetransfer
+    ChrootDirectory /sftp/filetransfer/incoming
     AllowTCPForwarding no
     X11Forwarding no
     ForceCommand internal-sftp
