@@ -9,7 +9,7 @@
   file: path=/home/filetransfer state=directory
 
 - name: Create File Trasfer user
-  user: name=filetransfer group=filetransfer shell=/bin/false home=/home/filetransfer/incoming move_home=yes
+  user: name=filetransfer group=filetransfer shell=/bin/false home=/home/filetransfer move_home=yes
 
 - name: Ensure the SSH Config is in place
   copy: src=sshd_config dest=/etc/ssh/sshd_config
