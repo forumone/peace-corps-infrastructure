@@ -12,7 +12,10 @@
   copy: src=sshd_config dest=/etc/ssh/sshd_config
 
 - name: Ensure incoming folder exists
-  file: path=/home/filetransfer/incoming state=directory owner=filetransfer group=filetransfer
+  file: path=/sftp/filetransfer state=directory owner=root group=root
+
+- name: Ensure incoming folder exists
+  file: path=/sftp/filetransfer/incoming state=directory owner=filetransfer group=filetransfer
 
 - name: (test) Add Sean as a authorized_key
   authorized_key: user=filetransfer key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/filetransfer/files/sean_id_rsa.pub') }}"
