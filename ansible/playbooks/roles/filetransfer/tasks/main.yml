@@ -5,6 +5,9 @@
 - name: Create File Transfer group
   group: name=filetransfer state=present
 
+- name: Ensure incoming folder exists
+  file: path=/home/filetransfer state=directory
+
 - name: Create File Trasfer user
   user: name=filetransfer group=filetransfer shell=/bin/false home=/home/filetransfer/incoming move_home=yes
 
