@@ -88,6 +88,8 @@ Subsystem sftp internal-sftp
 # and ChallengeResponseAuthentication to 'no'.
 UsePAM yes
 
-Match Group filetransfer
-    ChrootDirectory /sftp/%u
+Match User filetransfer
+    ChrootDirectory /home/filetransfer/incoming
+    AllowTCPForwarding no
+    X11Forwarding no
     ForceCommand internal-sftp

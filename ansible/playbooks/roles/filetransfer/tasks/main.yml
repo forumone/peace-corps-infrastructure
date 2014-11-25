@@ -8,20 +8,14 @@
 - name: Create File Trasfer user
   user: name=filetransfer group=filetransfer shell=/sbin/nologin
 
-- name: Create SFTP folder
-  file: path=/sftp state=directory
+- name: Ensure the SSH Config is in place
+  copy: src=sshd_config dest=/etc/ssh/sshd_config
 
-- name: Create ChootDirectory
-  file: path=/sftp/filetransfer/incoming state=directory owner=filetransfer group=filetransfer
-
-- name: Create ssh directory
-  file: path=/sftp/filetransfer/.ssh state=directory owner=filetransfer group=filetransfer
-
-- name: Create ssh
-  file: path=/sftp/filetransfer/.ssh/authorized_keys state=touch owner=filetransfer group=filetransfer
+- name: Ensure incoming folder exists
+  file: path=/home/filetransfer/incoming state=directory
 
 - name: (test) Add Sean as a authorized_key
-  lineinfile: dest=/sftp/filetransfer/.ssh/authorized_keys line="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCo1NoxHMcfUZC8zmqRUeqv5SfOwZU/eiwvyzlBqrXQ7U6VYd+UlLaTNVXAC49I1JDHxNNnbcJ8i5SBJ5hngWKKhD8CCvDALbBKwO7OL0mQmzPg/Iy3PuQQrGX9C3Q18RpuOeXzKpgWn4iJqzJJzUBMUsBeDqt0hqEsRZSVgBaMi6h6QKiipv1QIZ1TJORjSRPtg54oKF7gOjuS7aV+fA/3WLQ6ETY8dYhqY3WHOCO633OOSHmX5vWTEmI16ytSgSOEW+9ksgD2yEpC5RgyGYGF1GcHwWUGDScvfKUTZsAH25Z2ZegfSOvd/y0V1jaOxrkSksxzjt4E0Lhfk7HXxup7 sean.herron@gsa.gov" owner=filetransfer group=filetransfer
+  authorized_key: user=filetransfer key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/filetransfer/files/sean_id_rsa.pub') }}"
 
 - name: Restart SSH
   service: name=ssh state=restarted
