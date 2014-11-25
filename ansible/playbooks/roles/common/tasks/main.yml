@@ -6,10 +6,10 @@
   apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
   sudo: yes
 
-- name: Add Logstash Forwarder repository
-  apt_repository: repo='deb http://packages.elasticsearch.org/logstashforwarder/debian stable main' state=present
-  sudo: yes
+#- name: Add Logstash Forwarder repository
+#  apt_repository: repo='deb http://packages.elasticsearch.org/logstashforwarder/debian stable main' state=present
+#  sudo: yes
 
-- name: Install Logstash
-  apt: name=logstash state=present update_cache=yes force=yes
-  sudo: yes
+#- name: Install Logstash
+ # apt: name=logstash state=present update_cache=yes force=yes
+ # sudo: yes
