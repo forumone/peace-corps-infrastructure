@@ -16,6 +16,8 @@
 
 - name: Ensure Admin instances get the proper environment set
   hosts: tag_role_admin:&tag_environment_dev
+  roles:
+    - filetransfer
 
 
 - name: Ensure pay.gov instances get the proper setup

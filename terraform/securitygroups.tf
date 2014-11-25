@@ -67,26 +67,6 @@ resource "aws_security_group" "nat" {
   }
 }
 
-resource "aws_security_group" "admin" {
-  name = "peace-corps-admin"
-  description = "Allow access to the admin webservers"
-  vpc_id = "vpc-51971234"
-  
-  ingress {
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = ["159.142.0.0/16"]
-  }
-
-  ingress {
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = ["159.142.0.0/16"]
-  }
-}
-
 resource "aws_security_group" "rds" {
     name = "peace-corps-rds"
     description = "Peace Corps RDS default security group"
@@ -137,5 +117,31 @@ resource "aws_security_group" "paygov" {
     to_port = 443
     protocol = "tcp"
     cidr_blocks = ["199.169.197.157/32", "199.169.192.157/32", "199.169.194.157/32"]
+  }
+}
+
+resource "aws_security_group" "admin" {
+  name = "peace-corps-admin"
+  description = "Allow services for Admin Users"
+  vpc_id = "vpc-51971234"
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["159.142.0.0/16", "65.205.231.0/24"]
+  }
+
+  ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["159.142.0.0/16", "65.205.231.0/24"]
+  }
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["159.142.0.0/16", "65.205.231.0/24"]
   }
 }

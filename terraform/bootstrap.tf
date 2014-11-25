@@ -125,6 +125,21 @@ resource "aws_instance" "logging-1b" {
   }
 }
 
+resource "aws_instance" "admin-dev" {
+  ami = "${lookup(var.aws_amis, var.aws_region)}"
+  instance_type = "t2.micro"
+  key_name = "peacecorps-deploy"
+  security_groups = ["${aws_security_group.private.id}", "${aws_security_group.admin.id}"]
+  subnet_id = "${aws_subnet.us-east-1a-public.id}"
+  associate_public_ip_address = true
+  tags {
+        Name = "Web Admin Server"
+        agency = "peacecorps"
+        role = "admin"
+        environment = "dev"
+  }
+}
+
 resource "aws_instance" "webapp-dev-1a" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"

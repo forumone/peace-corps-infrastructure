@@ -63,3 +63,11 @@ resource "aws_route53_record" "logging-peacecorps-internal" {
    ttl = "60"
    records = ["${aws_instance.logging-1a.private_ip}", "${aws_instance.logging-1b.private_ip}"]
 }
+
+resource "aws_route53_record" "filetransfer-dev" {
+   zone_id ="Z17MKCYB7Q35O8"
+   name = "filetransfer-dev.beta.peacecorps.gov"
+   type = "CNAME"
+   ttl = "60"
+   records = ["${aws_instance.admin-dev.public_dns}"]
+}
