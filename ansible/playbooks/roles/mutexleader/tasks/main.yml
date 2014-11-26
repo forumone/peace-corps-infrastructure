@@ -1,0 +1,10 @@
+---
+
+- name: synchronize database
+  sudo_user: "{{deploy_user}}"
+  command: "/home/{{deploy_user}}/manage.sh migrate"
+
+- name: post static files to s3
+  sudo_user: "{{deploy_user}}"
+  command: "/home/{{deploy_user}}/manage.sh collectstatic --noinput --clear"
+
