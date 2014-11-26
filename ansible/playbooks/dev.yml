@@ -14,6 +14,11 @@
   roles:
     - logstore
 
+- name: Update mutex leader first (db/static files)
+  hosts: tag_role_mutexleader:&tag_environment_dev
+  roles:
+    - mutexleader
+
 - name: Ensure Admin instances get the proper environment set
   hosts: tag_role_admin:&tag_environment_dev
   roles:
