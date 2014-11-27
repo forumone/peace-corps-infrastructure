@@ -67,9 +67,10 @@
   template: src=manage.sh.j2 dest=/home/{{deploy_user}}/manage.sh mode=700
   sudo_user: "{{deploy_user}}"
 
-- name: collect static files
-  sudo_user: "{{deploy_user}}"
-  command: "/home/{{deploy_user}}/manage.sh collectstatic --noinput --clear"
+# No longer needed as static files are collected by mutexleader and sent to s3
+#- name: collect static files
+#  sudo_user: "{{deploy_user}}"
+#  command: "/home/{{deploy_user}}/manage.sh collectstatic --noinput --clear"
 
 - name: place start file
   template: src=start.sh.j2 dest=/home/{{deploy_user}}/start.sh mode=700
