@@ -137,6 +137,7 @@ resource "aws_instance" "admin-dev" {
         agency = "peacecorps"
         role = "admin"
         environment = "dev"
+        mutexleader = "true"
   }
 }
 

@@ -6,16 +6,13 @@
   group: name=filetransfer state=present
 
 - name: Ensure incoming folder exists
-  file: path=/home/filetransfer state=directory
+  file: path=/home/filetransfer state=directory owner=root group=root
 
 - name: Create File Trasfer user
-  user: name=filetransfer group=filetransfer shell=/bin/false home=/incoming move_home=yes
+  user: name=filetransfer group=filetransfer shell=/bin/false home=/home/filetransfer/incoming move_home=yes
 
 - name: Ensure the SSH Config is in place
   copy: src=sshd_config dest=/etc/ssh/sshd_config
-
-- name: Ensure incoming folder exists
-  file: path=/home/filetransfer state=directory owner=root group=root
 
 - name: (test) Add Sean as a authorized_key
   authorized_key: user=filetransfer key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/filetransfer/files/sean_id_rsa.pub') }}"

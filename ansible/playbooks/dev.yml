@@ -15,7 +15,7 @@
     - logstore
 
 - name: Update mutex leader first (db/static files)
-  hosts: tag_role_mutexleader:&tag_environment_dev
+  hosts: tag_mutexleader_true:&tag_environment_dev
   roles:
     - mutexleader
 
