@@ -6,7 +6,7 @@
 
 - name: latest update time
   register: latest_static_files
-  command: "find {{app_code_dir}}/peacecorps/peacecorps/static/peacecorps/img/ -printf '%T@\n' | sort | tail -n 1"
+  shell: "find {{app_code_dir}}/peacecorps/peacecorps/static/peacecorps/ -printf '%T@\n' | sort | tail -n 1"
 
 - name: previous run update time
   register: previous_static_files
