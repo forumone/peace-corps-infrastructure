@@ -8,6 +8,9 @@
   register: latest_static_files
   shell: "find {{app_code_dir}}/peacecorps/peacecorps/static/peacecorps/ -printf '%T@\n' | sort | tail -n 1"
 
+- name: make sure last update time is present
+  file: path=/tmp/previous_static_files.txt state=touch
+
 - name: previous run update time
   register: previous_static_files
   command: "cat /tmp/previous_static_files.txt"
