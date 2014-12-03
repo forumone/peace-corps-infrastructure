@@ -14,8 +14,8 @@
 - name: Ensure the SSH Config is in place
   copy: src=sshd_config dest=/etc/ssh/sshd_config
 
-- name: (test) Add Sean as a authorized_key
-  authorized_key: user=filetransfer key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/filetransfer/files/sean_id_rsa.pub') }}"
+- name: Add Peace Corps as a authorized_key
+  authorized_key: user=filetransfer key="{{ lookup('file', '/home/ubuntu/peace-corps-infrastructure/ansible/playbooks/roles/filetransfer/files/pc_id_rsa.pub') }}"
 
 - name: Restart SSH
   service: name=ssh state=restarted
