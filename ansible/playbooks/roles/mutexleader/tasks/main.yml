@@ -2,9 +2,9 @@
 
 - name: synchronize database
   sudo_user: "{{deploy_user}}"
-  command: "/home/{{deploy_user}}/manage.sh migrate"
+  command: "/home/{{deploy_user}}/manage.sh migrate --settings={{app_code_dir}}/peacecorps/peacecorps/settings/production-admin.py"
 
 - name: post static files to s3
   sudo_user: "{{deploy_user}}"
-  command: "/home/{{deploy_user}}/manage.sh collectstatic --noinput --clear"
+  command: "/home/{{deploy_user}}/manage.sh collectstatic --noinput --clear --settings={{app_code_dir}}/peacecorps/peacecorps/settings/production-admin.py"
 
