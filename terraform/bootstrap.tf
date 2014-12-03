@@ -132,6 +132,7 @@ resource "aws_instance" "admin-dev" {
   security_groups = ["${aws_security_group.private.id}", "${aws_security_group.admin.id}"]
   subnet_id = "${aws_subnet.us-east-1a-public.id}"
   associate_public_ip_address = true
+  iam_instance_profile = "peacecorps-admin-server"
   tags {
         Name = "Web Admin Server"
         agency = "peacecorps"
