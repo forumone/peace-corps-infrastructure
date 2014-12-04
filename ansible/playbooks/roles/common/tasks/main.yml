@@ -24,3 +24,11 @@
 - name: Ensure placement of the cert file
   copy: src=logstash-forwarder.crt dest=/etc/pki/tls/certs/logstash-forwarder.crt
   sudo: yes
+  notify:
+    - restart logstash forwarder
+
+- name: Ensure placement of the logstash forwarder settings
+  copy: src=logstash-forwarder dest=/etc/logstash-forwarder
+  sudo: yes
+  notify:
+    - restart logstash forwarder
