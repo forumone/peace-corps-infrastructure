@@ -21,4 +21,4 @@
   when: latest_static_files.stdout > previous_static_files.stdout
 
 - name: update static file time
-  command: "echo {{ latest_static_files }} > /tmp/previous_static_files.txt"
+  shell: "echo {{ latest_static_files }} > /tmp/previous_static_files.txt"
