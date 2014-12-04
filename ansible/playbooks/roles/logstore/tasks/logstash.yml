@@ -35,4 +35,5 @@
   with_items:
     - 01-inputs.conf
     - 10-nginx.conf
+    - 10-syslog.conf
     - 30-output.conf
