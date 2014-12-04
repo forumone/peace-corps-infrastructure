@@ -16,3 +16,11 @@
 
 - name: Ensure Logstash Forwarder is running
   service: name=logstash-forwarder state=started enabled=yes
+
+- name: Create proper directory for logstash cert
+  file: path=/etc/pki/tls/certs state=directory
+  sudo: yes
+
+- name: Ensure placement of the cert file
+  copy: src=logstash-forwarder.crt dest=/etc/pki/tls/certs/logstash-forwarder.crt
+  sudo: yes
