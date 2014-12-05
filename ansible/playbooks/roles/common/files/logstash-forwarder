@@ -23,6 +23,12 @@
         "/var/log/nginx/*.error.log"
       ],
       "fields": { "type": "nginx-error" }
+    },
+    {
+      "paths": [
+        "/var/log/webapp.log"
+      ],
+      "fields": { "type": "webapp" }
     }
    ]
 }
