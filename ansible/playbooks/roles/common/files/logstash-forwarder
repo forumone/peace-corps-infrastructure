@@ -14,9 +14,15 @@
     },
     {
       "paths": [
-        "/var/log/nginx/*"
+        "/var/log/nginx/*.access.log"
       ],
       "fields": { "type": "nginx-access" }
+    },
+    {
+      "paths": [
+        "/var/log/nginx/*.error.log"
+      ],
+      "fields": { "type": "nginx-error" }
     }
    ]
 }
