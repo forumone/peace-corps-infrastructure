@@ -7,7 +7,7 @@
   "files": [
     {
       "paths": [
-        "/var/log/syslog",
+        "/var/log/apt/history.log",
         "/var/log/auth.log"
        ],
       "fields": { "type": "syslog" }
