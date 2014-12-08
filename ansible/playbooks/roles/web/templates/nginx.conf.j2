@@ -20,8 +20,8 @@ server {
   {% endif %}
   include ssl/ssl.rules;
 
-  access_log /var/log/nginx/{{root_domain_name}}.access.log;
-  error_log /var/log/nginx/{{root_domain_name}}.error.log info;
+  access_log /var/log/nginx/peacecorps-webapp.access.log;
+  error_log /var/log/nginx/peacecorps-webapp.error.log info;
 
   keepalive_timeout 5;
 

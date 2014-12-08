@@ -6,8 +6,8 @@ server {
   ssl_certificate_key  /etc/nginx/ssl/keys/star.18f.us.key;
   include ssl/ssl.rules;
 
-  access_log            /var/log/nginx/peacecorps-kibana.18f.us.access.log;
-  error_log             /var/log/nginx/peacecorps-kibana.18f.us.error.log;
+  access_log            /var/log/nginx/peacecorps-kibana-18f-us.access.log;
+  error_log             /var/log/nginx/peacecorps-kibana-18f-us.error.log;
 
   location / {
     root  /var/www/kibana-3.1.2;

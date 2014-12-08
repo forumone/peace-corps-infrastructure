@@ -6,8 +6,8 @@ server {
   ssl_certificate_key  /etc/nginx/ssl/keys/pay.key;
   include ssl/ssl.rules;
 
-  access_log /var/log/nginx/{{pay_domain_name}}.access.log;
-  error_log /var/log/nginx/{{pay_domain_name}}.error.log info;
+  access_log /var/log/nginx/pay-nat.access.log;
+  error_log /var/log/nginx/pay-nat.error.log info;
 
   location / {
     if (!-f $request_filename) {
