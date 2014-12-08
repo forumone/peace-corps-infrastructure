@@ -34,8 +34,9 @@
   sudo: yes
   with_items:
     - 01-inputs.conf
-    - 10-nginx.conf
     - 10-syslog.conf
+    - 11-nginx.conf
+    - 12-webapp.conf
     - 30-output.conf
   notify:
     - restart logstash
