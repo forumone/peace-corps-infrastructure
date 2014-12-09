@@ -32,8 +32,12 @@ server {
 
   location / {
 
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host $http_host;
+    proxy_set_header  X-Forwarded-By  $server_addr:$server_port
+    proxy_set_header  X-Forwarded-For remote_addr;
+    proxy_set_header  X-Forwarded-Proto $scheme;
+    proxy_set_header  X-Real-IP $remote_addr;
+    proxy_pass_request_headers on;
     proxy_redirect off;
 
     {% if 'tag_role_paygov' in group_names %}
