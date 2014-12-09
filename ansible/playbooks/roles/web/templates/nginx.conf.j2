@@ -1,68 +1,79 @@
-upstream app_server_djangoapp {
-  server localhost:8000 fail_timeout=0;
+user www-data;
+worker_processes 4;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 768;
+    # multi_accept on;
 }
 
-server {
-  listen 443 ssl spdy proxy_protocol;
+http {
 
-  {% if 'tag_role_paygov' in group_names %}
+    ##
+    # Basic Settings
+    ##
 
-  server_name pay.donate.peacecorps.internal;
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+    # server_tokens off;
 
-  ssl_certificate      /etc/nginx/ssl/keys/pay.donate.peacecorps.internal.crt;
-  ssl_certificate_key  /etc/nginx/ssl/keys/pay.donate.peacecorps.internal.key;
+    # server_names_hash_bucket_size 64;
+    # server_name_in_redirect off;
 
-  {% else %}
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
 
-  server_name {{root_domain_name}};
-  ssl_certificate      /etc/nginx/ssl/keys/donate.crt;
-  ssl_certificate_key  /etc/nginx/ssl/keys/donate.key;
-  {% endif %}
-  include ssl/ssl.rules;
+    ##
+    # Logging Settings
+    ##
 
-  set_real_ip_from 10.19.61.0/24;
-  real_ip_header proxy_protocol;
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+    log_format elb_log '$proxy_protocol_addr - $remote_user [$time_local] ' '"$request" $status $body_bytes_sent "$http_referer" ' '"$http_user_agent"';
 
-  access_log /var/log/nginx/peacecorps-webapp.access.log elb_log;
-  error_log /var/log/nginx/peacecorps-webapp.error.log info;
+    ##
+    # Gzip Settings
+    ##
 
-  keepalive_timeout 5;
+    gzip on;
+    gzip_disable "msie6";
 
-  # nginx should serve up static files and never send to the WSGI server
-  location /static {
-    alias /var/www/static;
-  }
+    # gzip_vary on;
+    # gzip_proxied any;
+    # gzip_comp_level 6;
+    # gzip_buffers 16 8k;
+    # gzip_http_version 1.1;
+    # gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
-  location / {
+    ##
+    # Virtual Host Configs
+    ##
 
-    proxy_set_header Host $http_host;
-    #proxy_set_header  X-Forwarded-By  $server_addr:$server_port;
-    #proxy_set_header  X-Forwarded-For remote_addr;
-    #proxy_set_header  X-Forwarded-Proto $scheme;
-    #proxy_set_header  X-Real-IP $remote_addr;
-    #proxy_pass_request_headers on;
-    proxy_redirect off;
-
-    {% if 'tag_role_paygov' in group_names %}
-    # We don't pass auth here
-    {% else %}
-    auth_basic "Restricted";
-    auth_basic_user_file /etc/nginx/.htpasswd;
-    {% endif %}
-
-    if (!-f $request_filename) {
-      proxy_pass http://app_server_djangoapp;
-      break;
-    }
-  }
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
 }
 
-server {
-    listen 80;
-    {% if 'tag_role_paygov' in group_names %}
-      server_name pay.donate.peacecorps.internal;
-    {% else %}
-      server_name {{root_domain_name}};
-    {% endif %}
-    return 301 https://$host$request_uri;
-}
+
+#mail {
+#   # See sample authentication script at:
+#   # http://wiki.nginx.org/ImapAuthenticateWithApachePhpScript
+# 
+#   # auth_http localhost/auth.php;
+#   # pop3_capabilities "TOP" "USER";
+#   # imap_capabilities "IMAP4rev1" "UIDPLUS";
+# 
+#   server {
+#       listen     localhost:110;
+#       protocol   pop3;
+#       proxy      on;
+#   }
+# 
+#   server {
+#       listen     localhost:143;
+#       protocol   imap;
+#       proxy      on;
+#   }
+#}
