@@ -13,12 +13,6 @@
   notify:
     - restart nginx
 
-- name: place realip configuration
-  template: src=http_realip.conf.j2 dest=/etc/nginx/conf.d/http_realip.conf
-  sudo: yes
-  notify:
-    - restart nginx
-
 - name: Ensure nginx ssl directory
   file: dest=/etc/nginx/ssl state=directory
 
