@@ -55,3 +55,9 @@
   template: src=nginx.conf.j2 dest=/etc/nginx/sites-enabled/main
   notify:
     - restart nginx
+
+- name: Write htpasswd
+  template: src=nginx.htpasswd.j2 dest=/etc/nginx/.htpasswd
+  sudo: yes
+  notify:
+    - restart nginx
