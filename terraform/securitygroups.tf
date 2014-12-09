@@ -20,7 +20,7 @@ resource "aws_security_group" "private" {
         from_port = 0
         to_port = 65535
         protocol = "tcp"
-        cidr_blocks = ["10.19.61.0/0"]
+        cidr_blocks = ["10.19.61.0/24"]
     }
 }
 
