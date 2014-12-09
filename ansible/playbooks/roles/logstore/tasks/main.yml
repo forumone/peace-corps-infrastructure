@@ -55,5 +55,8 @@
 - name: Place kibana config file
   template: src=config.js.j2 dest=/var/www/kibana-3.1.2/config.js
 
+- name: Make Logstash the default kibana view
+  command: mv /var/www/kibana-3.1.2/logstash.json /var/www/kibana-3.1.2/default.json
+
 - include: logstash.yml
 - include: nginx.yml
