@@ -1,9 +1,0 @@
-#!/bin/bash
-# -*- coding: utf-8 -*-
-# This script runs accounting synchronization on the latest file and deletes
-# any which are older than a week
-
-LATEST=`ls -t1 /tmp/* | head -n 1`
-/home/{{deploy_user}}/manage.sh sync_accounting $LATEST
-
-find /home/filetransfer/incoming/*.csv -mtime +7 | xargs echo >> /tmp/verify.txt
