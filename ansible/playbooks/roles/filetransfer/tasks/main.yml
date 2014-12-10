@@ -24,5 +24,5 @@
   service: name=ssh state=restarted
 
 - name: cron job for deleting old files
-  cron: name="Every hour, synchronize accounting data" minute=27 user=filetransfer
+  cron: name="Every hour, synchronize accounting data" minute=27
         job="find /home/filetransfer/incoming/*.csv -mtime +7 | xargs echo >> /tmp/verify.txt"
