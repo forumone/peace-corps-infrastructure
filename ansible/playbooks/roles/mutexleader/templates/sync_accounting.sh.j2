@@ -4,6 +4,6 @@
 # any which are older than a week
 
 LATEST=`ls -t1 /tmp/* | head -n 1`
-/home/{{deploy_user}}/manage.sh sync $LATEST
+/home/{{deploy_user}}/manage.sh sync_accounting $LATEST
 
-find /home/filetransfer/incoming/ -mtime +7 | xargs echo >> /tmp/verify.txt
+find /home/filetransfer/incoming/*.csv -mtime +7 | xargs echo >> /tmp/verify.txt
