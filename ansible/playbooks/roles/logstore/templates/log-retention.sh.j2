@@ -1,0 +1,22 @@
+#!/bin/bash
+# -*- coding: utf-8 -*-
+
+# This script creates a custom log rentention period for Elasticsearch
+# indexes created by logstash
+
+# Set the number of days for log retention
+retentionperiod=90
+
+# Set how far back from the log retention date to ensure logs were actually
+# deleted
+daysback=7
+
+# Calculate the difference between $rententionperiod and $daysback
+startat=`expr $daysback \+ $retentionperiod`
+
+for i in `seq $startat $retentionperiod`; do
+    d=`date +%Y.%m.%d -d "$i day ago"`
+    curl -XDELETE http://{{ ec2_private_ip_address }}:9200/logstash-$d > /dev/null 2>&1
+done
+
+curl -XPOST 'http://{{ ec2_private_ip_address }}:9200/_optimize'
