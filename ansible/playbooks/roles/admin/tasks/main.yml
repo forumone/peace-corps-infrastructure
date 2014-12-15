@@ -1,0 +1,8 @@
+- name: place environmental variables file
+  copy: src=admin-dev.sh dest="/home/{{deploy_user}}/admin-dev.sh"
+  sudo_user: "{{deploy_user}}"
+
+- name: add environmental variables for the environment
+  lineinfile: dest="/home/{{deploy_user}}/.bashrc" line="source /home/{{deploy_user}}/admin-dev.sh"
+  sudo_user: "{{deploy_user}}"
+
