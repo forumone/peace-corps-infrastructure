@@ -3,7 +3,11 @@ upstream app_server_djangoapp {
 }
 
 server {
+  {% if 'tag_role_admin' in group_names %}
+  listen 443 ssl spdy;
+  {% else %}
   listen 443 ssl spdy proxy_protocol;
+  {% endif %}
 
   {% if 'tag_role_paygov' in group_names %}
 
@@ -20,8 +24,10 @@ server {
   {% endif %}
   include ssl/ssl.rules;
 
+  {% if 'tag_role_admin' not in group_names %}
   set_real_ip_from 10.19.61.0/24;
   real_ip_header proxy_protocol;
+  {% endif %}
 
   access_log /var/log/nginx/peacecorps-webapp.access.log elb_log;
   error_log /var/log/nginx/peacecorps-webapp.error.log info;
