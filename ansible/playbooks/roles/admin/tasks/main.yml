@@ -1,5 +1,6 @@
 - name: Will need to reinstall pillow if these libraries weren't present
   command: dpkg -s libjpeg-dev zlib1g-dev libtiff5-dev
+  ignore_errors: True
   register: image_libs_present
 
 - name: Image manipulation libraries
