@@ -1,0 +1,30 @@
+- name: Will need to reinstall pillow if these libraries weren't present
+  command: dpkg -s libjpeg-dev zlib1g-dev libtiff5-dev
+  ignore_errors: True
+  register: image_libs_present
+
+- name: Image manipulation libraries
+  sudo: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items:
+    - libjpeg-dev
+    - zlib1g-dev
+    - libtiff5-dev
+
+- name: Reinstall Pillow
+  when: image_libs_present
+  sudo_user: "{{deploy_user}}"
+  pip: name=Pillow
+       virtualenv={{virtualenv_dir}}
+       extra_args='--force-reinstall'
+
+- name: place environmental variables file
+  copy: src=admin-dev.sh dest="/home/{{deploy_user}}/admin-dev.sh"
+  sudo_user: "{{deploy_user}}"
+
+- name: add environmental variables for the environment
+  lineinfile: dest="/home/{{deploy_user}}/.bashrc" line="source /home/{{deploy_user}}/admin-dev.sh"
+  sudo_user: "{{deploy_user}}"
+

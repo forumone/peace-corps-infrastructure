@@ -8,7 +8,7 @@
 - name: Ensure incoming folder exists
   file: path=/home/filetransfer state=directory owner=root group=root
 
-- name: Create File Trasfer user
+- name: Create File Transfer user
   user: name=filetransfer group=filetransfer shell=/bin/false home=/home/filetransfer/incoming move_home=yes
 
 - name: Ensure the SSH Config is in place
@@ -22,3 +22,7 @@
 
 - name: Restart SSH
   service: name=ssh state=restarted
+
+- name: cron job for deleting old files
+  cron: name="Every hour, synchronize accounting data" minute=27
+        job="find /home/filetransfer/incoming/*.csv -mtime +7 | xargs echo >> /tmp/verify.txt"

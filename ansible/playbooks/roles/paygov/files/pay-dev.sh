@@ -1,1 +1,1 @@
-../../../../secrets/pay-dev.sh.enc.unencrypted
+export USE_PAYGOV='True'

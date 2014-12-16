@@ -11,5 +11,9 @@ if [ -f /home/{{deploy_user}}/pay-dev.sh ]; then
     source /home/{{deploy_user}}/pay-dev.sh
 fi
 
+if [ -f /home/{{deploy_user}}/admin-dev.sh ]; then
+    source /home/{{deploy_user}}/admin-dev.sh
+fi
+
 
 exec gunicorn {{app_name}}.wsgi:application --access-logfile /var/log/gunicorn/access.log --error-logfile /var/log/gunicorn/error.log
