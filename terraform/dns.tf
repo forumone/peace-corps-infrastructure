@@ -71,3 +71,11 @@ resource "aws_route53_record" "filetransfer-dev" {
    ttl = "60"
    records = ["${aws_instance.admin-dev.public_dns}"]
 }
+
+resource "aws_route53_record" "admin" {
+   zone_id ="Z17MKCYB7Q35O8"
+   name = "admin.beta.peacecorps.gov"
+   type = "CNAME"
+   ttl = "60"
+   records = ["${aws_instance.admin-dev.public_dns}"]
+}
