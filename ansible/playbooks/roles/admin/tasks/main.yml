@@ -13,12 +13,19 @@
     - zlib1g-dev
     - libtiff5-dev
 
+- name: Uninstall Pillow
+  when: image_libs_present.rc != 0
+  sudo_user: "{{deploy_user}}"
+  pip: name=Pillow
+       state=absent
+       virtualenv={{virtualenv_dir}}
+
 - name: Reinstall Pillow
   when: image_libs_present.rc != 0
   sudo_user: "{{deploy_user}}"
   pip: name=Pillow
+       state=present
        virtualenv={{virtualenv_dir}}
-       extra_args='--force-reinstall'
 
 - name: place environmental variables file
   copy: src=admin-dev.sh dest="/home/{{deploy_user}}/admin-dev.sh"
