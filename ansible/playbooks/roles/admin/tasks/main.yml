@@ -1,7 +1,7 @@
 - name: Will need to reinstall pillow if these libraries weren't present
   command: dpkg -s libjpeg-dev zlib1g-dev libtiff5-dev
-  ignore_errors: True
   register: image_libs_present
+  failed_when: False
 
 - name: Image manipulation libraries
   sudo: yes
@@ -14,7 +14,7 @@
     - libtiff5-dev
 
 - name: Reinstall Pillow
-  when: image_libs_present
+  when: image_libs_present.rc != 0
   sudo_user: "{{deploy_user}}"
   pip: name=Pillow
        virtualenv={{virtualenv_dir}}
