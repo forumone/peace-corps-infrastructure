@@ -1,0 +1,21 @@
+---
+
+- name: Add SSL Mate GPG Key
+  apt_key: url=https://sslmate.com/apt/ubuntu1404/sslmate.gpg state=present
+  sudo: yes
+
+- name: Add SSLMate Repository
+  apt_repository: repo='deb http://packages.sslmate.com/ubuntu trusty main' state=present
+  sudo: yes
+
+- name: Add SSLMate Src Repository
+  apt_repository: repo='deb-sec http://packages.sslmate.com/ubuntu trusty main' state=present
+  sudo: yes
+
+- name: ensure apt cache is up to date
+  apt: update_cache=yes
+  sudo: yes
+
+- name: Install sslmate
+  apt: name=sslmate state=latest
+  sudo: yes
