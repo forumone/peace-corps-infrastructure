@@ -39,13 +39,13 @@ server {
     alias /var/www/static;
   }
 
+{% if 'tag_role_admin' in group_names %}
+  # We allow admin on admin instances
+{% else %}
   location /admin {
-    {% if 'tag_role_admin' in group_names %}
-      # We allow admin on admin instances
-    {% else %}
       deny all;
-    {% endif %}
   }
+{% endif %}
 
   location / {
 
