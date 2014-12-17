@@ -71,18 +71,10 @@ server {
       auth_basic_user_file /etc/nginx/.htpasswd;
     {% endif %}
 
-    {% if 'tag_role_admin' in group_names %}
-      # Proxy direct to the admin panel
-      if (!-f $request_filename) {
-        proxy_pass http://app_server_djangoapp/admin;
-        break;
-      }
-    {% else %}
-      if (!-f $request_filename) {
-        proxy_pass http://app_server_djangoapp;
-        break;
-      }
-    {% endif %}
+    if (!-f $request_filename) {
+      proxy_pass http://app_server_djangoapp;
+      break;
+    }
   }
 }
 
