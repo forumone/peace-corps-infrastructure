@@ -15,20 +15,20 @@
     - logstore
 
 - name: Update mutex leader first (db/static files)
-  hosts: tag_mutexleader_true:&tag_environment_dev
+  hosts: tag_mutexleader_true
   roles:
     - mutexleader
 
 - name: Ensure pay.gov instances get the proper setup
-  hosts: tag_role_paygov:&tag_environment_dev
+  hosts: tag_role_paygov
   roles:
     - paygov
 
 - name: Installs the Django Web Application
   hosts:
-    - tag_role_webserver:&tag_environment_dev
-    - tag_role_admin:&tag_environment_dev
-    - tag_role_paygov:&tag_environment_dev
+    - tag_role_webserver
+    - tag_role_admin
+    - tag_role_paygov
   roles:
     - builder
     - role: pyenv
@@ -42,7 +42,7 @@
     - web
 
 - name: Ensure Admin instances get the proper environment set
-  hosts: tag_role_admin:&tag_environment_dev
+  hosts: tag_role_admin
   roles:
     - filetransfer
     - admin

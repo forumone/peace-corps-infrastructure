@@ -5,6 +5,10 @@ variable "aws_region" {
     default = "us-east-1"
 }
 
+variable "18f_tracking" {
+  default = "PC-20140812-20190811-01"
+}
+
 # Ubuntu Trusty 14.04 LTS (x64)
 variable "aws_amis" {
     default = {
@@ -27,6 +31,7 @@ resource "aws_vpc" "peace-corps" {
     cidr_block = "10.19.61.0/24"
     tags {
         Name = "peacecorps"
+        client = "${var.18f_tracking}"
     }
 }
 
@@ -47,6 +52,7 @@ resource "aws_instance" "us-east-1a-nat" {
         Name = "NAT 1A"
         agency = "peacecorps"
         role = "nat"
+        client = "${var.18f_tracking}"
   }
 }
 
@@ -63,6 +69,7 @@ resource "aws_instance" "us-east-1b-nat" {
         Name = "NAT 1B"
         agency = "peacecorps"
         role = "nat"
+        client = "${var.18f_tracking}"
   }
 }
 
@@ -91,6 +98,7 @@ resource "aws_instance" "config1a" {
         Name = "Configuration Management"
         agency = "peacecorps"
         role = "configmanagement"
+        client = "${var.18f_tracking}"
   }
 }
 
@@ -108,6 +116,7 @@ resource "aws_instance" "logging-1a" {
         Name = "Logging Server"
         agency = "peacecorps"
         role = "peacecorps-logging"
+        client = "${var.18f_tracking}"
   }
 }
 resource "aws_instance" "logging-1b" {
@@ -122,10 +131,11 @@ resource "aws_instance" "logging-1b" {
         Name = "Logging Server"
         agency = "peacecorps"
         role = "peacecorps-logging"
+        client = "${var.18f_tracking}"
   }
 }
 
-resource "aws_instance" "admin-dev" {
+resource "aws_instance" "admin" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
@@ -137,12 +147,12 @@ resource "aws_instance" "admin-dev" {
         Name = "Web Admin Server"
         agency = "peacecorps"
         role = "admin"
-        environment = "dev"
         mutexleader = "true"
+        client = "${var.18f_tracking}"
   }
 }
 
-resource "aws_instance" "webapp-dev-1a" {
+resource "aws_instance" "webapp-1a" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
@@ -153,11 +163,11 @@ resource "aws_instance" "webapp-dev-1a" {
         Name = "Web Application Server"
         agency = "peacecorps"
         role = "webserver"
-        environment = "dev"
+        client = "${var.18f_tracking}"
   }
 }
 
-resource "aws_instance" "webapp-dev-1b" {
+resource "aws_instance" "webapp-1b" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
@@ -168,11 +178,11 @@ resource "aws_instance" "webapp-dev-1b" {
         Name = "Web Application Server"
         agency = "peacecorps"
         role = "webserver"
-        environment = "dev"
+        client = "${var.18f_tracking}"
   }
 }
 
-resource "aws_instance" "paygov-dev-1a" {
+resource "aws_instance" "paygov-1a" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
@@ -183,11 +193,11 @@ resource "aws_instance" "paygov-dev-1a" {
         Name = "Pay.Gov Server"
         agency = "peacecorps"
         role = "paygov"
-        environment = "dev"
+        client = "${var.18f_tracking}"
   }
 }
 
-resource "aws_instance" "paygov-dev-1b" {
+resource "aws_instance" "paygov-1b" {
   ami = "${lookup(var.aws_amis, var.aws_region)}"
   instance_type = "t2.micro"
   key_name = "peacecorps-deploy"
@@ -198,50 +208,13 @@ resource "aws_instance" "paygov-dev-1b" {
         Name = "Pay.Gov Server"
         agency = "peacecorps"
         role = "paygov"
-        environment = "dev"
-  }
-}
-
-#### DEV SETUP
-# Create a Dev Machine
-resource "aws_instance" "dev" {
-  ami = "${lookup(var.aws_amis, var.aws_region)}"
-  instance_type = "t2.micro"
-  key_name = "peacecorps"
-  security_groups = ["${aws_security_group.app.id}"]
-  subnet_id = "${aws_subnet.us-east-1a-private.id}"
-  associate_public_ip_address = false
-  tags {
-        Name = "Dev Box"
-        agency = "peacecorps-legacy"
+        client = "${var.18f_tracking}"
   }
 }
 
 # Create a new load balancer
-resource "aws_elb" "webapp-dev" {
-  name = "peacecorps-webapp-dev"
-  subnets = ["${aws_subnet.us-east-1a-public.id}", "${aws_subnet.us-east-1b-public.id}"]
-  
-  listener {
-    instance_port = 80
-    instance_protocol = "http"
-    lb_port = 80
-    lb_protocol = "http"
-  }
-
-  listener {
-    instance_port = 443
-    instance_protocol = "tcp"
-    lb_port = 443
-    lb_protocol = "tcp"
-  }
-
-  instances = ["${aws_instance.webapp-dev-1a.id}", "${aws_instance.webapp-dev-1b.id}"]
-}
-
-# Create a new load balancer
-resource "aws_elb" "paygov-dev" {
-  name = "peacecorps-paygov-dev"
+resource "aws_elb" "webapp" {
+  name = "peacecorps-webapp"
   subnets = ["${aws_subnet.us-east-1a-public.id}", "${aws_subnet.us-east-1b-public.id}"]
 
   listener {
@@ -258,7 +231,29 @@ resource "aws_elb" "paygov-dev" {
     lb_protocol = "tcp"
   }
 
-  instances = ["${aws_instance.paygov-dev-1a.id}", "${aws_instance.paygov-dev-1b.id}"]
+  instances = ["${aws_instance.webapp-1a.id}", "${aws_instance.webapp-1b.id}"]
+}
+
+# Create a new load balancer
+resource "aws_elb" "paygov" {
+  name = "peacecorps-paygov"
+  subnets = ["${aws_subnet.us-east-1a-public.id}", "${aws_subnet.us-east-1b-public.id}"]
+
+  listener {
+    instance_port = 80
+    instance_protocol = "http"
+    lb_port = 80
+    lb_protocol = "http"
+  }
+
+  listener {
+    instance_port = 443
+    instance_protocol = "tcp"
+    lb_port = 443
+    lb_protocol = "tcp"
+  }
+
+  instances = ["${aws_instance.paygov-1a.id}", "${aws_instance.paygov-1b.id}"]
 }
 
 # Create a new load balancer

@@ -29,7 +29,7 @@ resource "aws_route53_record" "donate-peacecorps-dev" {
    name = "donate.peacecorps-dev.18f.us"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_elb.webapp-dev.dns_name}"]
+   records = ["${aws_elb.webapp.dns_name}"]
 }
 
 resource "aws_route53_record" "pay-donate-peacecorps-dev" {
@@ -45,7 +45,7 @@ resource "aws_route53_record" "donate-peacecorps-internal" {
    name = "donate.peacecorps.internal"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_elb.webapp-dev.dns_name}"]
+   records = ["${aws_elb.webapp.dns_name}"]
 }
 
 resource "aws_route53_record" "pay-donate-peacecorps-internal" {
@@ -53,7 +53,7 @@ resource "aws_route53_record" "pay-donate-peacecorps-internal" {
    name = "pay.donate.peacecorps.internal"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_elb.paygov-dev.dns_name}"]
+   records = ["${aws_elb.paygov.dns_name}"]
 }
 
 resource "aws_route53_record" "logging-peacecorps-internal" {
@@ -69,7 +69,7 @@ resource "aws_route53_record" "filetransfer-dev" {
    name = "filetransfer-dev.beta.peacecorps.gov"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_instance.admin-dev.public_dns}"]
+   records = ["${aws_instance.admin.public_dns}"]
 }
 
 resource "aws_route53_record" "admin" {
@@ -77,5 +77,5 @@ resource "aws_route53_record" "admin" {
    name = "admin.beta.peacecorps.gov"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_instance.admin-dev.public_dns}"]
+   records = ["${aws_instance.admin.public_dns}"]
 }
