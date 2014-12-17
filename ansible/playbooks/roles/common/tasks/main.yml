@@ -1,6 +1,7 @@
 ---
 - include: install_fail2ban.yml
 - include: create_deploy_user.yml
+- include: install_sslmate.yml
 
 - name: Add Elasticsearch apt-key
   apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
