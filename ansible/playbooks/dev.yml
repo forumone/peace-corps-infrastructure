@@ -4,12 +4,6 @@
   roles:
     - common
 
-- name: Get SSL Certificates figured out
-  hosts: 127.0.0.1
-  connection: local
-  roles:
-    - sslmaster
-
 - name: Creates a NAT Instance
   hosts: tag_role_nat
   roles:

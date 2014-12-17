@@ -1,9 +1,0 @@
----
-
-- name: See if the beta.peacecorps.gov certificate exists
-  stat: path=/etc/sslmate/beta.peacecorps.gov.key
-  register: betapeacecorpsgovkey
-
-- name: Buy a key for beta.peacecorps.gov
-  command: sslmate buy beta.peacecorps.gov
-  when: not betapeacecorpsgovkey.stat.exists
