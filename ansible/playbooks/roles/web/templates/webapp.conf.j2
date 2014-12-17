@@ -52,6 +52,13 @@ server {
     {% if 'tag_role_paygov' in group_names %}
     # We don't pass auth here
     {% else %}
+    satisfy any;
+
+    allow 159.142.0.0/16;
+    allow 65.205.231.0/24;
+
+    deny all;
+
     auth_basic "Restricted";
     auth_basic_user_file /etc/nginx/.htpasswd;
     {% endif %}
