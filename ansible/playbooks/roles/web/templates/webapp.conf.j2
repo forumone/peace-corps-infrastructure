@@ -5,12 +5,13 @@ upstream app_server_djangoapp {
 server {
   {% if 'tag_role_admin' in group_names %}
   listen 443 ssl spdy;
+  client_max_body_size 10M;
+
   {% else %}
   listen 443 ssl spdy proxy_protocol;
   {% endif %}
 
   {% if 'tag_role_paygov' in group_names %}
-
   server_name pay.donate.peacecorps.internal;
 
   ssl_certificate      /etc/nginx/ssl/keys/pay.donate.peacecorps.internal.crt;
