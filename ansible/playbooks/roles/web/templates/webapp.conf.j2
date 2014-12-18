@@ -90,7 +90,7 @@ server {
         # We allow you, on admin instances, to not append /admin to the URL
         # TODO: Clean this up.
         rewrite ^/admin/(.*) /admin/$1 break;
-        rewrite ^/admin/(.*) /$1 break;
+        rewrite ^/(.*) /admin/$1 break;
 
       {% endif %}
 
