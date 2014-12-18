@@ -73,6 +73,9 @@ server {
     {% endif %}
 
     if (!-f $request_filename) {
+      {% if 'tag_role_admin' in group_names %}
+      rewrite ^/admin/(.*) /$1 break;
+      {% endif %}
       proxy_pass http://app_server_djangoapp;
       break;
     }
