@@ -19,3 +19,6 @@
 - name: Install sslmate
   apt: name=sslmate state=latest
   sudo: yes
+
+- name: Configure SSLMate
+  template: src=sslmate.conf.j2 dest=/etc/sslmate.conf
