@@ -46,7 +46,7 @@
   copy: src=beta.peacecorps.gov.key dest=/etc/nginx/ssl/keys/beta.peacecorps.gov.key
 
 - name: Place Donate SSL Certificate
-  cmd: sslmate download beta.peacecorps.gov
+  command: sslmate download beta.peacecorps.gov
   notify:
     - restart nginx
 
