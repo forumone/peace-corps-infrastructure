@@ -20,5 +20,8 @@
   apt: name=sslmate state=latest
   sudo: yes
 
+- name: Ensure SSLMate Directory exists
+  file: path=/etc/sslmate state=directory
+
 - name: Configure SSLMate
   template: src=sslmate.conf.j2 dest=/etc/sslmate.conf

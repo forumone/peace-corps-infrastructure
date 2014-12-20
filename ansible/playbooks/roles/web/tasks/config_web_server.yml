@@ -43,10 +43,10 @@
   when: not dhparam2048.stat.exists
 
 - name: Place Donate SSL Key
-  copy: src=beta.peacecorps.gov.key dest=/etc/nginx/ssl/keys/beta.peacecorps.gov.key
+  copy: src=beta.peacecorps.gov.key dest=/etc/sslmate/beta.peacecorps.gov.key
 
 - name: Place Donate SSL Certificate
-  command: sslmate download beta.peacecorps.gov
+  command : sslmate download beta.peacecorps.gov
   notify:
     - restart nginx
 
