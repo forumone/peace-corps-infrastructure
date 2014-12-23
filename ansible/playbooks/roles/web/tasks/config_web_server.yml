@@ -49,6 +49,7 @@
   command : sslmate download beta.peacecorps.gov
   register: sslmate_result
   failed_when: sslmate_result.rc not in (0, 10)
+  changed_when: sslmate_result.rc == 0
   notify:
     - restart nginx
 

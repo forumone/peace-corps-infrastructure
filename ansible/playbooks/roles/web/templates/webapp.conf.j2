@@ -24,8 +24,8 @@ server {
   {% else %}
   # Otherwise, we assume this is a webapp
     server_name {{root_domain_name}};
-    ssl_certificate      /etc/sslmate/beta.peacecorps.gov.chained.crt
-    ssl_certificate_key  /etc/sslmate/beta.peacecorps.gov.key
+    ssl_certificate      /etc/sslmate/beta.peacecorps.gov.chained.crt;
+    ssl_certificate_key  /etc/sslmate/beta.peacecorps.gov.key;
 
   {% endif %}
 
