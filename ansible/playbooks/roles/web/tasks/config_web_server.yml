@@ -47,6 +47,8 @@
 
 - name: Place Donate SSL Certificate
   command : sslmate download beta.peacecorps.gov
+  register: sslmate_result
+  failed_when: sslmate_result.rc not in (0, 10)
   notify:
     - restart nginx
 
