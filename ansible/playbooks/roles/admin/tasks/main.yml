@@ -35,3 +35,13 @@
   lineinfile: dest="/home/{{deploy_user}}/.bashrc" line="source /home/{{deploy_user}}/admin-dev.sh"
   sudo_user: "{{deploy_user}}"
 
+- name: Place Admin SSL Key
+  copy: src=admin.beta.peacecorps.gov.key dest=/etc/sslmate/admin.beta.peacecorps.gov.key
+
+- name: Place Donate SSL Certificate
+  command : sslmate download admin.beta.peacecorps.gov
+  register: sslmate_result
+  failed_when: sslmate_result.rc not in (0, 10)
+  changed_when: sslmate_result.rc == 0
+  notify:
+    - restart nginx
