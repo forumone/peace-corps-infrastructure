@@ -21,11 +21,16 @@ server {
     ssl_certificate      /etc/nginx/ssl/keys/pay.donate.peacecorps.internal.crt;
     ssl_certificate_key  /etc/nginx/ssl/keys/pay.donate.peacecorps.internal.key;
 
+  {% elif 'tag_role_admin' in group_names %}
+    server_name admin.beta.peacecorps.gov;
+    ssl_certificate      /etc/sslmate/admin.beta.peacecorps.gov.chained.crt;
+    ssl_certificate_key  /etc/sslmate/admin.beta.peacecorps.gov.key;
+
   {% else %}
   # Otherwise, we assume this is a webapp
-    server_name {{root_domain_name}};
-    ssl_certificate      /etc/sslmate/{{root_domain_name}}.chained.crt;
-    ssl_certificate_key  /etc/sslmate/{{root_domain_name}}.key;
+    server_name beta.peacecorps.gov;
+    ssl_certificate      /etc/sslmate/beta.peacecorps.gov.chained.crt;
+    ssl_certificate_key  /etc/sslmate/beta.peacecorps.gov.key;
 
   {% endif %}
 
