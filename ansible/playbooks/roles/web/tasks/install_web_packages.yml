@@ -14,3 +14,4 @@
     - supervisor
     - postgresql-client-common
     - postgresql-client
+    - libmemcached-dev
