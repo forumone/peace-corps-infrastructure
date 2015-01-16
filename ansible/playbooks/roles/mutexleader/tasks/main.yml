@@ -30,4 +30,4 @@
 - name: cron job for synchronizing accounting
   when: filetransfer_incoming.stat.exists
   cron: name="Every hour, synchronize accounting data" minute=13 user={{deploy_user}}
-        job="/home/{{deploy_user}}/manage.sh sync_account `ls -t1 /home/filetransfer/incoming/*.csv | head -n 1`"
+        job="/home/{{deploy_user}}/manage.sh sync_accounting `ls -t1 /home/filetransfer/incoming/*.csv | head -n 1`"
