@@ -9,7 +9,10 @@
   command: "{{ item }}"
   sudo: yes
   with_items:
-    - service supervisor stop
-    - service supervisor start
     - service nginx stop
     - service nginx start
+
+- name: restart peacecorps
+  command: "supervisorctl restart {{app_name}}"
+  sudo_user: "{{deploy_user}}"
+  sudo: yes
