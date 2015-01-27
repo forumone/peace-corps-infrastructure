@@ -69,29 +69,6 @@ server {
     proxy_set_header Host $http_host;
     proxy_redirect off;
 
-    {% if 'tag_role_paygov' not in group_names %}
-      # We set some policies here to force authentication unless coming
-      # from a trusted IP
-      satisfy any;
-
-      # GSA
-      allow 159.142.0.0/16;
-
-      # Peace Corps
-      allow 65.205.231.0/24;
-      allow 108.171.130.0/24;
-      allow 108.171.133.0/24;
-      allow 72.37.171.131/32;
-      allow 72.37.171.132/32;
-      allow 80.254.156.99/32;
-      allow 80.254.156.100/32;
-
-      deny all;
-
-      auth_basic "Restricted";
-      auth_basic_user_file /etc/nginx/.htpasswd;
-    {% endif %}
-
     if (!-f $request_filename) {
       {% if 'tag_role_admin' in group_names %}
         # We allow you, on admin instances, to not append /admin to the URL
