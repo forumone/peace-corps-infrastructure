@@ -3,7 +3,7 @@
 - include: install_nginx.yml
 - include: config_web_server.yml
 - include: config_web_app.yml
-- include: config_supervisor.yml
+- include: config_upstart.yml
 
 - name: Ensure everything is restarted and running
   command: "{{ item }}"
@@ -11,8 +11,3 @@
   with_items:
     - service nginx stop
     - service nginx start
-
-- name: restart peacecorps
-  command: "supervisorctl restart {{app_name}}"
-  sudo_user: "{{deploy_user}}"
-  sudo: yes
