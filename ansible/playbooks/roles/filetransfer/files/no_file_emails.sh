@@ -1,1 +1,1 @@
-../../../../secrets/no_file_emails.sh.unencrypted
+../../../../secrets/no_file_emails.sh.enc.unencrypted
