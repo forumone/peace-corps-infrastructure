@@ -31,7 +31,7 @@
   copy: src=no_file_emails.sh dest="/home/filetransfer/no_file_emails.sh"
 
 - name: place script to run which checks for missing uploads
-  copy: src=check_arrived.sh dest="/home/filetransfer/check_arrived.sh" mode="a+x"
+  copy: src=check_arrived.sh dest="/home/filetransfer/check_arrived.sh" mode=0755
 
 - name: cron job for sending alerts if a file hasn't arrived
   cron: name="Every hour, check if a file hasn't arrived in the past 24" minute=13
