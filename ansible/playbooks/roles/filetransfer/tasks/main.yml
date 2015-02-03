@@ -25,4 +25,11 @@
 
 - name: cron job for deleting old files
   cron: name="Every hour, synchronize accounting data" minute=27
-        job="find /home/filetransfer/incoming/*.csv -mtime +7 | xargs echo >> /tmp/verify.txt"
+        job="find /home/filetransfer/incoming/*.csv -mtime +7 | xargs rm"
+
+- name: install a mailer
+  apt: name=mailutils
+
+#- name: cron job for sending alerts if a file hasn't arrived
+#  cron: name="Every hour, check if a file hasn't arrived in the past 24" minute=13
+#        job=/home/filetransfer/check_arrived.sh
