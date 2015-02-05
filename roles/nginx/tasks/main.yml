@@ -1,0 +1,41 @@
+
+---
+# These tasks install and set up nginx
+
+- name: Get the more recent nginx repository
+  apt_repository: repo='ppa:nginx/stable'
+
+- name: Install nginx
+  apt: name=nginx state=latest
+
+- name: Start nginx
+  service: name=nginx state=started enabled=yes
+
+- name: Create proper ELB Logging Syntax
+  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf
+  sudo: yes
+  notify:
+    - restart nginx
+
+- name: Ensure nginx ssl directory
+  file: dest=/etc/nginx/ssl state=directory
+
+- name: Ensure nginx ssl directory for keys
+  file: dest=/etc/nginx/ssl/keys state=directory
+
+- name: Download SSL Rules
+  command: curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/ssl.rules
+
+- name: Get Eric's DH 3072 rules
+  command: curl -o /etc/nginx/ssl/dhparam3072.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam3072.pem
+
+- name: Get Eric's DH 4096 rules
+  command: curl -o /etc/nginx/ssl/dhparam4096.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam4096.pem
+
+- name: check if dhparam exists
+  stat: path=/etc/nginx/ssl/dhparam2048.pem
+  register: dhparam2048
+
+- name: Generate our own DH 2048 Params
+  command: openssl dhparam -outform pem -out /etc/nginx/ssl/dhparam2048.pem 2048
+  when: not dhparam2048.stat.exists
