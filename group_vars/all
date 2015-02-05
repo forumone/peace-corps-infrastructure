@@ -1,16 +1,16 @@
 ---
 # The app_name should be a shorthand, lowecase, no spaces version of the
 # application name since this variable will be used as a directory name
-app_name: %AppName%
+app_name: AppName
 
 # The URL you should expect to find the application at
-app_url: %AppUrl%
+app_url: AppUrl
 
 # The URL for pay.gov access
-paygov_url: %PayGovURL%
+paygov_url: PayGovURL
 
 # The deploy_user is the username created to deploy the application on
-deploy_user: %DeployUser%
+deploy_user: DeployUser
 
 # The Directory the application is deployed to
 app_code_dir: /home/{{deploy_user}}/{{app_name}}
