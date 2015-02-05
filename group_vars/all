@@ -12,6 +12,8 @@ paygov_url: PayGovURL
 # The deploy_user is the username created to deploy the application on
 deploy_user: DeployUser
 
+code_repository: CodeRepository
+
 # The Directory the application is deployed to
 app_code_dir: /home/{{deploy_user}}/{{app_name}}
 
