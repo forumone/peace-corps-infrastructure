@@ -1,7 +1,7 @@
 ---
 # The app_name should be a shorthand, lowecase, no spaces version of the
 # application name since this variable will be used as a directory name
-app_name: AppName
+app_name: peacecorps
 
 # The URL you should expect to find the application at
 app_url: AppUrl
@@ -12,7 +12,11 @@ paygov_url: PayGovURL
 # The deploy_user is the username created to deploy the application on
 deploy_user: DeployUser
 
+# The repository to get application code from
 code_repository: CodeRepository
+
+# The branch of that repository to get code from
+
 
 # The Directory the application is deployed to
 app_code_dir: /home/{{deploy_user}}/{{app_name}}
@@ -28,8 +32,3 @@ django_settings_dir_name: "/home/{{deploy_user}}/{{app_name}}/{{app_name}}"
 
 # Location of the pip requirements file in the application directory
 requirements_file: "{{app_code_dir}}/requirements.txt"
-
-secrets_bucket: SecretsBucket
-
-# A Shortcut to Decrypt a file
-decrypt: openssl aes-256-cbc -d -a -salt -pass file:/home/ubuntu/decrypt.txt
