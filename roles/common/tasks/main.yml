@@ -1,0 +1,41 @@
+---
+# These tasks install and set up fail2ban
+- name: ensure apt cache is up to date
+  apt: update_cache=yes
+  sudo: yes
+
+- name: Install fail2ban
+  apt: name=fail2ban state=latest
+  sudo: yes
+
+# Ensure git is present
+- name: Install git
+  apt: name=git state=latest
+  sudo: yes
+
+# Creates a user for deployment of things
+- name: Create Deployment group
+  group: name="{{deploy_user}}" state=present
+  sudo: yes
+
+- name: Create Deployment user
+  user: name="{{deploy_user}}" comment="{{deploy_user}}" group="{{deploy_user}}"
+  sudo: yes
+
+# Ensure Build-essential is present
+- name: Install build-essential
+  apt: name=build-essential state=latest
+  sudo: yes
+
+# Get AWS CLI installed
+- name: Install python-pip
+  apt: name=python-pip state=latest
+  sudo: yes
+
+- name: Install boto with pip
+  pip: name=boto
+  sudo: yes
+
+- name: Install awscli with pip
+  pip: name=awscli
+  sudo: yes

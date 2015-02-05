@@ -1,0 +1,82 @@
+###
+# Configures the django application
+#
+- name: see if the code repository exists
+  stat: path="{{app_code_dir}}"
+  register: existing_app_code_dir
+
+- name: checkout web app code if the directory does not exist
+  git: repo={{code_repository}} dest={{app_code_dir}}
+  sudo_user: "{{deploy_user}}"
+  when: existing_app_code_dir.stat.isdir is not defined
+
+- name: pull for latest from the master branch if code directoy exists
+  command: git pull origin master
+  sudo_user: "{{deploy_user}}"
+  args:
+    chdir: "{{app_code_dir}}"
+  when: existing_app_code_dir.stat.isdir is defined
+
+- name: install web application dependencies listed in requirements.txt
+  sudo_user: "{{deploy_user}}"
+  pip: requirements={{requirements_file}}
+       virtualenv={{virtualenv_dir}}
+
+- name: ensure gunicorn is installed
+  sudo_user: "{{deploy_user}}"
+  pip: name=gunicorn virtualenv={{virtualenv_dir}}
+
+- name: check if app/static directory exists
+  file: path=/var/www/static owner={{deploy_user}} state=directory
+
+- name: check/create gunicorn log directory
+  file: path=/var/log/gunicorn owner={{deploy_user}} state=directory
+
+- name: check/create app log file
+  file: path=/var/log/webapp.log owner={{deploy_user}} state=touch
+
+- name: check/create gpg directory
+  file: path=/gpg owner={{deploy_user}} state=directory
+
+- name: Download gpg public key store (encrypted)
+  command: aws s3 cp s3://{{secrets_bucket}}/pubring.gpg.enc /tmp/pubring.gpg.enc
+  args:
+    creates: /tmp/pubring.gpg.enc
+
+- name: Decrypt and place public key store
+  command: "{{decrypt}} -in /tmp/pubring.gpg.enc -out /gpg/pubring.gpg"
+  args:
+    creates: /gpg/pubring.gpg
+
+- name: Set owner of pubring
+  file: path=/gpg/pubring.gpg owner={{deploy_user}} state=touch
+
+- name: Download gpg trust store (encrypted)
+  command: aws s3 cp s3://{{secrets_bucket}}/trustdb.gpg.enc /tmp/trustdb.gpg.enc
+  args:
+    creates: /tmp/trustdb.gpg.enc
+
+- name: Decrypt and place trust store
+  command: "{{decrypt}} -in /tmp/trustdb.gpg.enc -out /gpg/trustdb.gpg"
+  args:
+    creates: /gpg/trustdb.gpg
+
+- name: Set owner of trust store
+  file: path=/gpg/trustdb.gpg owner={{deploy_user}} state=touch
+
+- name: Download webserver environmental variables (encrypted)
+  command: aws s3 cp s3://{{secrets_bucket}}/webserver-dev.sh.enc /tmp/webserver-dev.sh.enc
+  args:
+    creates: /tmp/webserver-dev.sh.enc
+
+- name: Decrypt and place webserver environmental variables
+  command: "{{decrypt}} -in /tmp/webserver-dev.sh.enc -out /home/{{deploy_user}}/webserver-dev.sh"
+  args:
+    creates: /home/{{deploy_user}}/webserver-dev.sh
+
+- name: Set owner of trust store
+  file: path="/home/{{deploy_user}}/webserver-dev.sh" owner={{deploy_user}} state=touch
+
+- name: place django management script
+  template: src=manage.sh.j2 dest=/home/{{deploy_user}}/manage.sh mode=700
+  sudo_user: "{{deploy_user}}"

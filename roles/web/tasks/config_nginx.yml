@@ -1,0 +1,22 @@
+###
+# Configures nginx for the web application
+#
+
+- name: Place application SSL certificate
+  copy: src="{{app_url}}.chained.crt" dest="/etc/nginx/ssl/keys/{{app_url}}.chained.crt"
+
+- name: Download application SSL Key (encrypted)
+  command: aws s3 cp s3://{{secrets_bucket}}/{{app_url}}.key.enc /tmp/{{app_url}}.key.enc
+  args:
+    creates: /tmp/{{app_url}}.key.enc
+
+- name: Decrypt and place application SSL Key
+  command: "{{decrypt}} -in /tmp/{{app_url}}.key.enc -out /etc/nginx/ssl/keys/{{app_url}}.key"
+  args:
+    creates: /etc/nginx/ssl/keys/{{app_url}}.key
+
+- name: write nginx configuration
+  template: src=webapp.conf.j2 dest=/etc/nginx/sites-enabled/{{app_name}}
+  sudo: yes
+  notify:
+    - restart nginx

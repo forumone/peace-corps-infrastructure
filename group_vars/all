@@ -1,0 +1,31 @@
+---
+# The app_name should be a shorthand, lowecase, no spaces version of the
+# application name since this variable will be used as a directory name
+app_name: %AppName%
+
+# The URL you should expect to find the application at
+app_url: %AppUrl%
+
+# The URL for pay.gov access
+paygov_url: %PayGovURL%
+
+# The deploy_user is the username created to deploy the application on
+deploy_user: %DeployUser%
+
+# The Directory the application is deployed to
+app_code_dir: /home/{{deploy_user}}/{{app_name}}
+
+# The version of python to deploy
+python_version: 3.4.1
+
+# The directory the virtualenv will be created in
+virtualenv_dir: /home/{{deploy_user}}/pyenv/versions/{{app_name}}-{{python_version}}
+
+# The django project settings directory
+django_settings_dir_name: "/home/{{deploy_user}}/{{app_name}}/{{app_name}}"
+
+# Location of the pip requirements file in the application directory
+requirements_file: "{{app_code_dir}}/requirements.txt"
+
+# A Shortcut to Decrypt a file
+decrypt: openssl aes-256-cbc -d -a -salt -pass file:/home/ubuntu/decrypt.txt

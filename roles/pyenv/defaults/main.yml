@@ -1,0 +1,8 @@
+---
+# defaults file for pyenv
+pyenv_path: "/home/{{deploy_user}}/pyenv"
+pyenv_owner: "{{ deploy_user }}"
+pyenv_python_versions:
+  - "{{python_version}}"
+pyenv_virtualenvs:
+  - { venv_name: "latest", py_version: "{{python_version}}" }

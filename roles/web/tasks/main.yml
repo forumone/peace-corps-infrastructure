@@ -1,0 +1,18 @@
+---
+
+- name: ensure web server packages are installed
+  apt: name="{{item}}" state=latest
+  with_items:
+    - openssl
+    - libssl-dev
+    - python-dev
+    - libevent-dev
+    - libpq-dev
+    - python-virtualenv
+    - postgresql-client-common
+    - postgresql-client
+    - libmemcached-dev
+
+- include: config_nginx.yml
+- include: config_web_app.yml
+- include: config_upstart.yml

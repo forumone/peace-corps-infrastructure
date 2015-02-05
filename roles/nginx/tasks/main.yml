@@ -4,12 +4,15 @@
 
 - name: Get the more recent nginx repository
   apt_repository: repo='ppa:nginx/stable'
+  sudo: yes
 
 - name: Install nginx
   apt: name=nginx state=latest
+  sudo: yes
 
 - name: Start nginx
   service: name=nginx state=started enabled=yes
+  sudo: yes
 
 - name: Create proper ELB Logging Syntax
   template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf
@@ -19,18 +22,23 @@
 
 - name: Ensure nginx ssl directory
   file: dest=/etc/nginx/ssl state=directory
+  sudo: yes
 
 - name: Ensure nginx ssl directory for keys
   file: dest=/etc/nginx/ssl/keys state=directory
+  sudo: yes
 
 - name: Download SSL Rules
-  command: curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/ssl.rules
+  get_url: url=https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/ssl.rules dest=/etc/nginx/ssl/ssl.rules
+  sudo: yes
 
 - name: Get Eric's DH 3072 rules
-  command: curl -o /etc/nginx/ssl/dhparam3072.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam3072.pem
+  get_url: url=https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam3072.pem dest=/etc/nginx/ssl/dhparam3072.pem
+  sudo: yes
 
 - name: Get Eric's DH 4096 rules
-  command: curl -o /etc/nginx/ssl/dhparam4096.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam4096.pem
+  get_url: url=https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam4096.pem dest=/etc/nginx/ssl/dhparam4096.pem
+  sudo: yes
 
 - name: check if dhparam exists
   stat: path=/etc/nginx/ssl/dhparam2048.pem
@@ -38,4 +46,5 @@
 
 - name: Generate our own DH 2048 Params
   command: openssl dhparam -outform pem -out /etc/nginx/ssl/dhparam2048.pem 2048
+  sudo: yes
   when: not dhparam2048.stat.exists

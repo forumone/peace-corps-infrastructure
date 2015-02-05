@@ -1,0 +1,16 @@
+###
+# sets up the upstart configuration and handles any restarting issues
+#
+---
+
+- name: Write app config
+  template: src="upstart_app.conf" dest="/etc/init/{{app_name}}.conf"
+  sudo: yes
+
+- name: restart upstart
+  service: name="{{app_name}}" state=started
+  sudo: yes
+
+- name: reload gunicorn
+  command: "reload {{app_name}}"
+  sudo: yes
