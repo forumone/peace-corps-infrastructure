@@ -1,0 +1,7 @@
+---
+# Installs everything for the NAT!
+- hosts: 127.0.0.1
+  connection: local
+  roles:
+    - nginx
+    - nat
