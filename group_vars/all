@@ -27,5 +27,7 @@ django_settings_dir_name: "/home/{{deploy_user}}/{{app_name}}/{{app_name}}"
 # Location of the pip requirements file in the application directory
 requirements_file: "{{app_code_dir}}/requirements.txt"
 
+secrets_bucket: SecretsBucket
+
 # A Shortcut to Decrypt a file
 decrypt: openssl aes-256-cbc -d -a -salt -pass file:/home/ubuntu/decrypt.txt
