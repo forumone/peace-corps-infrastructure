@@ -1,7 +1,7 @@
 ---
 # These tasks install and set up fail2ban
-- name: ensure apt cache is up to date
-  apt: update_cache=yes
+#- name: ensure apt cache is up to date
+#  apt: update_cache=yes
 
 - name: Install fail2ban
   apt: name=fail2ban state=latest
