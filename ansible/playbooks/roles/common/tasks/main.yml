@@ -11,9 +11,9 @@
   apt_repository: repo='deb http://packages.elasticsearch.org/logstashforwarder/debian stable main' state=present
   sudo: yes
 
-- name: Install Logstash Forwarder
-  apt: name=logstash-forwarder state=present update_cache=yes force=yes
-  sudo: yes
+#- name: Install Logstash Forwarder
+#  apt: name=logstash-forwarder state=present update_cache=yes force=yes
+#  sudo: yes
 
 - name: Ensure Logstash Forwarder is running
   service: name=logstash-forwarder state=started enabled=yes
