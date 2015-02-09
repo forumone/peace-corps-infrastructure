@@ -1,0 +1,788 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation for a VPC with RDS and web instances",
+
+  "Parameters" : {
+
+    "DescriptionTag": {
+      "Description" : "Stack Name",
+      "Default": "peacecorps-staging",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "AppName": {
+      "Description" : "Application Name",
+      "Default": "peacecorps",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "20",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+      "Default": "18f-aws-herron",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "DBName": {
+      "Default": "peacecorpsprod",
+      "Description" : "Postgres database name",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "64",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+
+    "DBUsername": {
+      "NoEcho": "true",
+      "Default": "peacecorps",
+      "Description" : "Username for Postgres database access",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+
+    "DBPassword": {
+      "NoEcho": "true",
+      "Default": "secret111",
+      "Description" : "Password for Postgres database access",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+    "DBAllocatedStorage": {
+      "Default": "10",
+      "Description" : "The size of the database (Gb)",
+      "Type": "Number",
+      "MinValue": "5",
+      "MaxValue": "1024",
+      "ConstraintDescription" : "must be between 5 and 1024Gb."
+    },
+
+    "InfrastructureBranchName": {
+      "Description" : "Name of the Infrastructure Branch to copy",
+      "Default": "staging",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "DeployToken": {
+      "NoEcho": "true",
+      "Description" : "Github Oauth Deploy Token",
+      "Default": "",
+      "Type": "String"
+    },
+
+    "SecretsBucket": {
+      "NoEcho": "true",
+      "Description" : "The name of the S3 bucket with secrets in it",
+      "Default": "peacecorps-secrets",
+      "Type": "String"
+    },
+
+    "SecretsKey": {
+      "NoEcho": "true",
+      "Description" : "Secure vars decryption key",
+      "Default": "",
+      "Type": "String"
+    },
+
+    "DeployUser": {
+      "Description" : "The user to deploy the application as",
+      "Default": "peacecorps",
+      "Type": "String"
+    },
+
+    "AppUrl": {
+      "Description" : "Application URL",
+      "Default": "peacecorps-prod.18f.us",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "CodeRepository": {
+      "Description" : "Code Repository",
+      "Default": "https://github.com/18f/peacecorps-site.git",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "PayGovURL": {
+      "Description" : "The URL for pay.gov to hit",
+      "Default": "pay.peacecorps-prod.18f.us",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    }
+
+  },
+
+  "Resources" : {
+
+    "mainVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock" : "10.19.61.0/24",
+        "EnableDnsSupport" : "true",
+        "EnableDnsHostnames" : "true",
+        "InstanceTenancy" : "default",
+        "Tags" : [
+          {"Key" : "Name", "Value" : { "Ref": "DescriptionTag" } },
+          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+        ]
+      }
+    },
+
+    "WebSecurityGroup" : {
+     "Type" : "AWS::EC2::SecurityGroup",
+     "Properties" :
+     {
+      "GroupDescription" : "Enable HTTP and HTTPS access",
+      "SecurityGroupIngress" : [
+        {
+          "IpProtocol" : "tcp",
+          "FromPort" : "80",
+          "ToPort" : "80",
+          "CidrIp" : "0.0.0.0/0"
+        },
+        {
+          "IpProtocol" : "tcp",
+          "FromPort" : "443",
+          "ToPort" : "443",
+          "CidrIp" : "0.0.0.0/0"
+          }],
+      "VpcId" : { "Ref" : "mainVPC" }
+     }
+    },
+
+    "LocalTrafficSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable access to local ips",
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "0",
+             "ToPort" : "65535",
+             "CidrIp" : "10.19.61.0/24"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "PublicSSHSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable SSH access via port 22 to known CIDR",
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "22",
+             "ToPort" : "22",
+             "CidrIp" : "159.142.0.0/16"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "AllSSHSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable SSH access via port 22 to everyone",
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "22",
+             "ToPort" : "22",
+             "CidrIp" : "0.0.0.0/0"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "TrustedWebSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable Web Access to Trusted parties",
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "159.142.0.0/16"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "65.205.231.0/24"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "72.37.171.131/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "72.37.171.132/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "80.254.156.99/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "80.254.156.100/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "159.142.0.0/16"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "65.205.231.0/24"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "72.37.171.131/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "72.37.171.132/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "80.254.156.99/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "80.254.156.100/32"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "PayGovSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable access to pay.gov",
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "199.169.197.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "199.169.192.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "199.169.194.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "199.169.197.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "199.169.192.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "199.169.194.157/32"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "RDSSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable postgres access to local ips",
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "5432",
+             "ToPort" : "5432",
+             "CidrIp" : "10.19.61.0/24"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "PublicSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1a",
+        "VpcId" : { "Ref" : "mainVPC" },
+        "CidrBlock" : "10.19.61.0/27",
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Public" },
+          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+        ]
+      }
+    },
+
+    "PublicSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1b",
+        "VpcId" : { "Ref" : "mainVPC" },
+        "CidrBlock" : "10.19.61.32/27",
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Public" },
+          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+        ]
+      }
+    },
+
+    "PrivateSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1a",
+        "VpcId" : { "Ref" : "mainVPC" },
+        "CidrBlock" : "10.19.61.64/27",
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Private" },
+          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+        ]
+      }
+    },
+
+    "PrivateSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1b",
+        "VpcId" : { "Ref" : "mainVPC" },
+        "CidrBlock" : "10.19.61.96/27",
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Private" },
+          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+        ]
+      }
+    },
+
+    "InternetGateway" : {
+      "Type" : "AWS::EC2::InternetGateway",
+      "Properties" : {
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Public" },
+          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+        ]
+      }
+    },
+
+    "AttachGateway" : {
+       "Type" : "AWS::EC2::VPCGatewayAttachment",
+       "Properties" : {
+         "VpcId" : { "Ref" : "mainVPC" },
+         "InternetGatewayId" : { "Ref" : "InternetGateway" }
+       }
+    },
+
+    "PublicRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : {"Ref" : "mainVPC"},
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Public" }
+        ]
+      }
+    },
+
+    "PublicRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PublicRouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "GatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+
+    "PublicSubnetRouteTableAssociationA" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnetA" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PublicSubnetRouteTableAssociationB" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnetB" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PrivateRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : {"Ref" : "mainVPC"},
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Private" }
+        ]
+      }
+    },
+
+    "PrivateRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "InstanceId" : { "Ref" : "NAT" }
+      }
+    },
+
+    "PrivateSubnetRouteTableAssociationA" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnetA" },
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+      }
+    },
+
+    "PrivateSubnetRouteTableAssociationB" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnetB" },
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+      }
+    },
+
+    "S3DataRole" : {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": "ec2.amazonaws.com"},
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "S3DataPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+            "PolicyName": "s3-peacecorps-secrets-get",
+            "PolicyDocument": {
+               "Version" : "2012-10-17",
+               "Statement": [{
+                 "Effect": "Allow",
+                 "Action": "s3:GetObject",
+                 "Resource": "arn:aws:s3:::peacecorps-secrets/*"
+               } ]
+            },
+            "Roles": [ { "Ref": "S3DataRole" } ]
+         }
+      },
+
+    "S3DataInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          { "Ref": "S3DataRole" }
+        ]
+      }
+    },
+
+
+    "NAT" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "InstanceType" : "t2.small",
+        "KeyName" : { "Ref" : "KeyName" },
+        "SourceDestCheck" : "false",
+        "ImageId" : "ami-9eaa1cf6",
+        "IamInstanceProfile": {
+          "Ref": "S3DataInstanceProfile"
+        },
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress" : true,
+            "DeleteOnTermination" : true,
+            "DeviceIndex": 0,
+            "SubnetId": {
+              "Ref": "PublicSubnetA"
+            },
+            "GroupSet": [
+              { "Ref" : "WebSecurityGroup" },
+              { "Ref" : "LocalTrafficSecurityGroup" },
+              { "Ref" : "PublicSSHSecurityGroup" },
+              { "Ref" : "AllSSHSecurityGroup" }
+            ]
+          }
+        ],
+        "Tags" : [
+          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } },
+          {"Key" : "Role", "Value" : { "Ref": "DescriptionTag" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : ["-", [
+            "cf",
+            { "Ref": "DescriptionTag" },
+            "NAT"
+          ]]}}
+        ],
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -ex\n",
+          "apt-get install software-properties-common -y\n",
+          "apt-add-repository ppa:ansible/ansible -y\n",
+          "apt-get update\n",
+          "apt-get upgrade -y\n",
+          "apt-get install git -y\n",
+          "apt-get install ansible -y\n",
+
+          "export LANG=en_US.UTF-8\n",
+          "export LC_ALL=en_US.UTF-8\n",
+
+          "mkdir -p /home/ubuntu\n",
+          "cd /home/ubuntu\n",
+
+          "git clone -b ",
+          { "Ref" : "InfrastructureBranchName" },
+          " --single-branch https://",
+          { "Ref" : "DeployToken" },
+          "@github.com/18F/peace-corps-infrastructure.git cloud-cutter\n",
+          "cd cloud-cutter\n",
+          "sed -i 's/%DESCRIPTION%/", { "Ref" : "DescriptionTag" }, "/g' ec2.ini\n",
+          "sed -i 's/%SecretsBucket%/", { "Ref" : "SecretsBucket" }, "/g' update.sh\n",
+          "sed -i 's/%InfrastructureBranchName%/", { "Ref" : "InfrastructureBranchName" }, "/g' update.sh\n",
+          "echo '", { "Ref" : "SecretsKey" }, "' >> /home/ubuntu/decrypt.txt\n",
+          "ansible-playbook nat.yml --connection=local\n",
+          ""
+          ]]}}
+
+      }
+    },
+
+    "ASGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+        "Properties" : {
+          "AvailabilityZones" : [ { "Fn::GetAtt" : [ "PrivateSubnetA", "AvailabilityZone" ] }, { "Fn::GetAtt" : [ "PrivateSubnetB", "AvailabilityZone" ] } ],
+          "HealthCheckGracePeriod" : 3000,
+          "HealthCheckType" : "ELB",
+          "LaunchConfigurationName" : { "Ref" : "LaunchConfigWeb" },
+          "LoadBalancerNames" : [ { "Ref" : "ELB" } ],
+          "MaxSize" : "5",
+          "MinSize" : "2",
+          "DesiredCapacity" : "2",
+          "Tags" : [ {
+            "Key" : "Description",
+            "Value" : { "Ref": "DescriptionTag" },
+            "PropagateAtLaunch": true
+          }, {
+            "Key" : "Name",
+            "Value" : { "Fn::Join" : ["-", [
+              "cf",
+              { "Ref": "DescriptionTag" },
+              "asg"
+            ]]},
+            "PropagateAtLaunch": true
+            }
+          ],
+          "VPCZoneIdentifier" : [ { "Ref" : "PrivateSubnetA" } , { "Ref" : "PrivateSubnetB" } ]
+        }
+    },
+
+    "LaunchConfigWeb" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "Properties" : {
+        "AssociatePublicIpAddress" : false,
+        "ImageId" : "ami-9eaa1cf6",
+        "InstanceType" : "m3.medium",
+        "KeyName" : { "Ref" : "KeyName" },
+        "SecurityGroups" : [
+          { "Ref" : "LocalTrafficSecurityGroup" }
+        ],
+        "IamInstanceProfile": {
+          "Ref": "S3DataInstanceProfile"
+        },
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -ex\n",
+          "sleep 120\n",
+          "apt-get install software-properties-common -y\n",
+          "apt-add-repository ppa:ansible/ansible -y\n",
+          "apt-get update\n",
+          "apt-get upgrade -y\n",
+          "apt-get install git -y\n",
+          "apt-get install ansible -y\n",
+
+          "export LANG=en_US.UTF-8\n",
+          "export LC_ALL=en_US.UTF-8\n",
+
+          "mkdir -p /home/ubuntu\n",
+          "cd /home/ubuntu\n",
+
+          "git clone -b ",
+          { "Ref" : "InfrastructureBranchName" },
+          " --single-branch https://",
+          { "Ref" : "DeployToken" },
+          "@github.com/18F/peace-corps-infrastructure.git cloud-cutter\n",
+          "cd cloud-cutter\n",
+          "echo '", { "Ref" : "SecretsKey" }, "' >> /home/ubuntu/decrypt.txt\n",
+          "sed -i 's/DeployUser/", { "Ref" : "DeployUser" }, "/g' group_vars/all\n",
+          "sed -i 's/AppName/", { "Ref" : "AppName" }, "/g' group_vars/all\n",
+          "sed -i 's/AppUrl/", { "Ref" : "AppUrl" }, "/g' group_vars/all\n",
+          "sed -i 's/CodeRepository/", { "Ref" : "CodeRepository" }, "/g' group_vars/all\n",
+          "sed -i 's/PayGovURL/", { "Ref" : "PayGovURL" }, "/g' group_vars/all\n",
+          "sed -i 's/SecretsBucket/", { "Ref" : "SecretsBucket" }, "/g' group_vars/all\n",
+          "ansible-playbook web.yml --connection=local\n",
+          "",
+          ""
+        ]]}}
+      }
+    },
+
+    "ELB" : {
+      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties" : {
+        "SecurityGroups" : [ { "Ref" : "WebSecurityGroup" } ],
+        "Subnets" : [
+          { "Ref" : "PublicSubnetA" },
+          { "Ref" : "PublicSubnetB" }
+        ],
+        "Listeners" : [ {
+          "LoadBalancerPort" : "80",
+          "InstancePort" : "80",
+          "Protocol" : "HTTP"
+        },
+        {
+          "LoadBalancerPort" : "443",
+          "InstancePort" : "443",
+          "Protocol" : "TCP"
+        }
+        ],
+        "HealthCheck": {
+           "HealthyThreshold" : "2",
+           "Interval" : "5",
+           "Target" : "TCP:80",
+           "Timeout" : "4",
+           "UnhealthyThreshold" : "3"
+        }
+      }
+    },
+
+
+    "DBSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "VPC Subnets",
+        "SubnetIds": [
+          { "Ref": "PrivateSubnetA" },
+          { "Ref": "PrivateSubnetB" }
+        ],
+        "Tags" : [ {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } } ]
+      }
+    },
+
+    "RDS": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "Engine" : "Postgres",
+        "DBName" : { "Ref": "DBName" },
+        "MultiAZ" : "true",
+        "MasterUsername": { "Ref": "DBUsername" },
+        "MasterUserPassword": { "Ref" : "DBPassword" },
+        "DBInstanceClass": "db.m1.small",
+        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
+        "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+        "VPCSecurityGroups": [
+          { "Ref" : "RDSSecurityGroup" }
+        ],
+        "Tags" : [ {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } } ]
+      }
+    }
+
+  },
+
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Value" : { "Fn::GetAtt" : [ "ELB", "DNSName" ] },
+      "Description" : "URL for the ELB"
+    }
+  }
+}
