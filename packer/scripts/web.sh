@@ -67,7 +67,7 @@ sudo chown peacecorps:peacecorps /home/peacecorps/webserver-init.sh
 
 # We place the django management script
 sudo cp /tmp/files/web/manage.sh /home/peacecorps/manage.sh
-chmod 700 /home/peacecorps/manage.sh
+sudo chmod 700 /home/peacecorps/manage.sh
 sudo chown peacecorps:peacecorps /home/peacecorps/webserver-init.sh
 
 #
