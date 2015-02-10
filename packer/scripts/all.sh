@@ -4,12 +4,12 @@
 export DEPLOY_USER=peacecorps
 
 # Say what environment we are in!
-if [ -f /tmp/environment_staging ];
+if [ -f ~/environment_staging ];
 then
    export PC_ENVIORNMENT=staging
 fi
 
-if [ -f /tmp/environment_production ];
+if [ -f ~/environment_production ];
 then
    export PC_ENVIORNMENT=production
 fi

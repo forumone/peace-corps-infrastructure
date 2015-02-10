@@ -5,9 +5,9 @@
 
   "Parameters" : {
 
-    "DescriptionTag": {
-      "Description" : "Stack Name",
-      "Default": "peacecorps-staging",
+    "ClientID": {
+      "Description" : "Client ID (IAA Number)",
+      "Default": "PC-20140812-20190811-01",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "255",
@@ -15,14 +15,14 @@
       "ConstraintDescription" : "can contain only ASCII characters."
     },
 
-    "AppName": {
-      "Description" : "Application Name",
-      "Default": "peacecorps",
+    "Environment": {
+      "Description" : "Name of the environment (staging or production)",
+      "Default": "staging",
       "Type": "String",
       "MinLength": "1",
-      "MaxLength": "20",
-      "AllowedPattern" : "[a-zA-Z0-9]*",
-      "ConstraintDescription" : "must contain only alphanumeric characters."
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
     },
 
     "KeyName": {
@@ -91,56 +91,6 @@
       "Description" : "Github Oauth Deploy Token",
       "Default": "",
       "Type": "String"
-    },
-
-    "SecretsBucket": {
-      "NoEcho": "true",
-      "Description" : "The name of the S3 bucket with secrets in it",
-      "Default": "peacecorps-secrets",
-      "Type": "String"
-    },
-
-    "SecretsKey": {
-      "NoEcho": "true",
-      "Description" : "Secure vars decryption key",
-      "Default": "",
-      "Type": "String"
-    },
-
-    "DeployUser": {
-      "Description" : "The user to deploy the application as",
-      "Default": "peacecorps",
-      "Type": "String"
-    },
-
-    "AppUrl": {
-      "Description" : "Application URL",
-      "Default": "peacecorps-prod.18f.us",
-      "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "255",
-      "AllowedPattern" : "[\\x20-\\x7E]*",
-      "ConstraintDescription" : "can contain only ASCII characters."
-    },
-
-    "CodeRepository": {
-      "Description" : "Code Repository",
-      "Default": "https://github.com/18f/peacecorps-site.git",
-      "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "255",
-      "AllowedPattern" : "[\\x20-\\x7E]*",
-      "ConstraintDescription" : "can contain only ASCII characters."
-    },
-
-    "PayGovURL": {
-      "Description" : "The URL for pay.gov to hit",
-      "Default": "pay.peacecorps-prod.18f.us",
-      "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "255",
-      "AllowedPattern" : "[\\x20-\\x7E]*",
-      "ConstraintDescription" : "can contain only ASCII characters."
     }
 
   },
@@ -155,32 +105,38 @@
         "EnableDnsHostnames" : "true",
         "InstanceTenancy" : "default",
         "Tags" : [
-          {"Key" : "Name", "Value" : { "Ref": "DescriptionTag" } },
-          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+          {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } },
+          {"Key" : "Application", "Value" : { "Ref": "AWS::StackName" } },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
 
     "WebSecurityGroup" : {
-     "Type" : "AWS::EC2::SecurityGroup",
-     "Properties" :
-     {
-      "GroupDescription" : "Enable HTTP and HTTPS access",
-      "SecurityGroupIngress" : [
-        {
-          "IpProtocol" : "tcp",
-          "FromPort" : "80",
-          "ToPort" : "80",
-          "CidrIp" : "0.0.0.0/0"
-        },
-        {
-          "IpProtocol" : "tcp",
-          "FromPort" : "443",
-          "ToPort" : "443",
-          "CidrIp" : "0.0.0.0/0"
-          }],
-      "VpcId" : { "Ref" : "mainVPC" }
-     }
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP and HTTPS access",
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - WebSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+        "SecurityGroupIngress" : [
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "80",
+            "ToPort" : "80",
+            "CidrIp" : "0.0.0.0/0"
+          },
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "443",
+            "ToPort" : "443",
+            "CidrIp" : "0.0.0.0/0"
+          }
+        ],
+        "VpcId" : { "Ref" : "mainVPC" }
+      }
     },
 
     "LocalTrafficSecurityGroup" : {
@@ -188,6 +144,11 @@
       "Properties" :
       {
        "GroupDescription" : "Enable access to local ips",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - LocalTrafficSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
        "SecurityGroupIngress" : [
          {
              "IpProtocol" : "tcp",
@@ -205,6 +166,11 @@
       "Properties" :
       {
        "GroupDescription" : "Enable SSH access via port 22 to known CIDR",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - PublicSSHSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
        "SecurityGroupIngress" : [
          {
              "IpProtocol" : "tcp",
@@ -222,6 +188,11 @@
       "Properties" :
       {
        "GroupDescription" : "Enable SSH access via port 22 to everyone",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - AllSSHSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
        "SecurityGroupIngress" : [
          {
              "IpProtocol" : "tcp",
@@ -239,6 +210,11 @@
       "Properties" :
       {
        "GroupDescription" : "Enable Web Access to Trusted parties",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - TrustedWebSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
        "SecurityGroupIngress" : [
          {
              "IpProtocol" : "tcp",
@@ -322,6 +298,11 @@
       "Properties" :
       {
        "GroupDescription" : "Enable access to pay.gov",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - PayGovSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
        "SecurityGroupIngress" : [
          {
              "IpProtocol" : "tcp",
@@ -369,6 +350,11 @@
       "Properties" :
       {
        "GroupDescription" : "Enable postgres access to local ips",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - RDSSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
        "SecurityGroupIngress" : [
          {
              "IpProtocol" : "tcp",
@@ -388,9 +374,10 @@
         "VpcId" : { "Ref" : "mainVPC" },
         "CidrBlock" : "10.19.61.0/27",
         "Tags" : [
-          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Name", "Value" : "Peace Corps PublicSubnetA" },
           {"Key" : "Network", "Value" : "Public" },
-          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
@@ -402,9 +389,10 @@
         "VpcId" : { "Ref" : "mainVPC" },
         "CidrBlock" : "10.19.61.32/27",
         "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps PublicSubnetB" },
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
           {"Key" : "Network", "Value" : "Public" },
-          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
@@ -416,9 +404,10 @@
         "VpcId" : { "Ref" : "mainVPC" },
         "CidrBlock" : "10.19.61.64/27",
         "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps PrivateSubnetA" },
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
           {"Key" : "Network", "Value" : "Private" },
-          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
@@ -430,9 +419,10 @@
         "VpcId" : { "Ref" : "mainVPC" },
         "CidrBlock" : "10.19.61.96/27",
         "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps PrivateSubnetA" },
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
           {"Key" : "Network", "Value" : "Private" },
-          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
@@ -441,9 +431,10 @@
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
         "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps Internet Gateway" },
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
           {"Key" : "Network", "Value" : "Public" },
-          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } }
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
@@ -461,8 +452,10 @@
       "Properties" : {
         "VpcId" : {"Ref" : "mainVPC"},
         "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps Public Route Table" },
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
-          {"Key" : "Network", "Value" : "Public" }
+          {"Key" : "Network", "Value" : "Public" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
@@ -497,8 +490,10 @@
       "Properties" : {
         "VpcId" : {"Ref" : "mainVPC"},
         "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps Private Route Table" },
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
-          {"Key" : "Network", "Value" : "Private" }
+          {"Key" : "Network", "Value" : "Private" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
@@ -528,7 +523,7 @@
       }
     },
 
-    "S3DataRole" : {
+    "AccessS3SecretsRole" : {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -545,42 +540,83 @@
       }
     },
 
-    "S3DataPolicy": {
+    "AccessS3SecretsPolicy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
-            "PolicyName": "s3-peacecorps-secrets-get",
-            "PolicyDocument": {
-               "Version" : "2012-10-17",
-               "Statement": [{
-                 "Effect": "Allow",
-                 "Action": "s3:GetObject",
-                 "Resource": "arn:aws:s3:::peacecorps-secrets/*"
-               } ]
-            },
-            "Roles": [ { "Ref": "S3DataRole" } ]
-         }
-      },
+        "PolicyName": "s3-peacecorps-secrets-get",
+        "PolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action": "s3:GetObject",
+            "Resource": { "Fn::Join" : [ "", [
+              "arn:aws:s3:::peacecorps-secrets/",
+              { "Ref": "Environment" },
+              "/*"
+            ]]}
+          }]
+        },
+        "Roles": [ { "Ref": "AccessS3SecretsRole" } ]
+      }
+    },
 
-    "S3DataInstanceProfile": {
+    "AccessS3SecretsProfile": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
         "Path": "/",
         "Roles": [
-          { "Ref": "S3DataRole" }
+          { "Ref": "AccessS3SecretsRole" }
         ]
       }
     },
 
+    "DBSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "VPC Subnets",
+        "SubnetIds": [
+          { "Ref": "PrivateSubnetA" },
+          { "Ref": "PrivateSubnetB" }
+        ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Name", "Value" : "Peace Corps DB Subnet Group" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "RDS": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "Engine" : "Postgres",
+        "DBName" : { "Ref": "DBName" },
+        "MultiAZ" : "true",
+        "MasterUsername": { "Ref": "DBUsername" },
+        "MasterUserPassword": { "Ref" : "DBPassword" },
+        "DBInstanceClass": "db.m1.small",
+        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
+        "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+        "VPCSecurityGroups": [
+          { "Ref" : "RDSSecurityGroup" }
+        ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Name", "Value" : "Peace Corps Database" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
 
     "NAT" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
-        "InstanceType" : "t2.small",
+        "InstanceType" : "t2.micro",
         "KeyName" : { "Ref" : "KeyName" },
         "SourceDestCheck" : "false",
         "ImageId" : "ami-9eaa1cf6",
         "IamInstanceProfile": {
-          "Ref": "S3DataInstanceProfile"
+          "Ref": "AccessS3SecretsProfile"
         },
         "NetworkInterfaces" : [
           {
@@ -599,190 +635,12 @@
           }
         ],
         "Tags" : [
-          {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } },
-          {"Key" : "Role", "Value" : { "Ref": "DescriptionTag" } },
-          {"Key" : "Name", "Value" : { "Fn::Join" : ["-", [
-            "cf",
-            { "Ref": "DescriptionTag" },
-            "NAT"
-          ]]}}
-        ],
-        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/bash -ex\n",
-          "apt-get install software-properties-common -y\n",
-          "apt-add-repository ppa:ansible/ansible -y\n",
-          "apt-get update\n",
-          "apt-get upgrade -y\n",
-          "apt-get install git -y\n",
-          "apt-get install ansible -y\n",
-
-          "export LANG=en_US.UTF-8\n",
-          "export LC_ALL=en_US.UTF-8\n",
-
-          "mkdir -p /home/ubuntu\n",
-          "cd /home/ubuntu\n",
-
-          "git clone -b ",
-          { "Ref" : "InfrastructureBranchName" },
-          " --single-branch https://",
-          { "Ref" : "DeployToken" },
-          "@github.com/18F/peace-corps-infrastructure.git cloud-cutter\n",
-          "cd cloud-cutter\n",
-          "sed -i 's/%DESCRIPTION%/", { "Ref" : "DescriptionTag" }, "/g' ec2.ini\n",
-          "sed -i 's/%SecretsBucket%/", { "Ref" : "SecretsBucket" }, "/g' update.sh\n",
-          "sed -i 's/%InfrastructureBranchName%/", { "Ref" : "InfrastructureBranchName" }, "/g' update.sh\n",
-          "echo '", { "Ref" : "SecretsKey" }, "' >> /home/ubuntu/decrypt.txt\n",
-          "ansible-playbook nat.yml --connection=local\n",
-          ""
-          ]]}}
-
-      }
-    },
-
-    "ASGroup" : {
-      "Type" : "AWS::AutoScaling::AutoScalingGroup",
-        "Properties" : {
-          "AvailabilityZones" : [ { "Fn::GetAtt" : [ "PrivateSubnetA", "AvailabilityZone" ] }, { "Fn::GetAtt" : [ "PrivateSubnetB", "AvailabilityZone" ] } ],
-          "HealthCheckGracePeriod" : 3000,
-          "HealthCheckType" : "ELB",
-          "LaunchConfigurationName" : { "Ref" : "LaunchConfigWeb" },
-          "LoadBalancerNames" : [ { "Ref" : "ELB" } ],
-          "MaxSize" : "5",
-          "MinSize" : "2",
-          "DesiredCapacity" : "2",
-          "Tags" : [ {
-            "Key" : "Description",
-            "Value" : { "Ref": "DescriptionTag" },
-            "PropagateAtLaunch": true
-          }, {
-            "Key" : "Name",
-            "Value" : { "Fn::Join" : ["-", [
-              "cf",
-              { "Ref": "DescriptionTag" },
-              "asg"
-            ]]},
-            "PropagateAtLaunch": true
-            }
-          ],
-          "VPCZoneIdentifier" : [ { "Ref" : "PrivateSubnetA" } , { "Ref" : "PrivateSubnetB" } ]
-        }
-    },
-
-    "LaunchConfigWeb" : {
-      "Type" : "AWS::AutoScaling::LaunchConfiguration",
-      "Properties" : {
-        "AssociatePublicIpAddress" : false,
-        "ImageId" : "ami-9eaa1cf6",
-        "InstanceType" : "m3.medium",
-        "KeyName" : { "Ref" : "KeyName" },
-        "SecurityGroups" : [
-          { "Ref" : "LocalTrafficSecurityGroup" }
-        ],
-        "IamInstanceProfile": {
-          "Ref": "S3DataInstanceProfile"
-        },
-        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/bash -ex\n",
-          "sleep 120\n",
-          "apt-get install software-properties-common -y\n",
-          "apt-add-repository ppa:ansible/ansible -y\n",
-          "apt-get update\n",
-          "apt-get upgrade -y\n",
-          "apt-get install git -y\n",
-          "apt-get install ansible -y\n",
-
-          "export LANG=en_US.UTF-8\n",
-          "export LC_ALL=en_US.UTF-8\n",
-
-          "mkdir -p /home/ubuntu\n",
-          "cd /home/ubuntu\n",
-
-          "git clone -b ",
-          { "Ref" : "InfrastructureBranchName" },
-          " --single-branch https://",
-          { "Ref" : "DeployToken" },
-          "@github.com/18F/peace-corps-infrastructure.git cloud-cutter\n",
-          "cd cloud-cutter\n",
-          "echo '", { "Ref" : "SecretsKey" }, "' >> /home/ubuntu/decrypt.txt\n",
-          "sed -i 's/DeployUser/", { "Ref" : "DeployUser" }, "/g' group_vars/all\n",
-          "sed -i 's/AppName/", { "Ref" : "AppName" }, "/g' group_vars/all\n",
-          "sed -i 's/AppUrl/", { "Ref" : "AppUrl" }, "/g' group_vars/all\n",
-          "sed -i 's/CodeRepository/", { "Ref" : "CodeRepository" }, "/g' group_vars/all\n",
-          "sed -i 's/PayGovURL/", { "Ref" : "PayGovURL" }, "/g' group_vars/all\n",
-          "sed -i 's/SecretsBucket/", { "Ref" : "SecretsBucket" }, "/g' group_vars/all\n",
-          "ansible-playbook web.yml --connection=local\n",
-          "",
-          ""
-        ]]}}
-      }
-    },
-
-    "ELB" : {
-      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
-      "Properties" : {
-        "SecurityGroups" : [ { "Ref" : "WebSecurityGroup" } ],
-        "Subnets" : [
-          { "Ref" : "PublicSubnetA" },
-          { "Ref" : "PublicSubnetB" }
-        ],
-        "Listeners" : [ {
-          "LoadBalancerPort" : "80",
-          "InstancePort" : "80",
-          "Protocol" : "HTTP"
-        },
-        {
-          "LoadBalancerPort" : "443",
-          "InstancePort" : "443",
-          "Protocol" : "TCP"
-        }
-        ],
-        "HealthCheck": {
-           "HealthyThreshold" : "2",
-           "Interval" : "5",
-           "Target" : "TCP:80",
-           "Timeout" : "4",
-           "UnhealthyThreshold" : "3"
-        }
-      }
-    },
-
-
-    "DBSubnetGroup": {
-      "Type": "AWS::RDS::DBSubnetGroup",
-      "Properties": {
-        "DBSubnetGroupDescription": "VPC Subnets",
-        "SubnetIds": [
-          { "Ref": "PrivateSubnetA" },
-          { "Ref": "PrivateSubnetB" }
-        ],
-        "Tags" : [ {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } } ]
-      }
-    },
-
-    "RDS": {
-      "Type": "AWS::RDS::DBInstance",
-      "Properties": {
-        "Engine" : "Postgres",
-        "DBName" : { "Ref": "DBName" },
-        "MultiAZ" : "true",
-        "MasterUsername": { "Ref": "DBUsername" },
-        "MasterUserPassword": { "Ref" : "DBPassword" },
-        "DBInstanceClass": "db.m1.small",
-        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
-        "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
-        "VPCSecurityGroups": [
-          { "Ref" : "RDSSecurityGroup" }
-        ],
-        "Tags" : [ {"Key" : "Description", "Value" : { "Ref": "DescriptionTag" } } ]
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Name", "Value" : "Peace Corps NAT" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
       }
     }
 
-  },
-
-  "Outputs" : {
-    "WebsiteURL" : {
-      "Value" : { "Fn::GetAtt" : [ "ELB", "DNSName" ] },
-      "Description" : "URL for the ELB"
-    }
   }
 }

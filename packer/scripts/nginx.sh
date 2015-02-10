@@ -2,7 +2,8 @@
 
 # Install and start up nginx as a service
 sudo apt-add-repository ppa:nginx/stable -y
-sudo apt-get install nginx
+sudo apt-get update -y
+sudo apt-get install nginx -y
 echo "Nginx Installed"
 
 sudo service nginx start
