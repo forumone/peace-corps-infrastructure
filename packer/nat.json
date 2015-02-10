@@ -1,0 +1,56 @@
+{
+  "variables": {
+    "ami_name": "PeaceCorps-NAT-{{timestamp}}",
+    "environment": "",
+    "domain": "",
+    "paygov_callback_domain": "",
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "source_ami": "ami-9eaa1cf6",
+    "ami_description": "AMI for a NAT in the Peace Corps Stack",
+    "client_id": "PC-20140812-20190811-01",
+    "region": "us-east-1",
+    "subnet_id": "",
+    "vpc_id": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "{{user `region`}}",
+    "source_ami": "{{user `source_ami`}}",
+    "instance_type": "t2.micro",
+    "ssh_username": "ubuntu",
+    "ssh_timeout": "5m",
+    "associate_public_ip_address": true,
+    "ami_virtualization_type": "hvm",
+    "ami_description": "{{user `ami_description`}}",
+    "ami_name": "{{user `ami_name`}}",
+    "vpc_id": "{{user `vpc_id`}}",
+    "subnet_id": "{{user `subnet_id`}}",
+    "enhanced_networking": true,
+    "tags": {
+      "Name": "{{user `ami_name`}}",
+      "Client": "{{ user `client_id`}}",
+    },
+    "tags": {
+      "Name": "{{user `ami_name`}}",
+      "Client": "{{ user `client_id`}}",
+      "Role": "NAT"
+    }
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/all.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/nginx.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/nat.sh"
+    }
+  ]
+}

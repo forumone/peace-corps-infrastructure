@@ -1,0 +1,72 @@
+{
+  "variables": {
+    "ami_name": "PeaceCorps-Web-{{timestamp}}",
+    "environment": "",
+    "domain": "",
+    "paygov_callback_domain": "",
+    "decryption_key": "",
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "source_ami": "ami-9eaa1cf6",
+    "ami_description": "AMI for a WebApp in the Peace Corps Stack",
+    "client_id": "PC-20140812-20190811-01",
+    "region": "us-east-1",
+    "subnet_id": "",
+    "vpc_id": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "{{user `region`}}",
+    "source_ami": "{{user `source_ami`}}",
+    "instance_type": "m3.medium",
+    "ssh_username": "ubuntu",
+    "ssh_timeout": "5m",
+    "associate_public_ip_address": true,
+    "ami_virtualization_type": "hvm",
+    "ami_description": "{{user `ami_description`}}",
+    "ami_name": "{{user `ami_name`}}",
+    "vpc_id": "{{user `vpc_id`}}",
+    "subnet_id": "{{user `subnet_id`}}",
+    "enhanced_networking": true,
+    "iam_instance_profile": "peacecorps-staging-S3DataInstanceProfile-1PB3ULOZL5637",
+    "run_tags": {
+      "Name": "{{user `ami_name`}}",
+      "Client": "{{ user `client_id`}}"
+    },
+    "tags": {
+      "Name": "{{user `ami_name`}}",
+      "Client": "{{ user `client_id`}}",
+      "Role": "NAT"
+    }
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "echo '{{user `environment`}}' > /tmp/pc_environment",
+        "echo '{{user `domain`}}' > /tmp/domain",
+        "echo '{{user `paygov_callback_domain`}}' > /tmp/paygov_callback_domain",
+        "echo '{{user `decryption_key`}}' > ~/decryption_key"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "files",
+      "destination": "/tmp"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/all.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/nginx.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/web.sh"
+    }
+  ]
+}
