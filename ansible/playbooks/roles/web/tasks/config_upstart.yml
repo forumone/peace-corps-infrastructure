@@ -12,5 +12,5 @@
   sudo: yes
 
 - name: reload gunicorn
-  command: "reload {{app_name}}"
+  command: "restart {{app_name}}"
   sudo: yes
