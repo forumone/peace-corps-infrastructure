@@ -1,4 +1,4 @@
-#/bin/bash
+#/bin/bash -x
 
 # Install and start up nginx as a service
 sudo apt-add-repository ppa:nginx/stable -y
@@ -9,6 +9,9 @@ echo "Nginx Installed"
 sudo service nginx start
 sudo update-rc.d nginx defaults
 echo "Nginx Service Started"
+
+# Place the nginx configuration
+sudo cp /tmp/files/web/nginx.conf /etc/nginx/nginx.conf
 
 # Create the SSL Keys Directory, download SSL rules
 sudo mkdir -p /etc/nginx/ssl/keys

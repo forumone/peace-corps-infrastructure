@@ -1,6 +1,6 @@
 {
   "variables": {
-    "ami_name": "PeaceCorps-Web-{{timestamp}}",
+    "ami_name": "PeaceCorps-PayGov-{{timestamp}}",
     "environment": "",
     "domain": "",
     "paygov_callback_domain": "",
@@ -8,7 +8,7 @@
     "aws_access_key": "",
     "aws_secret_key": "",
     "source_ami": "ami-9eaa1cf6",
-    "ami_description": "AMI for a WebApp in the Peace Corps Stack",
+    "ami_description": "AMI for a PayGov instance in the Peace Corps Stack",
     "client_id": "PC-20140812-20190811-01",
     "region": "us-east-1",
     "subnet_id": "",
@@ -20,7 +20,7 @@
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "{{user `region`}}",
     "source_ami": "{{user `source_ami`}}",
-    "instance_type": "m3.medium",
+    "instance_type": "t2.micro",
     "ssh_username": "ubuntu",
     "ssh_timeout": "5m",
     "associate_public_ip_address": true,
@@ -45,7 +45,7 @@
       "type": "shell",
       "inline": [
         "echo '{{user `environment`}}' > ~/pc_environment",
-        "echo '{{user `domain`}}' > ~/domain",
+        "echo 'pay.{{user `domain`}}' > ~/domain",
         "echo '{{user `decryption_key`}}' > ~/decryption_key.txt"
       ]
     },
@@ -65,6 +65,10 @@
     {
       "type": "shell",
       "script": "scripts/web.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/paygov.sh"
     }
   ]
 }

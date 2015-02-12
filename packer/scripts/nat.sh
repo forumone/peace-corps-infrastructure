@@ -1,4 +1,4 @@
-#/bin/bash
+#/bin/bash -x
 
 # Ensure ipv4 forwarding is enabled
 sudo sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf

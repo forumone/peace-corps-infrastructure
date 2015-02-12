@@ -1,4 +1,4 @@
-#/bin/bash
+#/bin/bash -x
 
 # Set some simple global environmental variables
 export DEPLOY_USER=peacecorps

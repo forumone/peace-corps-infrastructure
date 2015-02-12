@@ -1,4 +1,4 @@
-#/bin/bash
+#/bin/bash -x
 
 # Set some variables we'll use throughout this
 domain=$(cat /home/ubuntu/domain)
@@ -55,8 +55,6 @@ aws s3 cp s3://peacecorps-secrets/${environment}/trustdb.gpg.enc /tmp/trustdb.gp
 sudo openssl aes-256-cbc -d -a -salt -pass file:/home/ubuntu/decryption_key.txt -in /tmp/trustdb.gpg.enc -out /gpg/trustdb.gpg
 sudo chown peacecorps:peacecorps /gpg/trustdb.gpg
 
-sudo service nginx restart
-
 #
 ### Management Scripts Configuration ###
 #
@@ -68,15 +66,20 @@ sudo chown peacecorps:peacecorps /home/peacecorps/webserver-init.sh
 # We place the django management script
 sudo cp /tmp/files/web/manage.sh /home/peacecorps/manage.sh
 sudo chmod 700 /home/peacecorps/manage.sh
-sudo chown peacecorps:peacecorps /home/peacecorps/webserver-init.sh
+sudo chown peacecorps:peacecorps /home/peacecorps/manage.sh
+
+sudo cp /tmp/files/web/deploy_install_release.sh /home/peacecorps/deploy_install_release.sh
+sudo chmod 700 /home/peacecorps/deploy_install_release.sh
+sudo chown peacecorps:peacecorps /home/peacecorps/deploy_install_release.sh
 
 #
 ### Upstart Configuration ###
 #
 sudo cp /tmp/files/web/upstart_peacecorps.conf /etc/init/peacecorps.conf
 
+
 # Now we change users to install pyenv
-su peacecorps
+sudo su peacecorps <<'EOF'
 git clone https://github.com/yyuu/pyenv.git /home/peacecorps/pyenv
 git clone https://github.com/yyuu/pyenv-virtualenv.git /home/peacecorps/pyenv/plugins/pyenv-virtualenv
 cp /tmp/files/web/.pyenvrc /home/peacecorps/pyenv/.pyenvrc
@@ -84,17 +87,20 @@ chmod 644 /home/peacecorps/pyenv/.pyenvrc
 echo "source /home/peacecorps/pyenv/.pyenvrc" >> /home/peacecorps/.bashrc
 
 # Install Python
-. /home/peacecorps/pyenv/.pyenvrc && pyenv install 3.4.1
+source /home/peacecorps/pyenv/.pyenvrc
+pyenv install 3.4.1
 
 # Create virtual environment
-. /home/peacecorps/pyenv/.pyenvrc && pyenv virtualenv 3.4.1 peacecorps
+pyenv virtualenv 3.4.1 peacecorps
 
-if [ ! -d /home/peacecorps/peacecorps ]; then
-   git clone https://github.com/18F/peacecorps-site.git /home/peacecorps/peacecorps
-else
-    cd /home/peacecorps/peacecorps && git pull origin master
-fi
+pyenv activate peacecorps
+
+git clone https://github.com/18F/peacecorps-site.git /home/peacecorps/peacecorps
 
 cd /home/peacecorps/peacecorps
+git fetch --tags
+git checkout base
+
 pip install -r requirements.txt
 pip install gunicorn
+EOF

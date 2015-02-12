@@ -17,8 +17,7 @@ server {
   real_ip_header proxy_protocol;
 
   # Logging policies
-  # TODO: if/else for elb_log on non-PPed instances
-  access_log /var/log/nginx/peacecorps-webapp.access.log;
+  access_log /var/log/nginx/peacecorps-webapp.access.log elb_log;
   error_log /var/log/nginx/peacecorps-webapp.error.log;
 
   keepalive_timeout 5;
