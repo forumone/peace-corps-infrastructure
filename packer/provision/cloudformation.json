@@ -140,6 +140,30 @@
       "Description" : "Github Oauth Deploy Token",
       "Default": "",
       "Type": "String"
+    },
+
+    "WebAMI": {
+      "Description" : "AMI to use for web instances",
+      "Default": "ami-7c521914",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "Type": "String"
+    },
+
+    "PayGovAMI": {
+      "Description" : "AMI to use for pay.gov instances",
+      "Default": "ami-ca5219a2",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "Type": "String"
+    },
+
+    "NATAMI": {
+      "Description" : "AMI to use for NAT instances",
+      "Default": "ami-8a6f24e2",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "Type": "String"
     }
 
   },
@@ -659,11 +683,12 @@
 
     "NAT" : {
       "Type" : "AWS::EC2::Instance",
+      "DependsOn" : "AttachGateway",
       "Properties" : {
         "InstanceType" : "t2.micro",
         "KeyName" : { "Ref" : "KeyName" },
         "SourceDestCheck" : "false",
-        "ImageId" : "ami-9eaa1cf6",
+        "ImageId" : { "Ref": "NATAMI" },
         "IamInstanceProfile": {
           "Ref": "AccessS3SecretsProfile"
         },
@@ -684,10 +709,13 @@
           }
         ],
         "Tags" : [
-          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
-          {"Key" : "Name", "Value" : "Peace Corps NAT" },
-          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
-        ]
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName"}},
+          { "Key" : "Name", "Value" : { "Fn::Join" : ["-", ["cf", { "Ref": "AWS::StackName" }, "nat"]]}},
+          { "Key" : "Client", "Value" : { "Ref": "ClientID" }}
+        ],
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          ""
+        ]]}}
       }
     },
 
@@ -726,9 +754,10 @@
 
     "WebLaunchConfig" : {
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "DependsOn" : "NAT",
       "Properties" : {
         "AssociatePublicIpAddress" : false,
-        "ImageId" : "ami-0a7a3262",
+        "ImageId" : { "Ref" : "WebAMI" },
         "InstanceType" : "m3.medium",
         "KeyName" : { "Ref" : "KeyName" },
         "SecurityGroups" : [
@@ -745,7 +774,7 @@
           "sed -i 's/{{MEMCACHED_URL}}/", "", "/g' /home/peacecorps/webserver-init.sh\n",
           "chown peacecorps:peacecorps /home/peacecorps/webserver-init.sh\n",
           "sed -i 's/{{ReleaseTag}}/", { "Ref" : "ReleaseTag" }, "/g' /home/peacecorps/deploy_install_release.sh\n",
-          "sh /home/peacecorps/deploy_install_release.sh",
+          "source /home/peacecorps/deploy_install_release.sh",
           "chown peacecorps:peacecorps /home/peacecorps/deploy_install_release.sh\n",
           "service nginx restart\n",
           "service peacecorps restart\n",
@@ -833,9 +862,10 @@
 
     "PayGovLaunchConfig" : {
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "DependsOn" : "NAT",
       "Properties" : {
         "AssociatePublicIpAddress" : false,
-        "ImageId" : "ami-fe145f96",
+        "ImageId" : { "Ref" : "PayGovAMI" },
         "InstanceType" : "t2.micro",
         "KeyName" : { "Ref" : "KeyName" },
         "SecurityGroups" : [

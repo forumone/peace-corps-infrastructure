@@ -4,6 +4,7 @@
     "environment": "",
     "domain": "",
     "paygov_callback_domain": "",
+    "decryption_key": "",
     "aws_access_key": "",
     "aws_secret_key": "",
     "source_ami": "ami-9eaa1cf6",
@@ -29,24 +30,19 @@
     "vpc_id": "{{user `vpc_id`}}",
     "subnet_id": "{{user `subnet_id`}}",
     "enhanced_networking": true,
-    "tags": {
+    "run_tags": {
       "Name": "{{user `ami_name`}}",
-      "Client": "{{ user `client_id`}}",
+      "Client": "{{ user `client_id`}}"
     },
     "tags": {
       "Name": "{{user `ami_name`}}",
-      "Client": "{{ user `client_id`}}",
-      "Role": "NAT"
+      "Client": "{{ user `client_id`}}"
     }
   }],
   "provisioners": [
     {
       "type": "shell",
       "script": "scripts/all.sh"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/nginx.sh"
     },
     {
       "type": "shell",
