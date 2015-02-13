@@ -17,6 +17,9 @@ sudo apt-get install libmemcached-dev -y
 sudo apt-get install libbz2-dev -y
 sudo apt-get install libsqlite3-dev -y
 sudo apt-get install libreadline-dev -y
+sudo apt-get install libjpeg-dev -y
+sudo apt-get install zlib1g-dev -y
+sudo apt-get install libtiff5-dev -y
 
 #
 ### nginx Configuration ###
@@ -71,6 +74,10 @@ sudo chown peacecorps:peacecorps /home/peacecorps/manage.sh
 sudo cp /tmp/files/web/deploy_install_release.sh /home/peacecorps/deploy_install_release.sh
 sudo chmod 700 /home/peacecorps/deploy_install_release.sh
 sudo chown peacecorps:peacecorps /home/peacecorps/deploy_install_release.sh
+
+sudo cp /tmp/files/web/server_start.sh /home/ubuntu/server_start.sh
+sudo chmod 700 /home/ubuntu/server_start.sh
+sudo chown ubuntu:ubuntu /home/ubuntu/server_start.sh
 
 #
 ### Upstart Configuration ###

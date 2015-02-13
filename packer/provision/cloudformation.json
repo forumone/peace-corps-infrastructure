@@ -774,11 +774,11 @@
           "sed -i 's/{{MEMCACHED_URL}}/", "", "/g' /home/peacecorps/webserver-init.sh\n",
           "chown peacecorps:peacecorps /home/peacecorps/webserver-init.sh\n",
           "sed -i 's/{{ReleaseTag}}/", { "Ref" : "ReleaseTag" }, "/g' /home/peacecorps/deploy_install_release.sh\n",
-          "source /home/peacecorps/deploy_install_release.sh",
+          "source /home/peacecorps/deploy_install_release.sh\n",
           "chown peacecorps:peacecorps /home/peacecorps/deploy_install_release.sh\n",
-          "service nginx restart\n",
           "service peacecorps restart\n",
-          "restart peacecorps\n",
+          "service nginx restart\n",
+          "chown ubuntu:ubuntu /home/ubuntu/server_start.sh\n",
           ""
         ]]}}
       }
@@ -823,6 +823,23 @@
            "Timeout" : "4",
            "UnhealthyThreshold" : "3"
         }
+      }
+    },
+    "WebDNS" : {
+      "Type" : "AWS::Route53::RecordSetGroup",
+      "Properties" : {
+        "HostedZoneName" : { "Ref" : "HostedZoneName" },
+        "Comment" : "Zone alias targeted to WebELB LoadBalancer.",
+        "RecordSets" : [
+          {
+            "Name" : { "Fn::Join" : ["", [{ "Ref" : "DomainName" }, "."]]},
+            "Type" : "A",
+            "AliasTarget" : {
+              "HostedZoneId" : { "Fn::GetAtt" : ["WebELB", "CanonicalHostedZoneNameID"] },
+              "DNSName" : { "Fn::GetAtt" : ["WebELB","CanonicalHostedZoneName"] }
+            }
+          }
+        ]
       }
     },
 
@@ -882,11 +899,11 @@
           "sed -i 's/{{MEMCACHED_URL}}/", "", "/g' /home/peacecorps/webserver-init.sh\n",
           "chown peacecorps:peacecorps /home/peacecorps/webserver-init.sh\n",
           "sed -i 's/{{ReleaseTag}}/", { "Ref" : "ReleaseTag" }, "/g' /home/peacecorps/deploy_install_release.sh\n",
-          "sh /home/peacecorps/deploy_install_release.sh",
+          "sh /home/peacecorps/deploy_install_release.sh\n",
           "chown peacecorps:peacecorps /home/peacecorps/deploy_install_release.sh\n",
-          "service nginx restart\n",
           "service peacecorps restart\n",
-          "restart peacecorps\n",
+          "service nginx restart\n",
+          "chown ubuntu:ubuntu /home/ubuntu/server_start.sh\n",
           ""
         ]]}}
       }
@@ -934,21 +951,21 @@
       }
     },
     "PayGovDNS" : {
-        "Type" : "AWS::Route53::RecordSetGroup",
-        "Properties" : {
-          "HostedZoneName" : { "Ref" : "HostedZoneName" },
-          "Comment" : "Zone alias targeted to PayGovELB LoadBalancer.",
-          "RecordSets" : [
-            {
-              "Name" : { "Fn::Join" : ["", [{ "Ref" : "PayGovDomainName" }, "."]]},
-              "Type" : "A",
-              "AliasTarget" : {
-                  "HostedZoneId" : { "Fn::GetAtt" : ["PayGovELB", "CanonicalHostedZoneNameID"] },
-                  "DNSName" : { "Fn::GetAtt" : ["PayGovELB","CanonicalHostedZoneName"] }
-              }
+      "Type" : "AWS::Route53::RecordSetGroup",
+      "Properties" : {
+        "HostedZoneName" : { "Ref" : "HostedZoneName" },
+        "Comment" : "Zone alias targeted to PayGovELB LoadBalancer.",
+        "RecordSets" : [
+          {
+            "Name" : { "Fn::Join" : ["", [{ "Ref" : "PayGovDomainName" }, "."]]},
+            "Type" : "A",
+            "AliasTarget" : {
+              "HostedZoneId" : { "Fn::GetAtt" : ["PayGovELB", "CanonicalHostedZoneNameID"] },
+              "DNSName" : { "Fn::GetAtt" : ["PayGovELB","CanonicalHostedZoneName"] }
             }
-          ]
-        }
+          }
+        ]
+      }
     }
 
   }
