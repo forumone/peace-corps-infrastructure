@@ -1,3 +1,0 @@
-[submodule "playbooks/roles/pyenv"]
-	path = ansible/playbooks/roles/pyenv
-	url = https://github.com/avanov/ansible-galaxy-pyenv.git
