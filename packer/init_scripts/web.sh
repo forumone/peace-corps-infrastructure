@@ -53,7 +53,8 @@ sudo apt-get install libreadline-dev -y
 sudo apt-get install libjpeg-dev -y
 sudo apt-get install zlib1g-dev -y
 sudo apt-get install libtiff5-dev -y
-#### END NGINX ####
+sudo apt-get install sendmail -y
+#### END WEBSERVER PACKAGES ####
 
 ####
 #### WEBAPP LOGGING ####
