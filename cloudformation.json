@@ -1,0 +1,1398 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation for a VPC with RDS and web instances",
+
+  "Parameters" : {
+
+    "ClientID": {
+      "Description" : "Client ID (IAA Number)",
+      "Default": "PC-20140812-20190811-01",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "Environment": {
+      "Description" : "Name of the environment (staging or production)",
+      "Default": "staging",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedValues": ["staging", "production"],
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "ReleaseTag": {
+      "Description" : "Tag name you want to deploy of the application",
+      "Default": "0.9.1",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "DomainName": {
+      "Description" : "The domain name this is deploying to",
+      "Default": "donate.peacecorps-dev.18f.us",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "PayGovDomainName": {
+      "Description" : "The pay.gov endpoint domain name",
+      "Default": "pay.donate.peacecorps-dev.18f.us",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "AdminDomainName": {
+      "Description" : "The admin panel domain name",
+      "Default": "admin.donate.peacecorps-dev.18f.us",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "FileTransferDomainName": {
+      "Description" : "The domain name to use for sftp file transfers",
+      "Default": "filetransfer.donate.peacecorps-dev.18f.us",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "DecryptionKey": {
+      "Description" : "The decryption key for sensitive files",
+      "NoEcho": "true",
+      "Default": "secret111",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "HostedZoneID": {
+      "Description" : "The ID of the hosted zone in Route 53 to use.",
+      "Default": "Z3PIZ2HPFAFQXL",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "Must be an existing EC2 KeyPair"
+    },
+
+    "DBName": {
+      "Default": "peacecorps",
+      "Description" : "Postgres database name",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "64",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+
+    "DBUsername": {
+      "Default": "peacecorps",
+      "Description" : "Username for Postgres database access",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+
+    "DBPassword": {
+      "NoEcho": "true",
+      "Default": "secret111",
+      "Description" : "Password for Postgres database access",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+    "DBAllocatedStorage": {
+      "Default": "10",
+      "Description" : "The size of the database (Gb)",
+      "Type": "Number",
+      "MinValue": "5",
+      "MaxValue": "1024",
+      "ConstraintDescription" : "must be between 5 and 1024Gb."
+    },
+
+    "SecretKey": {
+      "NoEcho": "true",
+      "Description" : "Secret Key to use for Django",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "GPGEncryptID": {
+      "Description" : "GPG Encrypt ID",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+
+    "DeployToken": {
+      "NoEcho": "true",
+      "Description" : "Github Oauth Deploy Token",
+      "Default": "",
+      "Type": "String"
+    },
+
+    "WebAMI": {
+      "Description" : "AMI to use for web instances",
+      "Default": "ami-fe396e96",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "Type": "String"
+    },
+
+    "NATAMI": {
+      "Description" : "AMI to use for NAT instances",
+      "Default": "ami-0c396e64",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "Type": "String"
+    },
+
+    "FileAlertEmails": {
+      "Description" : "A list of emails (comma seperated) to alert to file transfer errors",
+      "Default": "sean.herron@gsa.gov, christopher.lubinski@gsa.gov",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "Type": "String"
+    },
+
+    "FileTransferPubKeys": {
+      "Description" : "A list of public keys (comma seperated) to permit access to file transfer machines",
+      "Default": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxabO0TN4swCizJV/7PvS+KDbGFRSZVz5M4mQrbN4F4HYTkwNyyetrLicGEtVs+0yZnWlk6jM8n+JYWOLXLdKi1s4tLg8S1asvsgRPbimks9sigeXD64fZ/b6cvHPME7AYfgF6PZyzt6vcQZucMcQsl0ibAdp3D2AIaZ3oRpFpkOnTZeJDahyj6JVud41t0uBjFksaJwy6KfsF/iW7mNRfeVs9DjBcj8g8gpDYNH1TICro1M5k2tOPBf1rkMoRQ+rJwYEN8V+o3JLnh1GtuA1MDx6pz4GXswDem8+0WV/RUZAKHXhPM0EjDONUYRJaxYONqgTxe+lPpBjc7ThE/7dgw== vdevl@dc-findb-dev.peacecorps.gov, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCo1NoxHMcfUZC8zmqRUeqv5SfOwZU/eiwvyzlBqrXQ7U6VYd+UlLaTNVXAC49I1JDHxNNnbcJ8i5SBJ5hngWKKhD8CCvDALbBKwO7OL0mQmzPg/Iy3PuQQrGX9C3Q18RpuOeXzKpgWn4iJqzJJzUBMUsBeDqt0hqEsRZSVgBaMi6h6QKiipv1QIZ1TJORjSRPtg54oKF7gOjuS7aV+fA/3WLQ6ETY8dYhqY3WHOCO633OOSHmX5vWTEmI16ytSgSOEW+9ksgD2yEpC5RgyGYGF1GcHwWUGDScvfKUTZsAH25Z2ZegfSOvd/y0V1jaOxrkSksxzjt4E0Lhfk7HXxup7 sean.herron@gsa.gov",
+      "MinLength": "1",
+      "Type": "String"
+    },
+
+    "MediaBucketName": {
+      "Description" : "The S3 Bucket to use for Media Uploads",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255"
+    },
+
+    "StaticBucketName": {
+      "Description" : "The S3 Bucket to use for Static Uploads",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255"
+    },
+
+    "NATElasticIPAllocationID": {
+      "Description" : "The Allocation ID of the Elastic IP for the NAT machine",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255"
+    }
+  },
+
+  "Resources" : {
+
+    "mainVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock" : "10.19.61.0/24",
+        "EnableDnsSupport" : "true",
+        "EnableDnsHostnames" : "true",
+        "InstanceTenancy" : "default",
+        "Tags" : [
+          {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" } },
+          {"Key" : "Application", "Value" : { "Ref": "AWS::StackName" } },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "WebSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP and HTTPS access",
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - WebSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+        "SecurityGroupIngress" : [
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "80",
+            "ToPort" : "80",
+            "CidrIp" : "0.0.0.0/0"
+          },
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "443",
+            "ToPort" : "443",
+            "CidrIp" : "0.0.0.0/0"
+          }
+        ],
+        "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "LocalTrafficSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable access to local ips",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - LocalTrafficSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "0",
+             "ToPort" : "65535",
+             "CidrIp" : "10.19.61.0/24"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "PublicSSHSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable SSH access via port 22 to known CIDR",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - PublicSSHSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "22",
+             "ToPort" : "22",
+             "CidrIp" : "159.142.0.0/16"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "AllSSHSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable SSH access via port 22 to everyone",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - AllSSHSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "22",
+             "ToPort" : "22",
+             "CidrIp" : "0.0.0.0/0"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "TrustedWebSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable Web Access to Trusted parties",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - TrustedWebSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "159.142.0.0/16"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "65.205.231.0/24"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "72.37.171.131/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "72.37.171.132/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "80.254.156.99/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "80.254.156.100/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "159.142.0.0/16"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "65.205.231.0/24"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "72.37.171.131/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "72.37.171.132/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "80.254.156.99/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "80.254.156.100/32"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "PayGovSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable access to pay.gov",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - PayGovSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "199.169.197.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "199.169.192.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "80",
+             "ToPort" : "80",
+             "CidrIp" : "199.169.194.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "199.169.197.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "199.169.192.157/32"
+         },
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "443",
+             "ToPort" : "443",
+             "CidrIp" : "199.169.194.157/32"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "RDSSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable postgres access to local ips",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - RDSSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "5432",
+             "ToPort" : "5432",
+             "CidrIp" : "10.19.61.0/24"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
+    "PublicSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1a",
+        "VpcId" : { "Ref" : "mainVPC" },
+        "CidrBlock" : "10.19.61.0/27",
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps PublicSubnetA" },
+          {"Key" : "Network", "Value" : "Public" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "PublicSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1b",
+        "VpcId" : { "Ref" : "mainVPC" },
+        "CidrBlock" : "10.19.61.32/27",
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps PublicSubnetB" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Public" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "PrivateSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1a",
+        "VpcId" : { "Ref" : "mainVPC" },
+        "CidrBlock" : "10.19.61.64/27",
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps PrivateSubnetA" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Private" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "PrivateSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1b",
+        "VpcId" : { "Ref" : "mainVPC" },
+        "CidrBlock" : "10.19.61.96/27",
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps PrivateSubnetA" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Private" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "InternetGateway" : {
+      "Type" : "AWS::EC2::InternetGateway",
+      "Properties" : {
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps Internet Gateway" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Public" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "GatewayAttachment" : {
+       "Type" : "AWS::EC2::VPCGatewayAttachment",
+       "Properties" : {
+         "VpcId" : { "Ref" : "mainVPC" },
+         "InternetGatewayId" : { "Ref" : "InternetGateway" }
+       }
+    },
+
+    "PublicRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : {"Ref" : "mainVPC"},
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps Public Route Table" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Public" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "PublicRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PublicRouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "GatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+
+    "PublicSubnetRouteTableAssociationA" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnetA" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PublicSubnetRouteTableAssociationB" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnetB" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PrivateRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : {"Ref" : "mainVPC"},
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps Private Route Table" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Private" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "PrivateRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "InstanceId" : { "Ref" : "NAT" }
+      }
+    },
+
+    "PrivateSubnetRouteTableAssociationA" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnetA" },
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+      }
+    },
+
+    "PrivateSubnetRouteTableAssociationB" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnetB" },
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+      }
+    },
+
+    "DBSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "VPC Subnets",
+        "SubnetIds": [
+          { "Ref": "PrivateSubnetA" },
+          { "Ref": "PrivateSubnetB" }
+        ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Name", "Value" : "Peace Corps DB Subnet Group" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "RDS": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "Engine" : "Postgres",
+        "DBName" : { "Ref": "DBName" },
+        "MultiAZ" : "true",
+        "MasterUsername": { "Ref": "DBUsername" },
+        "MasterUserPassword": { "Ref" : "DBPassword" },
+        "DBInstanceClass": "db.m1.small",
+        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
+        "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+        "VPCSecurityGroups": [
+          { "Ref" : "RDSSecurityGroup" }
+        ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Name", "Value" : "Peace Corps Database" },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ]
+      }
+    },
+
+    "NAT" : {
+      "Type" : "AWS::EC2::Instance",
+      "DependsOn" : "GatewayAttachment",
+      "Properties" : {
+        "InstanceType" : "t2.micro",
+        "KeyName" : { "Ref" : "KeyName" },
+        "SourceDestCheck" : "false",
+        "ImageId" : { "Ref" : "NATAMI" },
+        "IamInstanceProfile": { "Ref": "PayGovAccessS3SecretsProfile" },
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress" : true,
+            "DeleteOnTermination" : true,
+            "DeviceIndex": 0,
+            "SubnetId": {
+              "Ref": "PublicSubnetA"
+            },
+            "GroupSet": [
+              { "Ref" : "WebSecurityGroup" },
+              { "Ref" : "LocalTrafficSecurityGroup" },
+              { "Ref" : "PublicSSHSecurityGroup" },
+              { "Ref" : "AllSSHSecurityGroup" }
+            ]
+          }
+        ],
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName"}},
+          { "Key" : "Name", "Value" : { "Fn::Join" : ["-", ["cf", { "Ref": "AWS::StackName" }, "nat"]]}},
+          { "Key" : "Client", "Value" : { "Ref": "ClientID" }}
+        ],
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -ex\n",
+          "",
+          "sed -i 's/%PAYGOV_DOMAIN%/", { "Ref" : "PayGovDomainName" }, "/g' /home/ubuntu/files/nat/init.sh\n",
+          "sed -i 's/%PAYGOV_ELB%/", { "Fn::GetAtt" : [ "PayGovELB" , "DNSName" ] }, "/g' /home/ubuntu/files/nat/init.sh\n",
+          "sed -i 's/%ENVIRONMENT%/", { "Ref" : "Environment" }, "/g' /home/ubuntu/files/nat/init.sh\n",
+          "sed -i 's/%DECRYPTION_KEY%/", { "Ref" : "DecryptionKey" }, "/g' /home/ubuntu/files/nat/init.sh\n",
+          "",
+          "sh /home/ubuntu/files/nat/init.sh\n",
+          ""
+        ]]}}
+      }
+    },
+
+    "NATElasticIPAssociation" : {
+      "Type" : "AWS::EC2::EIPAssociation",
+        "Properties" : {
+          "InstanceId" : { "Ref" : "NAT" },
+          "AllocationId" : { "Ref" : "NATElasticIPAllocationID" }
+        }
+     },
+
+    "MainAccessS3SecretsPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "s3-peacecorps-secrets-get-main",
+        "PolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action": "s3:GetObject",
+            "Resource": { "Fn::Join" : [ "", [
+              "arn:aws:s3:::peacecorps-secrets/",
+              { "Ref": "Environment" },
+              "/all/*"
+            ]]}
+          }]
+        },
+        "Roles": [
+          { "Ref": "WebAccessS3SecretsRole" },
+          { "Ref": "PayGovAccessS3SecretsRole" }
+        ]
+      }
+    },
+
+    "WebAccessS3SecretsPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "s3-peacecorps-secrets-get-web",
+        "PolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "s3:GetObject",
+              "Resource": { "Fn::Join" : [ "", [
+                "arn:aws:s3:::peacecorps-secrets/",
+                { "Ref": "Environment" },
+                "/web/*"
+              ]]}
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:GetObject"
+              ],
+              "Resource": { "Fn::Join" : [ "", [
+                "arn:aws:s3:::",
+                { "Ref": "MediaBucketName" },
+                "/*"
+              ]]}
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:GetObject"
+              ],
+              "Resource": { "Fn::Join" : [ "", [
+                "arn:aws:s3:::",
+                { "Ref": "StaticBucketName" },
+                "/*"
+              ]]}
+            }
+          ]
+        },
+        "Roles": [ { "Ref": "WebAccessS3SecretsRole" } ]
+      }
+    },
+
+    "PayGovAccessS3SecretsPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "s3-peacecorps-secrets-get-paygov",
+        "PolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action": "s3:GetObject",
+            "Resource": { "Fn::Join" : [ "", [
+              "arn:aws:s3:::peacecorps-secrets/",
+              { "Ref": "Environment" },
+              "/paygov/*"
+            ]]}
+          }]
+        },
+        "Roles": [ { "Ref": "PayGovAccessS3SecretsRole" } ]
+      }
+    },
+
+    "AdminAccessS3SecretsPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "s3-peacecorps-secrets-get-admin",
+        "PolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "s3:GetObject",
+              "Resource": { "Fn::Join" : [ "", [
+                "arn:aws:s3:::peacecorps-secrets/",
+                { "Ref": "Environment" },
+                "/admin/*"
+              ]]}
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucket"
+              ],
+              "Resource": { "Fn::Join" : [ "", [
+                "arn:aws:s3:::",
+                { "Ref": "MediaBucketName" }
+              ]]}
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:DeleteObject",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTorrent",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:PutObjectVersionAcl",
+                "s3:RestoreObject",
+                "s3:ListBucket"
+              ],
+              "Resource": { "Fn::Join" : [ "", [
+                "arn:aws:s3:::",
+                { "Ref": "MediaBucketName" },
+                "/*"
+              ]]}
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucket"
+              ],
+              "Resource": { "Fn::Join" : [ "", [
+                "arn:aws:s3:::",
+                { "Ref": "StaticBucketName" }
+              ]]}
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:DeleteObject",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTorrent",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:PutObjectVersionAcl",
+                "s3:RestoreObject",
+                "s3:ListBucket"
+              ],
+              "Resource": { "Fn::Join" : [ "", [
+                "arn:aws:s3:::",
+                { "Ref": "StaticBucketName" },
+                "/*"
+              ]]}
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "route53:ChangeResourceRecordSets",
+                "route53:GetHostedZone",
+                "route53:ListResourceRecordSets"
+              ],
+              "Resource": [
+                { "Fn::Join" : [ "", [
+                  "arn:aws:route53:::hostedzone/",
+                  { "Ref": "HostedZoneID" }
+                ]]}
+              ]
+            },
+            {
+              "Effect":"Allow",
+              "Action":[
+                "route53:ListHostedZones"
+              ],
+              "Resource":[
+                "*"
+              ]
+            }
+          ]
+        },
+        "Roles": [ { "Ref": "AdminAccessS3SecretsRole" } ]
+      }
+    },
+
+    "WebAccessS3SecretsRole" : {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": "ec2.amazonaws.com"},
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "PayGovAccessS3SecretsRole" : {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": "ec2.amazonaws.com"},
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "AdminAccessS3SecretsRole" : {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": "ec2.amazonaws.com"},
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "WebAccessS3SecretsProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          { "Ref": "WebAccessS3SecretsRole" }
+        ]
+      }
+    },
+
+    "PayGovAccessS3SecretsProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          { "Ref": "PayGovAccessS3SecretsRole" }
+        ]
+      }
+    },
+
+    "AdminAccessS3SecretsProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          { "Ref": "AdminAccessS3SecretsRole" }
+        ]
+      }
+    },
+
+    "StaticBucketPolicy" : {
+      "Type" : "AWS::S3::BucketPolicy",
+      "Properties" : {
+        "Bucket" : { "Ref": "StaticBucketName" },
+        "PolicyDocument": {
+          "Statement":[{
+            "Sid": "AllowPublicRead",
+            "Action":["s3:GetObject"],
+            "Effect":"Allow",
+            "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "StaticBucketName" } , "/*" ]]},
+            "Principal":"*"
+          }]
+        }
+      }
+    },
+
+    "MediaBucketPolicy" : {
+      "Type" : "AWS::S3::BucketPolicy",
+      "Properties" : {
+        "Bucket" : { "Ref": "MediaBucketName" },
+        "PolicyDocument": {
+          "Statement":[{
+            "Sid": "AllowPublicRead",
+            "Action":["s3:GetObject"],
+            "Effect":"Allow",
+            "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "MediaBucketName" } , "/*" ]]},
+            "Principal":"*"
+          }]
+        }
+      }
+    },
+
+    "WebASGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+        "AvailabilityZones" : [
+          { "Fn::GetAtt" : [ "PrivateSubnetA", "AvailabilityZone" ] },
+          { "Fn::GetAtt" : [ "PrivateSubnetB", "AvailabilityZone" ] }
+        ],
+        "HealthCheckGracePeriod" : 3000,
+        "HealthCheckType" : "ELB",
+        "LaunchConfigurationName" : { "Ref" : "WebLaunchConfig" },
+        "LoadBalancerNames" : [ { "Ref" : "WebELB" } ],
+        "MaxSize" : "5",
+        "MinSize" : "2",
+        "DesiredCapacity" : "2",
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName"}, "PropagateAtLaunch": true },
+          { "Key" : "Name", "Value" : { "Fn::Join" : ["-", ["cf", { "Ref": "AWS::StackName" }, "web", "asg"]]}, "PropagateAtLaunch": true },
+          { "Key" : "Client", "Value" : { "Ref": "ClientID" }, "PropagateAtLaunch": true }
+        ],
+        "VPCZoneIdentifier" : [ { "Ref" : "PrivateSubnetA" } , { "Ref" : "PrivateSubnetB" } ]
+      },
+      "UpdatePolicy" : {
+        "AutoScalingScheduledAction" : {
+          "IgnoreUnmodifiedGroupSizeProperties" : "true"
+        },
+        "AutoScalingRollingUpdate" : {
+          "MinInstancesInService" : "1",
+          "MaxBatchSize" : "2",
+          "PauseTime" : "PT2M"
+        }
+      }
+    },
+
+    "WebLaunchConfig" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "DependsOn" : "NAT",
+      "Properties" : {
+        "AssociatePublicIpAddress" : false,
+        "ImageId" : { "Ref" : "WebAMI" },
+        "InstanceType" : "m3.medium",
+        "KeyName" : { "Ref" : "KeyName" },
+        "IamInstanceProfile": { "Ref": "WebAccessS3SecretsProfile" },
+        "SecurityGroups" : [
+          { "Ref" : "LocalTrafficSecurityGroup" }
+        ],
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -ex\n",
+          "",
+          "sleep 2m\n",
+          "",
+          "sed -i 's/%DOMAIN%/", { "Ref" : "DomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PAYGOV_DOMAIN%/", { "Ref" : "PayGovDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ADMIN_DOMAIN%/", { "Ref" : "AdminDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ENVIRONMENT%/", { "Ref" : "Environment" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ROLE%/web/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%DECRYPTION_KEY%/", { "Ref" : "DecryptionKey" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%SECRET_KEY%/", { "Ref" : "SecretKey" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_NAME%/", { "Ref" : "DBName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_USER%/", { "Ref" : "DBUsername" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_PASS%/", { "Ref" : "DBPassword" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_HOST%/", { "Fn::GetAtt" : [ "RDS", "Endpoint.Address" ]}, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%GPG_ENCRYPT_ID%/", { "Ref" : "GPGEncryptID" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%MEMCACHED_URL%/", "", "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%RELEASE_TAG%/", { "Ref" : "ReleaseTag" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%AWS_MEDIA_BUCKET_NAME%/", { "Ref" : "MediaBucketName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%AWS_STATIC_BUCKET_NAME%/", { "Ref" : "StaticBucketName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%HOSTED_ZONE_ID%/", { "Ref" : "HostedZoneID" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%FILE_TRANSFER_DOMAIN%/", { "Ref" : "FileTransferDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "",
+          "sh /home/ubuntu/files/web/init.sh\n",
+          "",
+          ""
+        ]]}}
+      }
+    },
+
+    "WebELB" : {
+      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties" : {
+        "SecurityGroups" : [ { "Ref" : "WebSecurityGroup" } ],
+        "Policies": [
+          {
+            "PolicyName": "EnableProxyProtocolPolicy",
+            "PolicyType": "ProxyProtocolPolicyType",
+            "Attributes": [
+              {
+                "Name": "ProxyProtocol",
+                "Value": true
+              }
+            ],
+            "InstancePorts": ["443"]
+          }
+        ],
+        "Subnets" : [
+          { "Ref" : "PublicSubnetA" },
+          { "Ref" : "PublicSubnetB" }
+        ],
+        "Listeners" : [ {
+          "LoadBalancerPort" : "80",
+          "InstancePort" : "80",
+          "Protocol" : "HTTP"
+        },
+        {
+          "LoadBalancerPort" : "443",
+          "InstancePort" : "443",
+          "Protocol" : "TCP"
+        }
+        ],
+        "HealthCheck": {
+           "HealthyThreshold" : "2",
+           "Interval" : "5",
+           "Target" : "TCP:22",
+           "Timeout" : "4",
+           "UnhealthyThreshold" : "3"
+        }
+      }
+    },
+
+    "PayGovASGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+        "AvailabilityZones" : [
+          { "Fn::GetAtt" : [ "PrivateSubnetA", "AvailabilityZone" ] },
+          { "Fn::GetAtt" : [ "PrivateSubnetB", "AvailabilityZone" ] }
+        ],
+        "HealthCheckGracePeriod" : 3000,
+        "HealthCheckType" : "ELB",
+        "LaunchConfigurationName" : { "Ref" : "PayGovLaunchConfig" },
+        "LoadBalancerNames" : [ { "Ref" : "PayGovELB" } ],
+        "MaxSize" : "5",
+        "MinSize" : "2",
+        "DesiredCapacity" : "2",
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName"}, "PropagateAtLaunch": true },
+          { "Key" : "Name", "Value" : { "Fn::Join" : ["-", ["cf", { "Ref": "AWS::StackName" }, "paygov", "asg"]]}, "PropagateAtLaunch": true },
+          { "Key" : "Client", "Value" : { "Ref": "ClientID" }, "PropagateAtLaunch": true }
+        ],
+        "VPCZoneIdentifier" : [ { "Ref" : "PrivateSubnetA" } , { "Ref" : "PrivateSubnetB" } ]
+      },
+      "UpdatePolicy" : {
+        "AutoScalingScheduledAction" : {
+          "IgnoreUnmodifiedGroupSizeProperties" : "true"
+        },
+        "AutoScalingRollingUpdate" : {
+          "MinInstancesInService" : "1",
+          "MaxBatchSize" : "2",
+          "PauseTime" : "PT2M"
+        }
+      }
+    },
+
+    "PayGovLaunchConfig" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "DependsOn" : "NAT",
+      "Properties" : {
+        "AssociatePublicIpAddress" : false,
+        "ImageId" : { "Ref" : "WebAMI" },
+        "InstanceType" : "t2.micro",
+        "KeyName" : { "Ref" : "KeyName" },
+        "IamInstanceProfile": { "Ref": "PayGovAccessS3SecretsProfile" },
+        "SecurityGroups" : [
+          { "Ref" : "LocalTrafficSecurityGroup" }
+        ],
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -ex\n",
+          "",
+          "sleep 2m\n",
+          "",
+          "sed -i 's/%DOMAIN%/", { "Ref" : "DomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PAYGOV_DOMAIN%/", { "Ref" : "PayGovDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ADMIN_DOMAIN%/", { "Ref" : "AdminDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ENVIRONMENT%/", { "Ref" : "Environment" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ROLE%/paygov/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%DECRYPTION_KEY%/", { "Ref" : "DecryptionKey" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%SECRET_KEY%/", { "Ref" : "SecretKey" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_NAME%/", { "Ref" : "DBName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_USER%/", { "Ref" : "DBUsername" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_PASS%/", { "Ref" : "DBPassword" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_HOST%/", { "Fn::GetAtt" : [ "RDS", "Endpoint.Address" ]}, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%GPG_ENCRYPT_ID%/", { "Ref" : "GPGEncryptID" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%MEMCACHED_URL%/", "", "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%RELEASE_TAG%/", { "Ref" : "ReleaseTag" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%AWS_MEDIA_BUCKET_NAME%/", { "Ref" : "MediaBucketName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%AWS_STATIC_BUCKET_NAME%/", { "Ref" : "StaticBucketName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%HOSTED_ZONE_ID%/", { "Ref" : "HostedZoneID" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%FILE_TRANSFER_DOMAIN%/", { "Ref" : "FileTransferDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "",
+          "",
+          "sh /home/ubuntu/files/web/init.sh\n",
+          ""
+        ]]}}
+      }
+    },
+
+    "PayGovELB" : {
+      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties" : {
+        "SecurityGroups" : [ { "Ref" : "WebSecurityGroup" } ],
+        "Policies": [
+          {
+            "PolicyName": "EnableProxyProtocolPolicy",
+            "PolicyType": "ProxyProtocolPolicyType",
+            "Attributes": [
+              {
+                "Name": "ProxyProtocol",
+                "Value": true
+              }
+            ],
+            "InstancePorts": ["443"]
+          }
+        ],
+        "Subnets" : [
+          { "Ref" : "PublicSubnetA" },
+          { "Ref" : "PublicSubnetB" }
+        ],
+        "Listeners" : [ {
+          "LoadBalancerPort" : "80",
+          "InstancePort" : "80",
+          "Protocol" : "HTTP"
+        },
+        {
+          "LoadBalancerPort" : "443",
+          "InstancePort" : "443",
+          "Protocol" : "TCP"
+        }
+        ],
+        "HealthCheck": {
+           "HealthyThreshold" : "2",
+           "Interval" : "5",
+           "Target" : "TCP:22",
+           "Timeout" : "4",
+           "UnhealthyThreshold" : "3"
+        }
+      }
+    },
+
+    "AdminASGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+        "AvailabilityZones" : [
+          { "Fn::GetAtt" : [ "PublicSubnetA", "AvailabilityZone" ] },
+          { "Fn::GetAtt" : [ "PublicSubnetB", "AvailabilityZone" ] }
+        ],
+        "HealthCheckGracePeriod" : 3000,
+        "HealthCheckType" : "ELB",
+        "LaunchConfigurationName" : { "Ref" : "AdminLaunchConfig" },
+        "MaxSize" : "1",
+        "MinSize" : "1",
+        "DesiredCapacity" : "1",
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName"}, "PropagateAtLaunch": true },
+          { "Key" : "Name", "Value" : { "Fn::Join" : ["-", ["cf", { "Ref": "AWS::StackName" }, "admin", "asg"]]}, "PropagateAtLaunch": true },
+          { "Key" : "Client", "Value" : { "Ref": "ClientID" }, "PropagateAtLaunch": true }
+        ],
+        "VPCZoneIdentifier" : [ { "Ref" : "PublicSubnetA" } , { "Ref" : "PublicSubnetB" } ]
+      },
+      "UpdatePolicy" : {
+        "AutoScalingScheduledAction" : {
+          "IgnoreUnmodifiedGroupSizeProperties" : "true"
+        },
+        "AutoScalingRollingUpdate" : {
+          "MinInstancesInService" : "0",
+          "MaxBatchSize" : "1",
+          "PauseTime" : "PT2M"
+        }
+      }
+    },
+
+    "AdminLaunchConfig" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "DependsOn" : "NAT",
+      "Properties" : {
+        "AssociatePublicIpAddress" : true,
+        "ImageId" : { "Ref" : "WebAMI" },
+        "InstanceType" : "t2.micro",
+        "KeyName" : { "Ref" : "KeyName" },
+        "IamInstanceProfile": { "Ref": "AdminAccessS3SecretsProfile" },
+        "SecurityGroups" : [
+          { "Ref" : "LocalTrafficSecurityGroup" },
+          { "Ref" : "AllSSHSecurityGroup" },
+          { "Ref" : "WebSecurityGroup" }
+        ],
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -ex\n",
+          "",
+          "sleep 2m\n",
+          "",
+          "sed -i 's/%DOMAIN%/", { "Ref" : "DomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PAYGOV_DOMAIN%/", { "Ref" : "PayGovDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ADMIN_DOMAIN%/", { "Ref" : "AdminDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ENVIRONMENT%/", { "Ref" : "Environment" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%ROLE%/admin/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%DECRYPTION_KEY%/", { "Ref" : "DecryptionKey" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%SECRET_KEY%/", { "Ref" : "SecretKey" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_NAME%/", { "Ref" : "DBName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_USER%/", { "Ref" : "DBUsername" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_PASS%/", { "Ref" : "DBPassword" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%PG_HOST%/", { "Fn::GetAtt" : [ "RDS", "Endpoint.Address" ]}, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%GPG_ENCRYPT_ID%/", { "Ref" : "GPGEncryptID" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%MEMCACHED_URL%/", "", "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%RELEASE_TAG%/", { "Ref" : "ReleaseTag" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%AWS_MEDIA_BUCKET_NAME%/", { "Ref" : "MediaBucketName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%AWS_STATIC_BUCKET_NAME%/", { "Ref" : "StaticBucketName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%HOSTED_ZONE_ID%/", { "Ref" : "HostedZoneID" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%FILE_TRANSFER_DOMAIN%/", { "Ref" : "FileTransferDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "",
+          "sh /home/ubuntu/files/web/init.sh\n",
+          "",
+          "echo -e ", {"Fn::Join" : [ "\n", [{ "Ref" : "FileTransferPubKeys" }]] }, " > /home/filetransfer/incoming/.ssh/authorized_keys\n",
+          "sh /home/ubuntu/files/filetransfer/adjust_ssh_users.sh\n",
+          "chown filetransfer:filetransfer /home/filetransfer/incoming/.ssh/authorized_keys\n",
+          "",
+          "",
+          "service ssh restart\n",
+          ""
+        ]]}}
+      }
+    }
+  }
+}

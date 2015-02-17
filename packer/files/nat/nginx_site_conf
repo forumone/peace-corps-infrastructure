@@ -1,0 +1,35 @@
+server {
+  listen 443 ssl spdy;
+
+  server_name {{domain}};
+  ssl_certificate      /etc/nginx/ssl/keys/{{domain}}.chained.crt;
+  ssl_certificate_key  /etc/nginx/ssl/keys/{{domain}}.key;
+
+  # Include our SSL Rules (thanks @konklone)
+  include ssl/ssl.rules;
+
+  # Logging policies
+  access_log /var/log/nginx/peacecorps-webapp.access.log;
+  error_log /var/log/nginx/peacecorps-webapp.error.log;
+
+  #allow 199.169.197.157;  # paygov QA
+  #allow 199.169.192.157;  # paygov production primary
+  #allow 199.169.194.157;  # paygov production secondary
+  #deny all;
+
+  keepalive_timeout 5;
+
+  location / {
+    if (!-f $request_filename) {
+      proxy_pass https://{{paygov_elb}};
+      proxy_set_header  Host  {{domain}};
+      break;
+    }
+  }
+}
+
+server {
+    listen 80;
+    server_name {{domain}};
+    return 301 https://$host$request_uri;
+}
