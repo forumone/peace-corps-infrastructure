@@ -1,0 +1,1 @@
+27 * * * * filetransfer bash find /home/filetransfer/incoming/*.csv -mtime +7 | xargs rm

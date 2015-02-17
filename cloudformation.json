@@ -1388,6 +1388,7 @@
           "sh /home/ubuntu/files/filetransfer/adjust_ssh_users.sh\n",
           "chown filetransfer:filetransfer /home/filetransfer/incoming/.ssh/authorized_keys\n",
           "",
+          "sed -i 's/{{NO_FILE_EMAILS}}/", { "Ref" : "FileAlertEmails" }, "/g' /home/filetransfer/check_incoming_status.sh\n",
           "",
           "service ssh restart\n",
           ""
