@@ -49,6 +49,7 @@ You'll need a few things before you begin, both locally and in your Amazon Web S
     "vpc_id": "VPCID",
     "subnet_id": "PUBLICSUBNETID"
 }
+```
 
 _Note that `vpc_id` and `subnet_id` should be a VPC and Public Subnet you create in AWS just for Packer. Don't use the VPC for the production application here._
 
