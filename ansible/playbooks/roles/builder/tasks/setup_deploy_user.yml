@@ -1,7 +1,0 @@
----
-
-- name: Create Deployment group
-  group: name="{{deploy_user}}" state=present
-
-- name: Create Deployment User
-  user: name="{{deploy_user}}" comment="Deployment User" group="{{deploy_user}}"

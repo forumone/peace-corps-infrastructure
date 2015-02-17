@@ -1,8 +1,0 @@
-[program:{{app_name}}]
-
-command=/home/{{deploy_user}}/start.sh
-directory={{django_settings_dir_name}}
-user={{deploy_user}}
-autostart=true
-autorestart=true
-redirect_stderr=True

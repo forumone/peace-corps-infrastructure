@@ -1,6 +1,0 @@
----
-# These tasks install and set up fail2ban
-
-- name: Install build-essential
-  apt: name=build-essential state=latest
-  sudo: yes

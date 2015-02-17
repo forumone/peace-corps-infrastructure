@@ -1,4 +1,0 @@
-# Creates a user for deployment of things
----
-
-- user: name="{{deploy_user}}" comment="{{deploy_user}}"
