@@ -676,6 +676,7 @@
         "DBInstanceClass": "db.m1.small",
         "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
         "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
+        "BackupRetentionPeriod": "90",
         "VPCSecurityGroups": [
           { "Ref" : "RDSSecurityGroup" }
         ],
@@ -684,7 +685,8 @@
           {"Key" : "Name", "Value" : "Peace Corps Database" },
           {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
-      }
+      },
+      "DeletionPolicy" : "Snapshot"
     },
 
     "NAT" : {
