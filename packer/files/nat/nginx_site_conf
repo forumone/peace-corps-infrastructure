@@ -20,11 +20,8 @@ server {
   keepalive_timeout 5;
 
   location / {
-    if (!-f $request_filename) {
-      proxy_pass https://{{paygov_elb}};
-      proxy_set_header  Host  {{domain}};
-      break;
-    }
+    proxy_pass https://{{paygov_elb}};
+    proxy_set_header  Host  {{domain}};
   }
 }
 

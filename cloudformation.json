@@ -676,7 +676,7 @@
         "DBInstanceClass": "db.m1.small",
         "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
         "DBSubnetGroupName": { "Ref" : "DBSubnetGroup" },
-        "BackupRetentionPeriod": "90",
+        "BackupRetentionPeriod": "35",
         "VPCSecurityGroups": [
           { "Ref" : "RDSSecurityGroup" }
         ],

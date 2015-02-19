@@ -66,7 +66,7 @@ openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/trustdb.gp
 chown peacecorps:peacecorps /gpg/trustdb.gpg
 
 if [ $role = "paygov" ]; then
-    aws s3 s3://peacecorps-secrets/${environment}/${role}/secring.gpg.enc /tmp/secring.gpg.enc
+    aws s3 cp s3://peacecorps-secrets/${environment}/${role}/secring.gpg.enc /tmp/secring.gpg.enc
     openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/secring.gpg.enc -out /gpg/secring.gpg
     chown peacecorps:peacecorps /gpg/secring.gpg
 
@@ -79,6 +79,30 @@ fi
 if [ $role = "admin" ]; then
     sh /home/ubuntu/files/admin/init.sh
     sh /home/ubuntu/files/filetransfer/init.sh
+
+    aws s3 cp s3://peacecorps-secrets/${environment}/admin/ssh_host_dsa_key.enc /tmp/ssh_host_dsa_key.enc
+    openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/ssh_host_dsa_key.enc -out /etc/ssh/ssh_host_dsa_key
+
+    aws s3 cp s3://peacecorps-secrets/${environment}/admin/ssh_host_dsa_key.pub.enc /tmp/ssh_host_dsa_key.pub.enc
+    openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/ssh_host_dsa_key.pub.enc -out /etc/ssh/ssh_host_dsa_key.pub
+
+
+
+    aws s3 cp s3://peacecorps-secrets/${environment}/admin/ssh_host_ecdsa_key.enc /tmp/ssh_host_ecdsa_key.enc
+    openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/ssh_host_ecdsa_key.enc -out /etc/ssh/ssh_host_ecdsa_key
+
+    aws s3 cp s3://peacecorps-secrets/${environment}/admin/ssh_host_ecdsa_key.pub.enc /tmp/ssh_host_ecdsa_key.pub.enc
+    openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/ssh_host_ecdsa_key.pub.enc -out /etc/ssh/ssh_host_ecdsa_key.pub
+
+
+
+    aws s3 cp s3://peacecorps-secrets/${environment}/admin/ssh_host_rsa_key.enc /tmp/ssh_host_rsa_key.enc
+    openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/ssh_host_rsa_key.enc -out /etc/ssh/ssh_host_rsa_key
+
+    aws s3 cp s3://peacecorps-secrets/${environment}/admin/ssh_host_rsa_key.pub.enc /tmp/ssh_host_rsa_key.pub.enc
+    openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/ssh_host_rsa_key.pub.enc -out /etc/ssh/ssh_host_rsa_key.pub
+
+
 
     PUBLIC_HOSTNAME=$(ec2metadata | grep 'public-hostname:' | cut -d ' ' -f 2)
 

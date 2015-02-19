@@ -24,7 +24,7 @@ cp /home/ubuntu/files/filetransfer/delete_old_file_transfers /etc/cron.d/delete_
 # Place the file status check script
 cp /home/ubuntu/files/filetransfer/check_incoming_status.sh /home/filetransfer/check_incoming_status.sh
 chmod 755 /home/filetransfer/check_incoming_status.sh
-echo -e "13 * * * * root bash /home/filetransfer/check_incoming_status.sh" | tee /etc/cron.d/check_incoming_status
+echo "13 * * * * root bash /home/filetransfer/check_incoming_status.sh" | tee /etc/cron.d/check_incoming_status
 
 # Set up the incoming file import
 cp /home/ubuntu/files/filetransfer/sync_accounting /etc/cron.d/sync_accounting
