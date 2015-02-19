@@ -12,10 +12,10 @@ server {
   access_log /var/log/nginx/peacecorps-webapp.access.log;
   error_log /var/log/nginx/peacecorps-webapp.error.log;
 
-  #allow 199.169.197.157;  # paygov QA
-  #allow 199.169.192.157;  # paygov production primary
-  #allow 199.169.194.157;  # paygov production secondary
-  #deny all;
+  allow 199.169.197.157;  # paygov QA
+  allow 199.169.192.157;  # paygov production primary
+  allow 199.169.194.157;  # paygov production secondary
+  deny all;
 
   keepalive_timeout 5;
 
