@@ -5,6 +5,8 @@ upstream app_server_djangoapp {
 server {
   listen 443 ssl spdy proxy_protocol;
 
+  client_max_body_size 10M;
+
   server_name {{domain}};
   ssl_certificate      /etc/nginx/ssl/keys/{{domain}}.chained.crt;
   ssl_certificate_key  /etc/nginx/ssl/keys/{{domain}}.key;

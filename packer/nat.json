@@ -3,7 +3,7 @@
     "ami_name": "PeaceCorps-NAT-{{timestamp}}",
     "aws_access_key": "",
     "aws_secret_key": "",
-    "source_ami": "ami-9eaa1cf6",
+    "source_ami": "ami-02f8b16a",
     "ami_description": "AMI for a NAT in the Peace Corps Stack",
     "client_id": "PC-20140812-20190811-01",
     "region": "us-east-1",
