@@ -721,7 +721,7 @@
         ],
         "Tags" : [
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
-          {"Key" : "Name", "Value" : "Peace Corps DB Subnet Group" },
+          {"Key" : "Name", "Value" : "Peace Corps ElasticacheSubnetGroup" },
           {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
@@ -740,7 +740,7 @@
         ],
         "Tags" : [
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
-          {"Key" : "Name", "Value" : "Peace Corps Cache" },
+          {"Key" : "Name", "Value" : "Peace Corps Elasticache" },
           {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
