@@ -718,11 +718,6 @@
         "SubnetIds": [
           {"Ref": "PrivateSubnetA"},
           {"Ref": "PrivateSubnetB"}
-        ],
-        "Tags" : [
-          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
-          {"Key" : "Name", "Value" : "Peace Corps ElasticacheSubnetGroup" },
-          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
         ]
       }
     },
