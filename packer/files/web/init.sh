@@ -70,7 +70,7 @@ if [ $role = "paygov" ]; then
     openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/secring.gpg.enc -out /gpg/secring.gpg
     chown peacecorps:peacecorps /gpg/secring.gpg
 
-    echo -e "53 * * * * peacecorps bash /home/peacecorps/manage.sh clear_stale_donors" | tee /etc/cron.d/clean_stale_donors
+    echo "53 * * * * peacecorps bash /home/peacecorps/manage.sh clear_stale_donors" | tee /etc/cron.d/clean_stale_donors
 
     cp /home/ubuntu/files/paygov/pay_vars.sh /home/peacecorps/pay_vars.sh
     chown peacecorps:peacecorps /home/peacecorps/pay_vars.sh
