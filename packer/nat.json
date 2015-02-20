@@ -9,7 +9,6 @@
     "region": "us-east-1",
     "subnet_id": "",
     "vpc_id": "",
-    "iam_instance_profile": ""
   },
   "builders": [{
     "type": "amazon-ebs",
@@ -27,7 +26,6 @@
     "vpc_id": "{{user `vpc_id`}}",
     "subnet_id": "{{user `subnet_id`}}",
     "enhanced_networking": true,
-    "iam_instance_profile": "{{user `iam_instance_profile`}}",
     "run_tags": {
       "Name": "{{user `ami_name`}}",
       "Client": "{{ user `client_id`}}"
