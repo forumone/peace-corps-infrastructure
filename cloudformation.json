@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation for a VPC with RDS and web instances",
+  "Description" : "AWS CloudFormation for a VPC with RDS, Elasticache, and web instances",
 
   "Parameters" : {
 
