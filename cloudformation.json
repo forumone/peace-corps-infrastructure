@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation for a VPC with RDS and web instances",
+  "Description" : "AWS CloudFormation for a VPC with RDS, Elasticache, and web instances",
 
   "Parameters" : {
 
@@ -493,6 +493,28 @@
       }
     },
 
+    "ElasticacheSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" :
+      {
+       "GroupDescription" : "Enable machines to access elasticache",
+       "Tags" : [
+          {"Key" : "Name", "Value" : "Peace Corps - ElasticacheSecurityGroup" },
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        ],
+       "SecurityGroupIngress" : [
+         {
+             "IpProtocol" : "tcp",
+             "FromPort" : "11211",
+             "ToPort" : "11211",
+             "CidrIp" : "10.19.61.0/24"
+         }
+       ],
+       "VpcId" : { "Ref" : "mainVPC" }
+      }
+    },
+
     "PublicSubnetA" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
@@ -687,6 +709,31 @@
         ]
       },
       "DeletionPolicy" : "Snapshot"
+    },
+    
+    "ElasticacheSubnetGroup": {
+      "Type": "AWS::ElastiCache::SubnetGroup",
+      "Properties": {
+        "Description": "VPC subnets",
+        "SubnetIds": [
+          {"Ref": "PrivateSubnetA"},
+          {"Ref": "PrivateSubnetB"}
+        ]
+      }
+    },
+
+    "ElasticacheCluster": {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "AutoMinorVersionUpgrade": "true",
+        "CacheNodeType": "cache.t2.micro",
+        "CacheSubnetGroupName": { "Ref": "ElasticacheSubnetGroup" },
+        "Engine": "memcached",
+        "NumCacheNodes": "2",
+        "VpcSecurityGroupIds": [
+          {"Fn::GetAtt": [ "ElasticacheSecurityGroup", "GroupId"]}
+        ]
+      }
     },
 
     "NAT" : {
@@ -1140,7 +1187,8 @@
           "sed -i 's/%PG_PASS%/", { "Ref" : "DBPassword" }, "/g' /home/ubuntu/files/web/init.sh\n",
           "sed -i 's/%PG_HOST%/", { "Fn::GetAtt" : [ "RDS", "Endpoint.Address" ]}, "/g' /home/ubuntu/files/web/init.sh\n",
           "sed -i 's/%GPG_ENCRYPT_ID%/", { "Ref" : "GPGEncryptID" }, "/g' /home/ubuntu/files/web/init.sh\n",
-          "sed -i 's/%MEMCACHED_URL%/", "", "/g' /home/ubuntu/files/web/init.sh\n",
+          "sed -i 's/%MEMCACHED_URL%/", { "Fn::GetAtt": ["ElasticacheCluster", "ConfigurationEndpoint.Address"]}, ":",
+                                        { "Fn::GetAtt": ["ElasticacheCluster", "ConfigurationEndpoint.Port"]}, "/g' /home/ubuntu/files/web/init.sh\n",
           "sed -i 's/%RELEASE_TAG%/", { "Ref" : "ReleaseTag" }, "/g' /home/ubuntu/files/web/init.sh\n",
           "sed -i 's/%AWS_MEDIA_BUCKET_NAME%/", { "Ref" : "MediaBucketName" }, "/g' /home/ubuntu/files/web/init.sh\n",
           "sed -i 's/%AWS_STATIC_BUCKET_NAME%/", { "Ref" : "StaticBucketName" }, "/g' /home/ubuntu/files/web/init.sh\n",
