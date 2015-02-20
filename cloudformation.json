@@ -726,17 +726,12 @@
       "Type": "AWS::ElastiCache::CacheCluster",
       "Properties": {
         "AutoMinorVersionUpgrade": "true",
-        "Engine": "memcached",
         "CacheNodeType": "cache.t2.micro",
         "CacheSubnetGroupName": { "Ref": "ElasticacheSubnetGroup" },
+        "Engine": "memcached",
         "NumCacheNodes": "2",
-        "VPCSecurityGroups": [
-          { "Ref" : "ElasticacheSecurityGroup" }
-        ],
-        "Tags" : [
-          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
-          {"Key" : "Name", "Value" : "Peace Corps Elasticache" },
-          {"Key" : "Client", "Value" : { "Ref": "ClientID" } }
+        "VPCSecurityGroupsIds": [
+          {"Fn::GetAtt": [ "ElasticacheSecurityGroup", "GroupId"]}
         ]
       }
     },
