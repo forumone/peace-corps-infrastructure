@@ -730,7 +730,7 @@
         "CacheSubnetGroupName": { "Ref": "ElasticacheSubnetGroup" },
         "Engine": "memcached",
         "NumCacheNodes": "2",
-        "VPCSecurityGroupIds": [
+        "VpcSecurityGroupIds": [
           {"Fn::GetAtt": [ "ElasticacheSecurityGroup", "GroupId"]}
         ]
       }
