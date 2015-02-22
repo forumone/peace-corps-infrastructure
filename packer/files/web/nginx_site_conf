@@ -29,7 +29,7 @@ server {
     deny all;
   }
 
-  location ^/$ {
+  location = / {
     return 302 /donate;
   }
 
