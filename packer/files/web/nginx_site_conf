@@ -24,18 +24,10 @@ server {
 
   keepalive_timeout 5;
 
-  # nginx should serve up static files and never send to the WSGI server
-  location /static {
-    alias /var/www/static;
-  }
-
   # We disallow the admin panel on everything but the admin machine
   # It's also disabled in django, but this provides an extra level
   location /admin {
-    deny all;
-  }
-
-  location / {
+    deny all; # Deny all unless you are on an admin server
     proxy_set_header Host $http_host;
     proxy_redirect off;
 
@@ -43,6 +35,21 @@ server {
       proxy_pass http://app_server_djangoapp;
       break;
     }
+  }
+
+  location /donate {
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+
+    if (!-f $request_filename) {
+      proxy_pass http://app_server_djangoapp;
+      break;
+    }
+  }
+
+  location = / {
+    # This is temporary while /donate is the only live section on the site
+    return 302 /donate;
   }
 }
 
