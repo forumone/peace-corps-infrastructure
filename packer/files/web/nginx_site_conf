@@ -23,33 +23,24 @@ server {
   error_log /var/log/nginx/peacecorps-webapp.error.log;
 
   keepalive_timeout 5;
-
   # We disallow the admin panel on everything but the admin machine
   # It's also disabled in django, but this provides an extra level
   location /admin {
-    deny all; # Deny all unless you are on an admin server
-    proxy_set_header Host $http_host;
-    proxy_redirect off;
-
-    if (!-f $request_filename) {
-      proxy_pass http://app_server_djangoapp;
-      break;
-    }
+    deny all;
   }
 
-  location /donate {
-    proxy_set_header Host $http_host;
-    proxy_redirect off;
-
-    if (!-f $request_filename) {
-      proxy_pass http://app_server_djangoapp;
-      break;
-    }
-  }
-
-  location = / {
-    # This is temporary while /donate is the only live section on the site
+  location ^/$ {
     return 302 /donate;
+  }
+
+  location / {
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+
+    if (!-f $request_filename) {
+      proxy_pass http://app_server_djangoapp;
+      break;
+    }
   }
 }
 
