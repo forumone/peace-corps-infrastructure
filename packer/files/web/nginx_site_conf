@@ -23,16 +23,14 @@ server {
   error_log /var/log/nginx/peacecorps-webapp.error.log;
 
   keepalive_timeout 5;
-
-  # nginx should serve up static files and never send to the WSGI server
-  location /static {
-    alias /var/www/static;
-  }
-
   # We disallow the admin panel on everything but the admin machine
   # It's also disabled in django, but this provides an extra level
   location /admin {
     deny all;
+  }
+
+  location = / {
+    return 302 /donate;
   }
 
   location / {
