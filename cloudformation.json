@@ -1136,9 +1136,17 @@
         "HealthCheckType" : "ELB",
         "LaunchConfigurationName" : { "Ref" : "WebLaunchConfig" },
         "LoadBalancerNames" : [ { "Ref" : "WebELB" } ],
-        "MaxSize" : "5",
+        "MaxSize" : "6",
         "MinSize" : "2",
         "DesiredCapacity" : "2",
+        "NotificationConfiguration" : {
+          "TopicARN" : { "Ref" : "NotificationTopic" },
+          "NotificationTypes" : [
+            "autoscaling:EC2_INSTANCE_LAUNCH",
+            "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+            "autoscaling:EC2_INSTANCE_TERMINATE",
+            "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"]
+        },
         "Tags" : [
           { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName"}, "PropagateAtLaunch": true },
           { "Key" : "Name", "Value" : { "Fn::Join" : ["-", ["cf", { "Ref": "AWS::StackName" }, "web", "asg"]]}, "PropagateAtLaunch": true },
@@ -1164,7 +1172,7 @@
       "Properties" : {
         "AssociatePublicIpAddress" : false,
         "ImageId" : { "Ref" : "WebAMI" },
-        "InstanceType" : "m3.medium",
+        "InstanceType" : "c3.large",
         "KeyName" : { "Ref" : "KeyName" },
         "IamInstanceProfile": { "Ref": "WebAccessS3SecretsProfile" },
         "SecurityGroups" : [
@@ -1199,6 +1207,66 @@
           "",
           ""
         ]]}}
+      }
+    },
+
+    "WebScaleUpPolicy" : {
+      "Type" : "AWS::AutoScaling::ScalingPolicy",
+      "Properties" : {
+        "AdjustmentType" : "ChangeInCapacity",
+        "AutoScalingGroupName" : { "Ref" : "WebASGroup" },
+        "Cooldown" : "60",
+        "ScalingAdjustment" : "1"
+      }
+    },
+    "WebScaleDownPolicy" : {
+      "Type" : "AWS::AutoScaling::ScalingPolicy",
+      "Properties" : {
+        "AdjustmentType" : "ChangeInCapacity",
+        "AutoScalingGroupName" : { "Ref" : "WebASGroup" },
+        "Cooldown" : "60",
+        "ScalingAdjustment" : "-1"
+      }
+    },
+
+    "CPUAlarmHigh": {
+     "Type": "AWS::CloudWatch::Alarm",
+     "Properties": {
+        "AlarmDescription": "Scale-up if CPU > 90% for 1 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "60",
+        "EvaluationPeriods": "2",
+        "Threshold": "90",
+        "AlarmActions": [ { "Ref": "WebScaleUpPolicy" } ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": { "Ref": "WebASGroup" }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold"
+      }
+    },
+    "CPUAlarmLow": {
+     "Type": "AWS::CloudWatch::Alarm",
+     "Properties": {
+        "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "300",
+        "EvaluationPeriods": "2",
+        "Threshold": "70",
+        "AlarmActions": [ { "Ref": "WebScaleDownPolicy" } ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": { "Ref": "WebASGroup" }
+          }
+        ],
+        "ComparisonOperator": "LessThanThreshold"
       }
     },
 
