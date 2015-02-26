@@ -1125,6 +1125,13 @@
       }
     },
 
+    "NotificationTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "Subscription": [ { "Endpoint": "sean.herron@gsa.gov", "Protocol": "email" } ]
+      }
+    },
+
     "WebASGroup" : {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
