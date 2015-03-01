@@ -726,10 +726,10 @@
       "Type": "AWS::ElastiCache::CacheCluster",
       "Properties": {
         "AutoMinorVersionUpgrade": "true",
-        "CacheNodeType": "cache.t2.micro",
+        "CacheNodeType": "cache.m3.medium",
         "CacheSubnetGroupName": { "Ref": "ElasticacheSubnetGroup" },
         "Engine": "memcached",
-        "NumCacheNodes": "2",
+        "NumCacheNodes": "3",
         "VpcSecurityGroupIds": [
           {"Fn::GetAtt": [ "ElasticacheSecurityGroup", "GroupId"]}
         ]
@@ -1144,8 +1144,8 @@
         "LaunchConfigurationName" : { "Ref" : "WebLaunchConfig" },
         "LoadBalancerNames" : [ { "Ref" : "WebELB" } ],
         "MaxSize" : "6",
-        "MinSize" : "2",
-        "DesiredCapacity" : "2",
+        "MinSize" : "4",
+        "DesiredCapacity" : "4",
         "NotificationConfiguration" : {
           "TopicARN" : { "Ref" : "NotificationTopic" },
           "NotificationTypes" : [
