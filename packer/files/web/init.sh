@@ -103,7 +103,7 @@ if [ $role = "admin" ]; then
 
     aws s3 cp s3://${aws_static_bucket_name}/filetransfers /home/filetransfer/incoming --recursive
     
-    echo "30 * * * * root bash aws s3 sync /home/filetransfer/incoming s3://{{AWS_STATIC_BUCKET_NAME}}/filetransfers --recursive" | tee /etc/cron.d/s3filetransferupload
+    echo "30 * * * * root bash aws s3 sync /home/filetransfer/incoming s3://%AWS_STATIC_BUCKET_NAME%/filetransfers --recursive" | tee /etc/cron.d/s3filetransferupload
 
     PUBLIC_HOSTNAME=$(ec2metadata | grep 'public-hostname:' | cut -d ' ' -f 2)
 
