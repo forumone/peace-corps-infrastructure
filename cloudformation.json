@@ -1144,8 +1144,8 @@
         "LaunchConfigurationName" : { "Ref" : "WebLaunchConfig" },
         "LoadBalancerNames" : [ { "Ref" : "WebELB" } ],
         "MaxSize" : "6",
-        "MinSize" : "4",
-        "DesiredCapacity" : "4",
+        "MinSize" : "2",
+        "DesiredCapacity" : "2",
         "NotificationConfiguration" : {
           "TopicARN" : { "Ref" : "NotificationTopic" },
           "NotificationTypes" : [
@@ -1179,7 +1179,7 @@
       "Properties" : {
         "AssociatePublicIpAddress" : false,
         "ImageId" : { "Ref" : "WebAMI" },
-        "InstanceType" : "c3.large",
+        "InstanceType" : "m3.medium",
         "KeyName" : { "Ref" : "KeyName" },
         "IamInstanceProfile": { "Ref": "WebAccessS3SecretsProfile" },
         "SecurityGroups" : [
