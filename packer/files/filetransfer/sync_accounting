@@ -1,1 +1,1 @@
-17 * * * * root bash /home/peacecorps/manage.sh sync_accounting `ls -t1 /home/filetransfer/incoming/*.csv | head -n 1`
+17 * * * * root bash /home/peacecorps/manage.sh sync_accounting `ls -r /home/filetransfer/incoming/*.csv | head -n 1`
