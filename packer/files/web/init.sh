@@ -101,10 +101,6 @@ if [ $role = "admin" ]; then
     aws s3 cp s3://peacecorps-secrets/${environment}/admin/ssh_host_rsa_key.pub.enc /tmp/ssh_host_rsa_key.pub.enc
     openssl aes-256-cbc -d -a -salt -pass pass:${decryption_key} -in /tmp/ssh_host_rsa_key.pub.enc -out /etc/ssh/ssh_host_rsa_key.pub
 
-    aws s3 cp s3://${aws_static_bucket_name}/filetransfers /home/filetransfer/incoming --recursive
-    
-    echo "30 * * * * root bash /usr/local/bin/aws s3 sync /home/filetransfer/incoming s3://%AWS_STATIC_BUCKET_NAME%/filetransfers --recursive" | tee /etc/cron.d/s3filetransferupload
-
     PUBLIC_HOSTNAME=$(ec2metadata | grep 'public-hostname:' | cut -d ' ' -f 2)
 
     sed -i "s@{{domain}}@$file_transfer_domain@" /home/ubuntu/files/filetransfer/dns.json
