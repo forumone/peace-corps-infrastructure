@@ -3,7 +3,9 @@
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
+sleep 10
 sudo apt-get update
+sudo apt-get update –fix-missing
 sudo apt-get upgrade -y
 
 # Basic package installation
@@ -14,7 +16,6 @@ sudo apt-get install python-pip -y
 
 sudo pip install boto
 sudo pip install awscli
-
 
 ###
 # 18F Defaults
@@ -78,3 +79,5 @@ sudo chown root:root /etc/at.allow
 sudo curl -o /etc/update-motd.d/00-header https://raw.githubusercontent.com/fisma-ready/ubuntu-lts/master/files/ubuntu/etc/update-motd.d/00-header
 sudo chown root:root /etc/update-motd.d/00-header
 sudo chmod 0755 /etc/update-motd.d/00-header
+
+

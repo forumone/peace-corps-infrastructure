@@ -21,13 +21,13 @@ sudo cp /home/ubuntu/files/web/nginx.conf /etc/nginx/nginx.conf
 # Create the SSL Keys Directory, download SSL rules
 sudo mkdir -p /etc/nginx/ssl/keys
 
-sudo curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/ssl.rules
+sudo curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/Threespot/peace-corps-infrastructure/master/packer/files/nat/ssl.rules
 
-sudo curl -o /etc/nginx/ssl/dhparam3072.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam3072.pem
+sudo curl -o /etc/nginx/ssl/dhparam3072.pem https://raw.githubusercontent.com/Threespot/peace-corps-infrastructure/master/packer/files/nat/dhparam3072.pem
 
-sudo curl -o /etc/nginx/ssl/dhparam4096.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam4096.pem
+sudo curl -o /etc/nginx/ssl/dhparam4096.pem https://raw.githubusercontent.com/Threespot/peace-corps-infrastructure/master/packer/files/nat/dhparam4096.pem
 
-sudo curl -o /etc/nginx/ssl/dhparam2048.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam2048.pem
+sudo curl -o /etc/nginx/ssl/dhparam2048.pem https://raw.githubusercontent.com/Threespot/peace-corps-infrastructure/master/packer/files/nat/dhparam2048.pem
 
 # Place the site configuration
 sudo cp /home/ubuntu/files/nat/nginx_site_conf /etc/nginx/sites-enabled/peacecorps

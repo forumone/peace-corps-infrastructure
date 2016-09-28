@@ -8,6 +8,7 @@
     "client_id": "PC-20140812-20190811-01",
     "region": "us-east-1",
     "subnet_id": "",
+    "code_tag": "",
     "vpc_id": ""
   },
   "builders": [{
@@ -47,6 +48,7 @@
     },
     {
       "type": "shell",
+      "execute_command":	"sh {{ .Path }} {{user `code_tag`}}",
       "script": "init_scripts/web.sh"
     }
   ]

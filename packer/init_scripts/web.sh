@@ -19,13 +19,13 @@ sudo cp /home/ubuntu/files/web/nginx.conf /etc/nginx/nginx.conf
 # Create the SSL Keys Directory, download SSL rules
 sudo mkdir -p /etc/nginx/ssl/keys
 
-sudo curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/ssl.rules
+sudo curl -o /etc/nginx/ssl/ssl.rules https://raw.githubusercontent.com/Threespot/peace-corps-infrastructure/master/packer/files/nat/ssl.rules
 
-sudo curl -o /etc/nginx/ssl/dhparam3072.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam3072.pem
+sudo curl -o /etc/nginx/ssl/dhparam3072.pem https://raw.githubusercontent.com/Threespot/peace-corps-infrastructure/master/packer/files/nat/dhparam3072.pem
 
-sudo curl -o /etc/nginx/ssl/dhparam4096.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam4096.pem
+sudo curl -o /etc/nginx/ssl/dhparam4096.pem https://raw.githubusercontent.com/Threespot/peace-corps-infrastructure/master/packer/files/nat/dhparam4096.pem
 
-sudo curl -o /etc/nginx/ssl/dhparam2048.pem https://raw.githubusercontent.com/18F/tls-standards/master/configuration/nginx/dhparam2048.pem
+sudo curl -o /etc/nginx/ssl/dhparam2048.pem https://raw.githubusercontent.com/Threespot/peace-corps-infrastructure/master/packer/files/nat/dhparam2048.pem
 
 # Place the site configuration
 sudo cp /home/ubuntu/files/web/nginx_site_conf /etc/nginx/sites-enabled/peacecorps
@@ -89,12 +89,16 @@ sudo chown peacecorps:peacecorps /home/peacecorps/manage.sh
 sudo cp /home/ubuntu/files/web/upstart_peacecorps.conf /etc/init/peacecorps.conf
 #### END MANAGEMENT SCRIPTS ####
 
+# set a variable received from packer build config to be used for application checkout from github for base build
+echo CODE_TAG="$1" > /tmp/code_tag
+
 ####
 #### PYENV INIT ####
 ####
 sudo cp /home/ubuntu/files/web/.pyenvrc /home/peacecorps/.pyenvrc
 sudo chown peacecorps:peacecorps /home/peacecorps/.pyenvrc
 sudo su peacecorps <<'EOF'
+set -x
 git clone https://github.com/yyuu/pyenv.git /home/peacecorps/pyenv
 git clone https://github.com/yyuu/pyenv-virtualenv.git /home/peacecorps/pyenv/plugins/pyenv-virtualenv
 cp /home/peacecorps/.pyenvrc /home/peacecorps/pyenv/.pyenvrc
@@ -110,11 +114,12 @@ pyenv virtualenv 3.4.1 peacecorps
 
 pyenv activate peacecorps
 
-git clone https://github.com/18F/peacecorps-site.git /home/peacecorps/peacecorps
+git clone https://github.com/Threespot/peacecorps-site.git /home/peacecorps/peacecorps
 
 cd /home/peacecorps/peacecorps
 git fetch --tags
-git checkout base
+source /tmp/code_tag
+git checkout $CODE_TAG
 
 pip install -r requirements.txt
 pip install gunicorn

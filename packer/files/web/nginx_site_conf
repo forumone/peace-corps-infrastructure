@@ -3,7 +3,7 @@ upstream app_server_djangoapp {
 }
 
 server {
-  listen 443 ssl spdy proxy_protocol;
+  listen 443 ssl proxy_protocol;
 
   client_max_body_size 10M;
 
@@ -50,3 +50,16 @@ server {
 
     return 301 https://$host$request_uri;
 }
+
+server {
+  listen 80;
+  listen 443 ssl proxy_protocol;
+  server_name beta.peacecorps.gov;
+  return 301 https://donate.peacecorps.gov$request_uri;
+
+  ssl_certificate      /etc/nginx/ssl/keys/{{domain}}.chained.crt;
+  ssl_certificate_key  /etc/nginx/ssl/keys/{{domain}}.key;
+
+  include ssl/ssl.rules;
+}
+

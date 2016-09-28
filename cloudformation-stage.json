@@ -27,7 +27,7 @@
 
     "ReleaseTag": {
       "Description" : "Tag name you want to deploy of the application",
-      "Default": "1.7.0",
+      "Default": "1.7.3",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "255",
@@ -37,7 +37,7 @@
 
     "DomainName": {
       "Description" : "The domain name this is deploying to",
-      "Default": "donate.peacecorps.gov",
+      "Default": "stage-donate.peacecorps.gov",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "255",
@@ -47,7 +47,7 @@
 
     "PayGovDomainName": {
       "Description" : "The pay.gov endpoint domain name",
-      "Default": "pay-donate.peacecorps.gov",
+      "Default": "stage-pay-donate.peacecorps.gov",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "255",
@@ -57,7 +57,7 @@
 
     "AdminDomainName": {
       "Description" : "The admin panel domain name",
-      "Default": "admin-donate.peacecorps.gov",
+      "Default": "stage-admin-donate.peacecorps.gov",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "255",
@@ -67,7 +67,7 @@
 
     "FileTransferDomainName": {
       "Description" : "The domain name to use for sftp file transfers",
-      "Default": "files-donate.peacecorps.gov",
+      "Default": "stage-files-donate.peacecorps.gov",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "255",
@@ -87,8 +87,8 @@
     },
 
     "HostedZoneID": {
-      "Description" : "The ID of the hosted zone in Route 53 to use for donate.peacecorps.gov.",
-      "Default": "Z23Y56A83RUTLA",
+      "Description" : "The ID of the hosted zone in Route 53 to use for stage-donate.peacecorps.gov.",
+      "Default": "Z1HGB9EHMU8D15",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "255",
@@ -170,7 +170,7 @@
 
     "WebAMI": {
       "Description" : "AMI to use for web instances",
-      "Default": "ami-d16519b4",
+      "Default": "ami-b11f52d4",
       "MinLength": "1",
       "MaxLength": "255",
       "Type": "String"
@@ -178,7 +178,7 @@
 
     "NATAMI": {
       "Description" : "AMI to use for NAT instances",
-      "Default": "ami-0d98e468",
+      "Default": "ami-991d50fc",
       "MinLength": "1",
       "MaxLength": "255",
       "Type": "String"
@@ -194,14 +194,14 @@
 
     "FileTransferPubKeys": {
       "Description" : "A list of public keys (comma seperated) to permit access to file transfer machines",
-      "Default": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxabO0TN4swCizJV/7PvS+KDbGFRSZVz5M4mQrbN4F4HYTkwNyyetrLicGEtVs+0yZnWlk6jM8n+JYWOLXLdKi1s4tLg8S1asvsgRPbimks9sigeXD64fZ/b6cvHPME7AYfgF6PZyzt6vcQZucMcQsl0ibAdp3D2AIaZ3oRpFpkOnTZeJDahyj6JVud41t0uBjFksaJwy6KfsF/iW7mNRfeVs9DjBcj8g8gpDYNH1TICro1M5k2tOPBf1rkMoRQ+rJwYEN8V+o3JLnh1GtuA1MDx6pz4GXswDem8+0WV/RUZAKHXhPM0EjDONUYRJaxYONqgTxe+lPpBjc7ThE/7dgw== vdevl@dc-findb-dev.peacecorps.gov, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCo1NoxHMcfUZC8zmqRUeqv5SfOwZU/eiwvyzlBqrXQ7U6VYd+UlLaTNVXAC49I1JDHxNNnbcJ8i5SBJ5hngWKKhD8CCvDALbBKwO7OL0mQmzPg/Iy3PuQQrGX9C3Q18RpuOeXzKpgWn4iJqzJJzUBMUsBeDqt0hqEsRZSVgBaMi6h6QKiipv1QIZ1TJORjSRPtg54oKF7gOjuS7aV+fA/3WLQ6ETY8dYhqY3WHOCO633OOSHmX5vWTEmI16ytSgSOEW+9ksgD2yEpC5RgyGYGF1GcHwWUGDScvfKUTZsAH25Z2ZegfSOvd/y0V1jaOxrkSksxzjt4E0Lhfk7HXxup7 sean.herron@gsa.gov",
+      "Default": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxabO0TN4swCizJV/7PvS+KDbGFRSZVz5M4mQrbN4F4HYTkwNyyetrLicGEtVs+0yZnWlk6jM8n+JYWOLXLdKi1s4tLg8S1asvsgRPbimks9sigeXD64fZ/b6cvHPME7AYfgF6PZyzt6vcQZucMcQsl0ibAdp3D2AIaZ3oRpFpkOnTZeJDahyj6JVud41t0uBjFksaJwy6KfsF/iW7mNRfeVs9DjBcj8g8gpDYNH1TICro1M5k2tOPBf1rkMoRQ+rJwYEN8V+o3JLnh1GtuA1MDx6pz4GXswDem8+0WV/RUZAKHXhPM0EjDONUYRJaxYONqgTxe+lPpBjc7ThE/7dgw== imported-openssh-key",
       "MinLength": "1",
       "Type": "String"
     },
 
     "MediaBucketName": {
       "Description" : "The S3 Bucket to use for Media Uploads",
-	  "Default": "donate-peacecorps-media",
+	  "Default": "stage-donate-peacecorps-media",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "255"
@@ -209,7 +209,7 @@
 
     "StaticBucketName": {
       "Description" : "The S3 Bucket to use for Static Uploads",
-	  "Default": "donate-peacecorps-static",
+	  "Default": "stage-donate-peacecorps-static",
 	  "Type": "String",
       "MinLength": "1",
       "MaxLength": "255"
@@ -217,7 +217,7 @@
 
     "NATElasticIPAllocationID": {
       "Description" : "The Allocation ID of the Elastic IP for the NAT machine",
-	  "Default": "eipalloc-c8787aad",
+	  "Default": "eipalloc-e9bdac8c",
 	  "Type": "String",
       "MinLength": "1",
       "MaxLength": "255"
@@ -809,7 +809,7 @@
             "Effect": "Allow",
             "Action": "s3:GetObject",
             "Resource": { "Fn::Join" : [ "", [
-              "arn:aws:s3:::donate-peacecorps-secrets/",
+              "arn:aws:s3:::stage-donate-peacecorps-secrets/",
               { "Ref": "Environment" },
               "/all/*"
             ]]}
@@ -833,7 +833,7 @@
               "Effect": "Allow",
               "Action": "s3:GetObject",
               "Resource": { "Fn::Join" : [ "", [
-                "arn:aws:s3:::donate-peacecorps-secrets/",
+                "arn:aws:s3:::stage-donate-peacecorps-secrets/",
                 { "Ref": "Environment" },
                 "/web/*"
               ]]}
@@ -876,7 +876,7 @@
             "Effect": "Allow",
             "Action": "s3:GetObject",
             "Resource": { "Fn::Join" : [ "", [
-              "arn:aws:s3:::donate-peacecorps-secrets/",
+              "arn:aws:s3:::stage-donate-peacecorps-secrets/",
               { "Ref": "Environment" },
               "/paygov/*"
             ]]}
@@ -897,7 +897,7 @@
               "Effect": "Allow",
               "Action": "s3:GetObject",
               "Resource": { "Fn::Join" : [ "", [
-                "arn:aws:s3:::donate-peacecorps-secrets/",
+                "arn:aws:s3:::stage-donate-peacecorps-secrets/",
                 { "Ref": "Environment" },
                 "/admin/*"
               ]]}
@@ -1511,8 +1511,8 @@
           "",
           "# Associate EIP address \n",
           "aws ec2 associate-address --instance-id `curl -s http://169.254.169.254/latest/meta-data/instance-id` --allow-reassociation --allocation-id ", { "Ref" : "ADMIINElasticIPAllocationID" }, " --region us-east-1\n",
-		  "",
-		  "sed -i 's/%DOMAIN%/", { "Ref" : "DomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
+          "",
+		      "sed -i 's/%DOMAIN%/", { "Ref" : "DomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
           "sed -i 's/%PAYGOV_DOMAIN%/", { "Ref" : "PayGovDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
           "sed -i 's/%ADMIN_DOMAIN%/", { "Ref" : "AdminDomainName" }, "/g' /home/ubuntu/files/web/init.sh\n",
           "sed -i 's/%ENVIRONMENT%/", { "Ref" : "Environment" }, "/g' /home/ubuntu/files/web/init.sh\n",
